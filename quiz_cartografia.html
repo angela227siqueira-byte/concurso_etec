@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Cartografia Básica · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .question-text img {
+            max-width: 100%;
+            border-radius: 12px;
+            margin: 12px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: block;
+        }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🗺️ Cartografia Básica</div>
+        <div class="sub">Leitura e interpretação de mapas, escalas e representações espaciais · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Cartografia Básica) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: `A Cartografia é definida como o conjunto de estudos e operações científicas, técnicas e artísticas que intervêm na elaboração de mapas a partir de dados de campo ou documentais.`,
+            correct: true,
+            justification: `Segundo Duarte (2002, cap. 1), essa é a definição adotada pela Associação Cartográfica Internacional, envolvendo desde a coleta até a impressão final.`
+        },
+        {
+            type: 'mc',
+            text: `Observe a Figura 3, que mostra duas barras de escala gráfica para uma mesma distância real de 5 km. A barra de menor comprimento corresponde a qual escala numérica?<br><img src="https://i.imgur.com/1IUrqIy.png" alt="Escalas gráficas">`,
+            correct: 1,
+            options: ['1:50.000', '1:100.000', '1:25.000', '1:10.000'],
+            justification: `Quanto menor a escala (denominador maior), menor é a representação gráfica da mesma distância no papel. A barra mais curta representa a escala 1:100.000.`
+        },
+        {
+            type: 'tf',
+            text: `Na projeção de Mercator (Figura 1, à esquerda), as regiões polares aparecem desproporcionalmente ampliadas, como é o caso da Groenlândia em relação à América do Sul.<br><img src="https://i.imgur.com/TfGjAlx.png" alt="Projeções cartográficas">`,
+            correct: true,
+            justification: `A projeção de Mercator é conforme (preserva ângulos), mas distorce severamente as áreas nas altas latitudes, fazendo a Groenlândia parecer maior que a América do Sul.`
+        },
+        {
+            type: 'mc',
+            text: `Ainda com base na Figura 1, qual das três projeções é a mais adequada para representar a distribuição de países por área territorial, minimizando distorções de tamanho?`,
+            correct: 1,
+            options: ['Mercator', 'Peters', 'Azimutal Equidistante', 'Todas são equivalentes'],
+            justification: `A projeção de Peters (centro) é equivalente, ou seja, preserva a proporção real das áreas, embora distorça as formas.`
+        },
+        {
+            type: 'tf',
+            text: `As curvas de nível na Figura 2 representam o relevo de uma área onde a declividade é maior onde as curvas estão mais próximas entre si.<br><img src="https://i.imgur.com/mFz4KWU.png" alt="Carta topográfica com curvas de nível">`,
+            correct: true,
+            justification: `Curvas de nível mais próximas indicam maior inclinação do terreno, princípio fundamental da interpretação topográfica (Duarte, cap. 6).`
+        },
+        {
+            type: 'mc',
+            text: `Observando a carta topográfica da Figura 2, as curvas de nível que se fecham em círculos concêntricos e apresentam valores de altitude crescentes em direção ao centro representam qual feição do relevo?`,
+            correct: 2,
+            options: ['Uma depressão', 'Um vale', 'Um morro ou colina', 'Uma planície'],
+            justification: `Quando as cotas aumentam em direção ao centro dos círculos concêntricos, trata-se de uma elevação (morro ou colina).`
+        },
+        {
+            type: 'tf',
+            text: `A escala numérica 1:50.000 indica que cada centímetro medido no mapa equivale a 500 metros no terreno.`,
+            correct: true,
+            justification: `1 cm no mapa = 50.000 cm no terreno = 500 metros. Escalas grandes como essa oferecem alto detalhamento.`
+        },
+        {
+            type: 'tf',
+            text: `O ponto C da Figura 4 está localizado no hemisfério Sul e a Oeste de Greenwich, portanto sua latitude é Sul e longitude Oeste.<br><img src="https://i.imgur.com/01p9oiA.png" alt="Coordenadas geográficas no globo">`,
+            correct: true,
+            justification: `Pela posição relativa na grade de coordenadas, o ponto C encontra-se no quadrante Sudoeste.`
+        },
+        {
+            type: 'tf',
+            text: `O meridiano de Greenwich, representado na Figura 4, divide a Terra nos hemisférios Oriental (Leste) e Ocidental (Oeste).`,
+            correct: true,
+            justification: `Greenwich é o meridiano de referência (0°), que separa os hemisférios Leste e Oeste.`
+        },
+        {
+            type: 'tf',
+            text: `Latitude é a distância angular medida a partir do Equador até os polos, variando de 0° a 90° Norte ou Sul.`,
+            correct: true,
+            justification: `A latitude é contada em graus a partir do Equador (0°) em direção aos polos (90° N ou S).`
+        },
+        {
+            type: 'mc',
+            text: `Considerando os fusos horários do Brasil na Figura 5, se em Brasília (UTC -3) são 14 horas, que horário será em Fernando de Noronha (UTC -2)?<br><img src="https://i.imgur.com/vJH7fCw.png" alt="Fusos horários do Brasil">`,
+            correct: 0,
+            options: ['15 horas', '13 horas', '16 horas', '14 horas'],
+            justification: `Fernando de Noronha está uma hora adiantado em relação a Brasília (UTC -2 contra UTC -3). Portanto, 14h + 1h = 15h.`
+        },
+        {
+            type: 'tf',
+            text: `De acordo com a Figura 5, o estado do Acre está inserido no fuso UTC -5, o que significa que possui 5 horas a menos em relação ao Meridiano de Greenwich.`,
+            correct: true,
+            justification: `O fuso horário do Acre corresponde a UTC -5, confirmando o atraso de 5 horas em relação a Greenwich.`
+        },
+        {
+            type: 'mc',
+            text: `No mapa de densidade demográfica da Figura 6, as tonalidades mais escuras indicam maior densidade populacional. Com base na legenda, qual região brasileira concentra as maiores densidades?<br><img src="https://i.imgur.com/2ymk3f9.png" alt="Mapa temático de densidade demográfica">`,
+            correct: 2,
+            options: ['Norte', 'Nordeste', 'Sudeste', 'Sul'],
+            justification: `Pela legenda em tons degradê, os estados mais escuros (maior densidade) situam-se predominantemente na região Sudeste.`
+        },
+        {
+            type: 'tf',
+            text: `O título de um mapa, como o da Figura 6, é um elemento opcional, já que a legenda supre todas as informações sobre o tema.`,
+            correct: false,
+            justification: `O título é um elemento obrigatório que identifica o tema e a área representada, complementando a legenda (Duarte, cap. 7).`
+        },
+        {
+            type: 'mc',
+            text: `Observando a Rosa dos Ventos na Figura 7, qual é a direção oposta ao Noroeste (NW)?<br><img src="https://i.imgur.com/433xjfw.png" alt="Rosa dos ventos e orientação">`,
+            correct: 0,
+            options: ['Sudeste (SE)', 'Sudoeste (SW)', 'Nordeste (NE)', 'Norte (N)'],
+            justification: `A direção oposta a Noroeste (315°) é Sudeste (135°), diametralmente contrária na rosa dos ventos.`
+        },
+        {
+            type: 'tf',
+            text: `A Rosa dos Ventos completa, como a da Figura 7, possui 8 direções: 4 cardeais e 4 colaterais.`,
+            correct: false,
+            justification: `A rosa completa geralmente possui 16 direções, incluindo os pontos subcolaterais (ex.: NNE, ENE).`
+        },
+        {
+            type: 'tf',
+            text: `O norte geográfico, indicado na Figura 7, coincide com o eixo de rotação da Terra e aponta para o Polo Norte verdadeiro.`,
+            correct: true,
+            justification: `O norte geográfico corresponde ao Polo Norte verdadeiro, eixo de rotação do planeta.`
+        },
+        {
+            type: 'tf',
+            text: `A declinação magnética, indicada na Figura 7 pela diferença entre norte magnético e geográfico, é constante em todos os pontos da Terra.`,
+            correct: false,
+            justification: `A declinação magnética varia conforme a localização geográfica e ao longo do tempo.`
+        },
+        {
+            type: 'tf',
+            text: `Curvas de nível jamais se cruzam, exceto em situações específicas como cavernas ou desmoronamentos.`,
+            correct: true,
+            justification: `Em condições normais de relevo, duas curvas de nível de altitudes diferentes não se cruzam (Duarte, cap. 6).`
+        },
+        {
+            type: 'tf',
+            text: `Na Figura 2, as curvas de nível com formato alongado e paralelo indicam um terreno de declive uniforme.`,
+            correct: true,
+            justification: `O paralelismo e o espaçamento regular das curvas sugerem uma vertente com inclinação constante.`
+        },
+        {
+            type: 'mc',
+            text: `A Cartografia Sistemática, segundo Duarte (2002), tem como principal objetivo a produção de mapas de base, como as cartas topográficas. Qual das figuras representa um produto típico dessa cartografia?`,
+            correct: 1,
+            options: ['Figura 1 (Projeções)', 'Figura 2 (Carta topográfica)', 'Figura 6 (Mapa temático)', 'Figura 7 (Rosa dos ventos)'],
+            justification: `A Figura 2 mostra uma carta topográfica com curvas de nível, produto característico da Cartografia Sistemática.`
+        },
+        {
+            type: 'tf',
+            text: `A projeção Azimutal Equidistante (Figura 1, à direita) mantém as distâncias corretas a partir de um ponto central.`,
+            correct: true,
+            justification: `Essa projeção preserva as distâncias a partir do centro do mapa, sendo útil para rotas aéreas e determinação de alcance.`
+        },
+        {
+            type: 'mc',
+            text: `Em um mapa na escala 1:200.000, duas cidades distam 3,5 cm no papel. Qual a distância real em quilômetros?`,
+            correct: 0,
+            options: ['7 km', '70 km', '3,5 km', '700 km'],
+            justification: `3,5 cm × 200.000 = 700.000 cm = 7.000 m = 7 km.`
+        },
+        {
+            type: 'tf',
+            text: `O sistema de coordenadas UTM (Universal Transversa de Mercator), visível na margem da carta na Figura 2, utiliza medidas em quilômetros e é empregado em mapeamentos de grande escala.`,
+            correct: true,
+            justification: `A projeção UTM é amplamente usada em cartas topográficas, com coordenadas expressas em metros ou quilômetros.`
+        },
+        {
+            type: 'mc',
+            text: `Uma fotografia aérea vertical, se corrigida geometricamente e georreferenciada, pode ser considerada um(a):`,
+            correct: 2,
+            options: ['mapa mental', 'carta topográfica', 'ortofoto', 'croqui'],
+            justification: `A ortofoto é uma imagem corrigida de distorções, podendo ser usada como base cartográfica precisa.`
+        },
+        {
+            type: 'tf',
+            text: `O sensoriamento remoto orbital capta informações da superfície terrestre por meio de satélites, permitindo monitorar desmatamento, crescimento urbano e variações climáticas.`,
+            correct: true,
+            justification: `Satélites como Landsat e CBERS fornecem imagens multiespectrais para estudos ambientais e urbanos.`
+        },
+        {
+            type: 'mc',
+            text: `Na projeção de Mercator (Figura 1, esquerda), a linha que une dois pontos representa uma curva de rumo constante, chamada de:`,
+            correct: 2,
+            options: ['geodésica', 'ortodrômica', 'loxodrômica', 'azimutal'],
+            justification: `A loxodrômica (ou linha de rumo) cruza todos os meridianos com o mesmo ângulo, sendo uma reta nessa projeção.`
+        },
+        {
+            type: 'tf',
+            text: `O GPS (Sistema de Posicionamento Global) determina coordenadas tridimensionais utilizando, no mínimo, três satélites.`,
+            correct: false,
+            justification: `São necessários no mínimo 4 satélites para determinar a posição 3D (latitude, longitude e altitude) com precisão.`
+        },
+        {
+            type: 'tf',
+            text: `A escala gráfica, como a da Figura 3, permanece correta mesmo se o mapa for ampliado ou reduzido fotograficamente.`,
+            correct: true,
+            justification: `A escala gráfica é proporcional, portanto se amplia ou reduz junto com o mapa, mantendo a relação correta.`
+        },
+        {
+            type: 'mc',
+            text: `Analisando a Figura 5, se um viajante sair de Rio Branco (AC) às 8h em direção a Brasília (DF), onde o fuso é UTC -3, após 4 horas de voo, que horas marcará o relógio em Brasília?`,
+            correct: 3,
+            options: ['13h', '11h', '12h', '14h'],
+            justification: `Rio Branco (UTC -5) são 8h, correspondendo a 10h em Brasília (UTC -3). Após 4h de voo, 10h + 4h = 14h.`
+        },
+        {
+            type: 'tf',
+            text: `Todo mapa é uma representação seletiva e simplificada da realidade, sujeita a distorções e à subjetividade do cartógrafo.`,
+            correct: true,
+            justification: `Nenhum mapa representa a totalidade do real; sempre há seleção, generalização e simbolização dos fenômenos.`
+        },
+        {
+            type: 'mc',
+            text: `No mapa temático da Figura 6, a densidade demográfica é representada pelo método:`,
+            correct: 1,
+            options: ['de pontos', 'coroplético', 'isoplético', 'de fluxos'],
+            justification: `O método coroplético utiliza cores ou tonalidades para preencher unidades espaciais conforme classes de intensidade.`
+        },
+        {
+            type: 'tf',
+            text: `A linha do Equador é o paralelo de referência 0°, dividindo a Terra em hemisférios Norte e Sul.`,
+            correct: true,
+            justification: `O Equador é o paralelo fundamental, equidistante dos polos, que separa os dois hemisférios.`
+        },
+        {
+            type: 'mc',
+            text: `Qual das projeções da Figura 1 é classificada como equivalente, ou seja, preserva a proporcionalidade das áreas?`,
+            correct: 1,
+            options: ['Mercator', 'Peters', 'Azimutal Equidistante', 'Nenhuma'],
+            justification: `Peters é uma projeção equivalente; as áreas são proporcionais às reais, ainda que as formas estejam distorcidas.`
+        },
+        {
+            type: 'tf',
+            text: `O mapa é sempre superior ao globo terrestre para representar distâncias e formas, pois não apresenta distorções angulares.`,
+            correct: false,
+            justification: `Ao contrário, o globo terrestre é o modelo mais fiel, sem as distorções inevitáveis das projeções planas.`
+        },
+        {
+            type: 'tf',
+            text: `A legenda da Figura 6 organiza as classes de densidade demográfica em cinco intervalos, permitindo a leitura qualitativa da distribuição espacial.`,
+            correct: true,
+            justification: `A legenda graduada transforma valores numéricos em classes visuais, possibilitando a interpretação da variação espacial.`
+        },
+        {
+            type: 'mc',
+            text: `Em relação à Rosa dos Ventos (Figura 7), o azimute de um objeto localizado exatamente a leste do observador é de:`,
+            correct: 1,
+            options: ['0°', '90°', '180°', '270°'],
+            justification: `O azimute é medido no sentido horário a partir do Norte (0°); Leste corresponde a 90°.`
+        },
+        {
+            type: 'tf',
+            text: `A projeção de Peters (Figura 1, centro) causou grande debate político porque alonga os países do Norte, enfatizando sua importância.`,
+            correct: false,
+            justification: `Peters alonga os países de baixa latitude (Sul), dando-lhes mais visibilidade, e não os do Norte.`
+        },
+        {
+            type: 'mc',
+            text: `Um topógrafo mediu uma distância de 500 metros no terreno. No mapa de escala 1:10.000, essa distância será representada por:`,
+            correct: 1,
+            options: ['0,5 cm', '5 cm', '50 cm', '5 mm'],
+            justification: `500 m = 50.000 cm. Dividindo por 10.000, obtém-se 5 cm no mapa.`
+        },
+        {
+            type: 'tf',
+            text: `A cartografia digital e os SIGs substituíram por completo a necessidade de mapas impressos em papel.`,
+            correct: false,
+            justification: `Mapas analógicos ainda são usados em campo, na educação e em situações onde o meio digital não é acessível ou confiável.`
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    // Elementos DOM
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        // Seleciona visualmente a resposta já registrada
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) {
+                    btn.classList.add('selected');
+                }
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você domina os fundamentos da Cartografia.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Revise os tópicos de projeções e escalas.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas é recomendável reler Duarte (2002), capítulos 2 a 7.';
+        else mensagem = '📚 Sugiro uma leitura cuidadosa do material antes de refazer o quiz.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
