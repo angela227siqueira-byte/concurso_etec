@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Relação sociedade–natureza e questões ambientais · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🌱 Relação sociedade–natureza e questões ambientais</div>
+        <div class="sub">Milton Santos, Ross, Vesentini e a BNCC · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Relação sociedade–natureza e questões ambientais) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: "A relação sociedade–natureza para Milton Santos é mediada pela técnica, que transforma a natureza em recurso e a incorpora ao espaço geográfico.",
+            correct: true,
+            justification: "Santos (2006) entende a técnica como o conjunto de meios instrumentais e sociais com que o homem realiza sua vida e transforma o espaço."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'desenvolvimento sustentável', consagrado no Relatório Brundtland (1987), define-se como:",
+            correct: 0,
+            options: [
+                "Atender às necessidades presentes sem comprometer a capacidade das futuras gerações",
+                "Crescimento econômico a qualquer custo",
+                "Retorno ao modo de vida pré-industrial",
+                "Exploração máxima dos recursos naturais"
+            ],
+            justification: "O Relatório 'Nosso Futuro Comum' consagrou essa definição, conciliando desenvolvimento e preservação ambiental."
+        },
+        {
+            type: 'tf',
+            text: "O Protocolo de Kyoto (1997) estabeleceu metas obrigatórias de redução de emissões de gases de efeito estufa para todos os países signatários, incluindo os em desenvolvimento.",
+            correct: false,
+            justification: "Kyoto impôs metas apenas aos países desenvolvidos (Anexo I); os países em desenvolvimento não tinham metas obrigatórias."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'pegada ecológica' mede:",
+            correct: 1,
+            options: [
+                "A quantidade de carbono emitida por veículos",
+                "A área de terra e água necessária para sustentar o consumo de uma população",
+                "O número de espécies extintas por ano",
+                "A extensão das florestas preservadas"
+            ],
+            justification: "A pegada ecológica calcula a área bioprodutiva requerida para produzir os recursos consumidos e absorver os resíduos gerados."
+        },
+        {
+            type: 'tf',
+            text: "O desmatamento na Amazônia brasileira resulta apenas da agricultura de subsistência praticada por comunidades tradicionais.",
+            correct: false,
+            justification: "As principais causas são a pecuária extensiva, a sojicultura, a exploração madeireira e a grilagem de terras, muito mais do que a agricultura de subsistência."
+        },
+        {
+            type: 'mc',
+            text: "O fenômeno da 'chuva ácida' ocorre quando:",
+            correct: 3,
+            options: [
+                "Há excesso de vapor d'água na atmosfera",
+                "As temperaturas caem bruscamente",
+                "Vulcões entram em erupção",
+                "Óxidos de enxofre e nitrogênio, lançados por indústrias e veículos, reagem com a água na atmosfera"
+            ],
+            justification: "A chuva ácida resulta da combinação de SO₂ e NOₓ com vapor d'água, formando ácidos sulfúrico e nítrico que precipitam."
+        },
+        {
+            type: 'tf',
+            text: "O Aquífero Guarani, por sua grande extensão e recarga rápida, é imune à contaminação por agrotóxicos e atividades industriais.",
+            correct: false,
+            justification: "Apesar da enorme reserva, o aquífero é vulnerável à contaminação, especialmente nas áreas de recarga onde o arenito aflora."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'justiça ambiental' refere-se a:",
+            correct: 0,
+            options: [
+                "Distribuição equitativa dos benefícios e ônus ambientais entre grupos sociais, combatendo o racismo ambiental",
+                "Punição igual para todos os crimes ambientais",
+                "A criação de parques nacionais",
+                "A exportação de resíduos para países pobres"
+            ],
+            justification: "Justiça ambiental denuncia que populações vulneráveis sofrem desproporcionalmente os impactos negativos da degradação e de projetos poluentes."
+        },
+        {
+            type: 'tf',
+            text: "O efeito estufa é um fenômeno artificial, causado exclusivamente pela queima de combustíveis fósseis.",
+            correct: false,
+            justification: "O efeito estufa é um fenômeno natural que mantém a temperatura do planeta; as atividades humanas o intensificam, gerando o aquecimento global."
+        },
+        {
+            type: 'mc',
+            text: "A 'Agenda 21', resultante da Rio-92, é um documento que:",
+            correct: 2,
+            options: [
+                "Estabelece tarifas de importação de produtos verdes",
+                "Proíbe a exploração de petróleo em todo o mundo",
+                "Propõe diretrizes para um desenvolvimento sustentável em nível global, nacional e local",
+                "Determina a criação de exércitos verdes"
+            ],
+            justification: "A Agenda 21 é um plano de ação para governos e sociedade civil implementarem a sustentabilidade em suas esferas."
+        },
+        {
+            type: 'tf',
+            text: "As Unidades de Conservação no Brasil dividem-se em dois grupos: proteção integral e uso sustentável.",
+            correct: true,
+            justification: "O SNUC (Lei 9.985/2000) classifica as UCs em proteção integral (parques, reservas biológicas) e uso sustentável (APAs, reservas extrativistas)."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'antropoceno' refere-se a:",
+            correct: 1,
+            options: [
+                "Era geológica dominada pelos dinossauros",
+                "Época geológica proposta, na qual a ação humana se tornou a principal força modificadora do planeta",
+                "Período de resfriamento global",
+                "Expansão dos oceanos"
+            ],
+            justification: "O Antropoceno designa o período em que as atividades humanas alteram profundamente os ciclos biogeoquímicos, o clima e a biodiversidade."
+        },
+        {
+            type: 'tf',
+            text: "A monocultura de eucalipto e pinus, comum no Sul e Sudeste, não gera impactos ambientais por ser uma prática de reflorestamento.",
+            correct: false,
+            justification: "Monoculturas de exóticas consomem grande volume de água, reduzem a biodiversidade e podem esgotar os solos, diferentemente de florestas nativas."
+        },
+        {
+            type: 'mc',
+            text: "A desertificação no semiárido nordestino é causada principalmente por:",
+            correct: 3,
+            options: [
+                "Terremotos",
+                "Inversão térmica",
+                "Expansão das geleiras",
+                "Uso inadequado do solo, desmatamento da caatinga e manejo incorreto da irrigação"
+            ],
+            justification: "A desertificação resulta da combinação de fatores climáticos com ação humana, como queimadas, sobrepastoreio e agricultura inadequada."
+        },
+        {
+            type: 'tf',
+            text: "A Rio+20, conferência da ONU em 2012, produziu um tratado vinculante com metas de redução de emissões para todos os países.",
+            correct: false,
+            justification: "A Rio+20 resultou no documento 'O Futuro que Queremos', sem força vinculante; as metas obrigatórias vieram apenas com o Acordo de Paris em 2015."
+        },
+        {
+            type: 'mc',
+            text: "O 'bloqueio atmosférico' que ocasiona estiagens prolongadas no Sudeste brasileiro está relacionado a:",
+            correct: 0,
+            options: [
+                "Massas de ar quente e seco estacionárias que impedem o avanço de frentes frias",
+                "Excesso de umidade vinda da Amazônia",
+                "Derretimento das calotas polares",
+                "Aumento do nível do mar"
+            ],
+            justification: "Bloqueios atmosféricos são sistemas de alta pressão que desviam as frentes, causando secas como a da crise hídrica de 2014-2015."
+        },
+        {
+            type: 'tf',
+            text: "O derretimento do permafrost pode liberar grandes quantidades de metano, agravando o aquecimento global.",
+            correct: true,
+            justification: "O permafrost armazena matéria orgânica congelada; seu degelo libera metano e CO₂, realimentando o efeito estufa."
+        },
+        {
+            type: 'mc',
+            text: "A Política Nacional de Resíduos Sólidos (PNRS, Lei 12.305/2010) determina que:",
+            correct: 1,
+            options: [
+                "Todos os resíduos devem ser incinerados",
+                "Os municípios elaborem planos de gestão integrada de resíduos e erradiquem lixões",
+                "Apenas a União gerencie o lixo",
+                "Resíduos sejam exportados para países vizinhos"
+            ],
+            justification: "A PNRS estabelece a responsabilidade compartilhada, a logística reversa e a disposição final ambientalmente adequada, extinguindo os lixões."
+        },
+        {
+            type: 'tf',
+            text: "O bioma Mata Atlântica, que cobria originalmente cerca de 15% do território brasileiro, está reduzido a menos de 30% da sua cobertura original.",
+            correct: true,
+            justification: "A Mata Atlântica foi intensamente devastada; restam cerca de 24% de remanescentes acima de 3 hectares, segundo a Fundação SOS Mata Atlântica."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'racismo ambiental' refere-se:",
+            correct: 2,
+            options: [
+                "À preservação de áreas verdes",
+                "À existência de espécies invasoras",
+                "À exposição desproporcional de minorias étnicas e populações pobres a riscos e poluição ambiental",
+                "À proibição de acesso a parques"
+            ],
+            justification: "Racismo ambiental é a injustiça socioambiental que atinge de forma desigual grupos raciais e comunidades de baixa renda."
+        },
+        {
+            type: 'tf',
+            text: "O Acordo de Paris (2015) tem como meta central manter o aumento da temperatura global bem abaixo de 2°C, buscando não ultrapassar 1,5°C.",
+            correct: true,
+            justification: "O artigo 2º do Acordo de Paris define essa meta, com contribuições nacionalmente determinadas (NDCs) a serem revisadas a cada cinco anos."
+        },
+        {
+            type: 'mc',
+            text: "A 'economia circular' propõe:",
+            correct: 0,
+            options: [
+                "Reduzir, reutilizar e reciclar materiais, fechando o ciclo produtivo sem descarte",
+                "Aumentar a extração de recursos",
+                "Concentrar a produção em aterros sanitários",
+                "Expandir a obsolescência programada"
+            ],
+            justification: "A economia circular substitui o modelo linear (extrair-produzir-descarar) por um ciclo em que os resíduos são reinseridos como matéria-prima."
+        },
+        {
+            type: 'tf',
+            text: "A usina de Belo Monte, no rio Xingu, é exemplo de hidrelétrica a fio d'água, que dispensa a formação de grandes reservatórios para gerar energia.",
+            correct: true,
+            justification: "Belo Monte opera com baixa capacidade de armazenamento (fio d'água), reduzindo a área alagada, embora com impactos sociais e ambientais significativos."
+        },
+        {
+            type: 'mc',
+            text: "A 'inversão térmica' nas cidades agrava a poluição porque:",
+            correct: 1,
+            options: [
+                "As temperaturas ficam mais altas",
+                "Uma camada de ar frio próxima ao solo fica retida por ar quente acima, impedindo a dispersão dos poluentes",
+                "Há forte ventania",
+                "As chuvas lavam a atmosfera"
+            ],
+            justification: "A inversão térmica aprisiona os poluentes próximos à superfície, piorando a qualidade do ar em cidades como São Paulo."
+        },
+        {
+            type: 'tf',
+            text: "O Brasil detém a maior biodiversidade do planeta, abrigando cerca de 20% do total de espécies conhecidas.",
+            correct: true,
+            justification: "Com biomas como a Amazônia, o Cerrado e a Mata Atlântica, o Brasil é o país com a maior megadiversidade biológica do mundo."
+        },
+        {
+            type: 'mc',
+            text: "Os 'créditos de carbono' são:",
+            correct: 2,
+            options: [
+                "Moeda corrente dos países amazônicos",
+                "Taxas aplicadas à gasolina",
+                "Certificados negociáveis que representam a não emissão ou a remoção de uma tonelada de CO₂ equivalente",
+                "Papéis emitidos apenas pela ONU"
+            ],
+            justification: "Créditos de carbono são unidades geradas por projetos que evitam emissões ou sequestram carbono, negociadas no mercado de carbono."
+        },
+        {
+            type: 'tf',
+            text: "A transposição do Rio São Francisco é isenta de críticas ambientais, pois as comunidades ribeirinhas não sofreram impactos.",
+            correct: false,
+            justification: "O projeto gerou críticas por possíveis danos ao ecossistema do rio, redução da vazão em trechos, custos elevados e impactos sociais."
+        },
+        {
+            type: 'mc',
+            text: "A 'obsolescência programada' tem como consequência ambiental:",
+            correct: 0,
+            options: [
+                "Aumento da geração de lixo eletrônico e uso desnecessário de recursos naturais",
+                "Redução do consumo de energia",
+                "Maior durabilidade dos bens",
+                "Diminuição da extração de matérias-primas"
+            ],
+            justification: "Obsolescência programada é a redução intencional da vida útil dos produtos, estimulando o descarte e o consumo contínuo de novos itens."
+        },
+        {
+            type: 'tf',
+            text: "Segundo Milton Santos, a natureza 'artificializada' resulta da incorporação de valores e técnicas humanas ao meio, tornando-o cada vez mais objeto de trabalho e investimento.",
+            correct: true,
+            justification: "Santos (2006) descreve a artificialização da natureza como processo de substituição do meio natural pelo meio técnico-científico-informacional."
+        },
+        {
+            type: 'mc',
+            text: "As 'áreas de preservação permanente' (APPs) no Código Florestal brasileiro são definidas como:",
+            correct: 1,
+            options: [
+                "Terrenos exclusivos para agropecuária",
+                "Áreas protegidas por sua função ambiental, como margens de rios, encostas íngremes e topos de morro",
+                "Zonas industriais",
+                "Regiões metropolitanas"
+            ],
+            justification: "APPs são áreas delimitadas por lei para preservar recursos hídricos, estabilidade geológica e biodiversidade, onde a supressão de vegetação é restrita."
+        },
+        {
+            type: 'tf',
+            text: "Os aquíferos são formações geológicas impermeáveis que impedem a infiltração de água no subsolo.",
+            correct: false,
+            justification: "Ao contrário, aquíferos são formações permeáveis, como arenitos, que armazenam e transmitem água subterrânea."
+        },
+        {
+            type: 'mc',
+            text: "A maior parte da matriz energética brasileira é composta por fontes renováveis, com destaque para:",
+            correct: 3,
+            options: [
+                "Energia nuclear",
+                "Carvão mineral",
+                "Gás natural",
+                "Hidroeletricidade, biomassa e, mais recentemente, eólica e solar"
+            ],
+            justification: "Cerca de 48% da matriz energética brasileira é renovável, muito acima da média mundial (14%), graças à hidroeletricidade e à biomassa do etanol."
+        },
+        {
+            type: 'tf',
+            text: "O 'passivo ambiental' de uma empresa inclui danos ao meio ambiente ainda não reparados, pelos quais ela pode ser responsabilizada judicialmente.",
+            correct: true,
+            justification: "Passivo ambiental é a dívida ecológica acumulada, passível de cobrança futura em ações civis públicas e termos de ajustamento de conduta."
+        },
+        {
+            type: 'mc',
+            text: "O 'eco-turismo', se bem planejado, pode contribuir para:",
+            correct: 0,
+            options: [
+                "Conservação de áreas naturais e geração de renda para comunidades locais",
+                "Destruição de parques nacionais",
+                "Afastar visitantes estrangeiros",
+                "Incentivar a caça esportiva"
+            ],
+            justification: "O ecoturismo bem gerido promove a valorização da natureza e o desenvolvimento econômico sustentável de populações anfitriãs."
+        },
+        {
+            type: 'tf',
+            text: "Os gases CFCs (clorofluorcarbonetos), antes usados em aerossóis e refrigeração, são responsáveis pela destruição da camada de ozônio.",
+            correct: true,
+            justification: "O Protocolo de Montreal (1987) baniu progressivamente os CFCs, que reagem com o ozônio estratosférico, diminuindo a proteção contra raios UV."
+        },
+        {
+            type: 'mc',
+            text: "A 'vulnerabilidade socioambiental' de uma população é determinada por:",
+            correct: 1,
+            options: [
+                "Apenas pela localização geográfica",
+                "Fatores sociais, econômicos e a exposição a riscos ambientais, como enchentes e deslizamentos",
+                "Exclusivamente pela renda per capita",
+                "Pelo tipo de emprego"
+            ],
+            justification: "A vulnerabilidade combina a exposição a perigos ambientais com a capacidade de resposta da comunidade, dependendo de renda, moradia e políticas públicas."
+        },
+        {
+            type: 'tf',
+            text: "A conservação da biodiversidade no Brasil é favorecida pela existência de corredores ecológicos que conectam fragmentos de vegetação nativa.",
+            correct: true,
+            justification: "Corredores ecológicos permitem o fluxo gênico entre populações isoladas, reduzindo os efeitos da fragmentação de habitats."
+        },
+        {
+            type: 'mc',
+            text: "A 'ecologia política' estuda:",
+            correct: 2,
+            options: [
+                "Apenas os ciclos biogeoquímicos",
+                "A reprodução das plantas",
+                "As relações de poder, os conflitos e as desigualdades que permeiam o acesso e o controle dos recursos naturais",
+                "A meteorologia"
+            ],
+            justification: "A ecologia política analisa quem ganha e quem perde com a exploração ambiental, incorporando justiça e conflitos socioambientais."
+        },
+        {
+            type: 'tf',
+            text: "Os furacões que atingem o litoral brasileiro, como o Catarina (2004), são fenômenos frequentes e previsíveis com meses de antecedência.",
+            correct: false,
+            justification: "Furacões são raros no Atlântico Sul devido à baixa temperatura da superfície do mar e ao cisalhamento dos ventos; o Catarina foi excepcional."
+        },
+        {
+            type: 'mc',
+            text: "A 'agricultura sintrópica' ou regenerativa preconiza:",
+            correct: 1,
+            options: [
+                "Uso intensivo de agrotóxicos",
+                "Plantio consorciado de múltiplas espécies, mimetizando a sucessão natural e recuperando solos degradados",
+                "Monoculturas extensivas",
+                "Irrigação por inundação"
+            ],
+            justification: "Inspirada na dinâmica das florestas, a agricultura sintrópica visa regenerar o solo e aumentar a biodiversidade enquanto produz alimentos."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você compreende profundamente a relação sociedade–natureza e os desafios ambientais.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Aprofunde os acordos internacionais e os impactos no semiárido brasileiro.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas releia sobre justiça ambiental, clima e resíduos sólidos.';
+        else mensagem = '📚 Recomendo reler o capítulo sobre meio ambiente de Ross (2011) e os textos sobre Antropoceno.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
