@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>📘 Noções Básicas de Informática</title>
+    <title>📘 Noções Básicas de Informática · Foco em Concursos</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -185,8 +185,8 @@
         <div class="fixed-header">
             <h1>Noções Básicas de Informática</h1>
             <div class="progress-row">
-                <span id="pageXofY">Página 1 de 10</span>
-                <span id="progressPercent">10%</span>
+                <span id="pageXofY">Página 1 de 15</span>
+                <span id="progressPercent">7%</span>
             </div>
             <div class="progress-bar-bg">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
@@ -213,124 +213,169 @@
 
 <script>
     (function(){
-        // ---------- CONTEÚDO DAS PÁGINAS ----------
         const pageContents = [
             // PÁGINA 0 - CAPA
             `<div class="capa">
                 <h1>Noções Básicas de Informática</h1>
                 <h2>Windows · Word · Excel<br>PowerPoint · Internet</h2>
-                <p>Guia de estudos para concursos e aperfeiçoamento profissional</p>
+                <p>Material aprofundado com foco em Concursos Públicos</p>
             </div>`,
 
             // PÁGINA 1 - ÍNDICE
             `<div class="text-container" style="max-width:100%;">
                 <h3>📌 Sumário</h3>
                 <ol>
-                    <li>1. Sistema Operacional Windows</li>
-                    <li>2. Principais recursos do Windows</li>
-                    <li>3. Microsoft Word – Processador de textos</li>
-                    <li>4. Word – Formatação e ferramentas</li>
-                    <li>5. Microsoft Excel – Planilhas eletrônicas</li>
-                    <li>6. Excel – Fórmulas e funções essenciais</li>
-                    <li>7. Microsoft PowerPoint – Apresentações</li>
-                    <li>8. Internet – Conceitos e navegação</li>
+                    <li>1. Sistema Operacional Windows – conceitos e operações</li>
+                    <li>2. Atalhos essenciais do Windows para provas</li>
+                    <li>3. Ferramentas do sistema e segurança</li>
+                    <li>4. Microsoft Word – processador de textos</li>
+                    <li>5. Word – Atalhos, revisão e mala direta</li>
+                    <li>6. Microsoft Excel – planilhas e referências</li>
+                    <li>7. Excel – Fórmulas e funções cobradas em concursos</li>
+                    <li>8. Excel – Gráficos e análise de dados</li>
+                    <li>9. Microsoft PowerPoint – criação e apresentação</li>
+                    <li>10. Internet – fundamentos e protocolos</li>
+                    <li>11. Correio eletrônico e segurança digital</li>
+                    <li>12. Questões comentadas de concursos anteriores</li>
                 </ol>
             </div>`,
 
-            // ----- TÓPICO 1: Windows -----
+            // ----- 1: Windows – conceitos -----
             `<div class="img-text-row right-image">
                 <div class="text-container">
                     <h3>1. Sistema Operacional Windows</h3>
-                    <p>O <strong>Windows</strong> é o sistema operacional mais utilizado em computadores pessoais no mundo. Desenvolvido pela Microsoft, ele gerencia o hardware e o software, fornecendo uma interface gráfica amigável. A <strong>Área de Trabalho</strong> (Desktop) é a tela principal, onde ficam ícones de atalho, a Barra de Tarefas e o Botão Iniciar. Através do <strong>Menu Iniciar</strong>, o usuário acessa programas, configurações e arquivos. O Windows também inclui o <strong>Explorador de Arquivos</strong> (Windows Explorer), que permite navegar, copiar, mover e organizar pastas e documentos. Versões recentes, como Windows 10 e 11, oferecem integração com a nuvem (OneDrive), assistente virtual (Cortana) e múltiplas áreas de trabalho virtuais.</p>
+                    <p>O <strong>Windows</strong> é o sistema operacional da Microsoft. Em concursos, são cobrados: <strong>Área de Trabalho</strong> (desktop) com ícones e atalhos; <strong>Barra de Tarefas</strong> (programas abertos, notificações, data/hora); <strong>Menu Iniciar</strong> (programas, configurações, desligar); e <strong>Explorador de Arquivos</strong> (antigo Windows Explorer, navegação por pastas com hierarquia em árvore). O Windows gerencia hardware (impressoras, discos) e software (instalação, execução de programas). As versões mais recentes (10 e 11) trazem <strong>OneDrive</strong> (nuvem integrada) e múltiplas áreas de trabalho virtuais. Um conceito importante: o <strong>sistema de arquivos NTFS</strong> oferece segurança com permissões e criptografia, enquanto o FAT32 é mais antigo e limitado a arquivos de até 4GB.</p>
                 </div>
                 <div class="img-container">
-                    <img src="https://img.freepik.com/free-photo/operating-system-windows-10-interface_23-2148892678.jpg" alt="Interface do Windows 10" aria-hidden="true">
+                    <img src="https://img.freepik.com/free-vector/windows-operating-system-concept-illustration_114360-35543.jpg" alt="Interface do Windows" aria-hidden="true">
                 </div>
             </div>`,
 
-            // ----- TÓPICO 2: Recursos do Windows -----
+            // ----- 2: Atalhos do Windows -----
             `<div class="img-text-row left-image">
                 <div class="img-container">
-                    <img src="https://img.freepik.com/free-vector/windows-operating-system-concept-illustration_114360-35543.jpg" alt="Recursos do Windows" aria-hidden="true">
+                    <img src="https://img.freepik.com/free-vector/keyboard-keys-concept-illustration_114360-14719.jpg" alt="Teclado com atalhos" aria-hidden="true">
                 </div>
                 <div class="text-container">
-                    <h3>2. Principais recursos do Windows</h3>
-                    <p>O Windows oferece diversas ferramentas essenciais: o <strong>Painel de Controle</strong> (e as Configurações) permitem ajustar hardware, contas de usuário e segurança. A <strong>Lixeira</strong> armazena temporariamente arquivos excluídos. O <strong>Gerenciador de Tarefas</strong> (Ctrl + Alt + Del) exibe os programas em execução e permite finalizar processos. O <strong>Windows Defender</strong> é o antivírus integrado. Atalhos de teclado aumentam a produtividade: <strong>Ctrl + C</strong> (copiar), <strong>Ctrl + V</strong> (colar), <strong>Ctrl + X</strong> (recortar), <strong>Ctrl + Z</strong> (desfazer), <strong>Alt + Tab</strong> (alternar janelas), <strong>Win + E</strong> (abrir Explorador de Arquivos) e <strong>Win + L</strong> (bloquear a tela).</p>
+                    <h3>2. Atalhos do Windows mais cobrados</h3>
+                    <p>Os atalhos de teclado são presença constante em provas. Os principais: <strong>Ctrl + C</strong> (copiar), <strong>Ctrl + V</strong> (colar), <strong>Ctrl + X</strong> (recortar), <strong>Ctrl + Z</strong> (desfazer), <strong>Ctrl + A</strong> (selecionar tudo); <strong>Alt + Tab</strong> (alternar entre janelas abertas); <strong>Win + D</strong> (mostrar área de trabalho); <strong>Win + E</strong> (abrir Explorador de Arquivos); <strong>Win + L</strong> (bloquear o computador); <strong>Win + I</strong> (abrir Configurações); <strong>Win + R</strong> (abrir caixa "Executar"); <strong>Ctrl + Alt + Del</strong> (tela de segurança: bloquear, trocar usuário, Gerenciador de Tarefas, sair). Para captura de tela: <strong>Print Screen</strong> (captura a tela inteira) e <strong>Win + Shift + S</strong> (ferramenta de captura recortada).</p>
                 </div>
             </div>`,
 
-            // ----- TÓPICO 3: Word -----
+            // ----- 3: Ferramentas do sistema e segurança -----
             `<div class="img-text-row right-image">
                 <div class="text-container">
-                    <h3>3. Microsoft Word – Processador de textos</h3>
-                    <p>O <strong>Microsoft Word</strong> é o editor de textos do pacote Office. Com ele, é possível criar documentos profissionais, cartas, currículos, relatórios e muito mais. A interface é composta por faixas de opções (guias) que organizam as ferramentas: <strong>Página Inicial</strong> (formatação básica da fonte, parágrafo, estilos), <strong>Inserir</strong> (tabelas, imagens, formas, cabeçalho e rodapé), <strong>Layout da Página</strong> (margens, orientação, colunas), <strong>Referências</strong> (sumário, notas de rodapé) e <strong>Revisão</strong> (ortografia, comentários). O Word também permite o uso de modelos prontos e a colaboração em tempo real via OneDrive.</p>
+                    <h3>3. Ferramentas do sistema e segurança</h3>
+                    <p>O <strong>Gerenciador de Tarefas</strong> (Ctrl + Shift + Esc) mostra processos, desempenho e permite finalizar programas travados. A <strong>Lixeira</strong> armazena arquivos excluídos até seu esvaziamento; arquivos excluídos com Shift + Del não vão para a Lixeira, sendo deletados permanentemente. O <strong>Windows Update</strong> mantém o sistema corrigido. No campo da segurança, o <strong>Windows Defender</strong> é o antivírus nativo, com proteção em tempo real e firewall integrado. O <strong>Firewall</strong> controla o tráfego de rede, bloqueando acessos não autorizados. A <strong>Restauração do Sistema</strong> cria pontos de restauração, permitindo reverter configurações problemáticas. Para backup, o <strong>Histórico de Arquivos</strong> salva cópias automáticas em unidade externa.</p>
                 </div>
                 <div class="img-container">
-                    <img src="https://img.freepik.com/free-vector/word-concept-illustration_114360-5962.jpg" alt="Ilustração do Microsoft Word" aria-hidden="true">
+                    <img src="https://img.freepik.com/free-vector/cyber-security-concept-illustration_114360-1636.jpg" alt="Segurança digital" aria-hidden="true">
                 </div>
             </div>`,
 
-            // ----- TÓPICO 4: Word - formatação -----
+            // ----- 4: Word – básico -----
             `<div class="img-text-row left-image">
                 <div class="img-container">
-                    <img src="https://img.freepik.com/free-vector/document-concept-illustration_114360-2629.jpg" alt="Documento com formatação" aria-hidden="true">
+                    <img src="https://img.freepik.com/free-vector/word-concept-illustration_114360-5962.jpg" alt="Microsoft Word" aria-hidden="true">
                 </div>
                 <div class="text-container">
-                    <h3>4. Word – Formatação e ferramentas avançadas</h3>
-                    <p>O Word oferece recursos como <strong>Mala Direta</strong>, que combina um documento principal com uma lista de destinatários (do Excel, por exemplo) para gerar cartas ou etiquetas personalizadas. O <strong>Controle de Alterações</strong> registra edições feitas por diferentes usuários, útil em revisões colaborativas. As <strong>Seções</strong> permitem dividir o documento em partes com formatações independentes (orientação retrato/paisagem, diferentes cabeçalhos). Outras funcionalidades incluem <strong>inserir gráficos</strong>, <strong>equações</strong>, e a <strong>pesquisa inteligente</strong>. O atalho <strong>Ctrl + B</strong> salva o documento; <strong>Ctrl + P</strong> imprime; e <strong>F7</strong> aciona o corretor ortográfico.</p>
+                    <h3>4. Microsoft Word – Processador de textos</h3>
+                    <p>O Word organiza ferramentas em guias (faixa de opções): <strong>Página Inicial</strong> (fonte, parágrafo, estilos, localizar/substituir); <strong>Inserir</strong> (tabelas, imagens, formas, cabeçalho/rodapé, número de página, equações, símbolos); <strong>Layout</strong> (margens, orientação, colunas, quebras); <strong>Referências</strong> (sumário automático, notas de rodapé, citações); <strong>Correspondências</strong> (mala direta); <strong>Revisão</strong> (ortografia e gramática – atalho F7, contar palavras, controlar alterações); <strong>Exibição</strong> (layout de impressão, leitura, zoom). É importante conhecer que o Word salva documentos no formato <strong>.docx</strong>, mas também pode gerar <strong>.pdf</strong> e <strong>.txt</strong>. O modo de compatibilidade permite abrir documentos antigos (.doc).</p>
                 </div>
             </div>`,
 
-            // ----- TÓPICO 5: Excel -----
+            // ----- 5: Word – atalhos e recursos avançados -----
             `<div class="img-text-row right-image">
                 <div class="text-container">
-                    <h3>5. Microsoft Excel – Planilhas eletrônicas</h3>
-                    <p>O <strong>Microsoft Excel</strong> é a ferramenta de planilhas do Office, amplamente utilizada para cálculos, análises de dados e gráficos. Uma planilha é formada por <strong>células</strong> organizadas em <strong>linhas</strong> (numeradas) e <strong>colunas</strong> (letras). O endereço da célula é a combinação da letra da coluna e o número da linha (ex.: A1, B5). O Excel suporta diversos tipos de dados: números, texto, datas e fórmulas. A <strong>Barra de Fórmulas</strong> exibe o conteúdo da célula ativa. É possível criar <strong>gráficos</strong> (coluna, pizza, linha, etc.) a partir dos dados selecionados, usar <strong>tabelas dinâmicas</strong> para resumir grandes volumes de informação e aplicar <strong>formatação condicional</strong> para destacar valores.</p>
+                    <h3>5. Word – Atalhos, revisão e mala direta</h3>
+                    <p>Atalhos essenciais no Word: <strong>Ctrl + B</strong> (salvar), <strong>Ctrl + P</strong> (imprimir), <strong>Ctrl + N</strong> (novo documento), <strong>Ctrl + O</strong> (abrir), <strong>Ctrl + U</strong> (localizar e substituir), <strong>F7</strong> (ortografia e gramática). A <strong>Mala Direta</strong> (guia Correspondências) mescla um documento principal com uma fonte de dados (planilha Excel, banco de dados) para gerar documentos personalizados em massa. O <strong>Controle de Alterações</strong> (Revisão) registra edições de diferentes autores. <strong>Seções</strong> (Layout > Quebras) dividem o documento, permitindo orientações diferentes (retrato/paisagem), cabeçalhos independentes ou numeração de páginas reiniciada. O <strong>Sumário automático</strong> é gerado a partir dos estilos Título 1, Título 2 etc.</p>
                 </div>
                 <div class="img-container">
-                    <img src="https://img.freepik.com/free-vector/spreadsheet-concept-illustration_114360-1321.jpg" alt="Ilustração do Excel" aria-hidden="true">
+                    <img src="https://img.freepik.com/free-vector/organizing-projects-concept-illustration_114360-542.jpg" alt="Produtividade no escritório" aria-hidden="true">
                 </div>
             </div>`,
 
-            // ----- TÓPICO 6: Excel - Fórmulas -----
+            // ----- 6: Excel – planilhas e referências -----
             `<div class="img-text-row left-image">
                 <div class="img-container">
-                    <img src="https://img.freepik.com/free-vector/data-analysis-concept-illustration_114360-30035.jpg" alt="Gráficos e dados no Excel" aria-hidden="true">
+                    <img src="https://img.freepik.com/free-vector/spreadsheet-concept-illustration_114360-1321.jpg" alt="Microsoft Excel" aria-hidden="true">
                 </div>
                 <div class="text-container">
-                    <h3>6. Excel – Fórmulas e funções essenciais</h3>
-                    <p>Uma <strong>fórmula</strong> começa com o sinal de igual (=) e pode conter operadores matemáticos (+, -, *, /). As funções pré-definidas facilitam cálculos: <strong>=SOMA(A1:A5)</strong> soma os valores do intervalo; <strong>=MÉDIA(B2:B10)</strong> calcula a média; <strong>=MÁXIMO(C1:C20)</strong> retorna o maior valor; <strong>=MÍNIMO</strong> retorna o menor. A função <strong>=SE(condição;valor_se_verdadeiro;valor_se_falso)</strong> permite decisões lógicas. Para buscas, o <strong>=PROCV(valor_procurado;matriz;coluna_retorno;procurar_intervalo)</strong> pesquisa verticalmente em tabelas. Referências de células podem ser <strong>relativas</strong> (A1), <strong>absolutas</strong> ($A$1) ou <strong>mistas</strong> ($A1 ou A$1), mudando o comportamento ao copiar a fórmula.</p>
+                    <h3>6. Microsoft Excel – Planilhas e referências</h3>
+                    <p>O Excel organiza dados em <strong>células</strong> (interseção de linhas numeradas e colunas com letras). A <strong>Barra de Fórmulas</strong> exibe o conteúdo da célula. Referências: <strong>relativa</strong> (A1 – muda ao copiar), <strong>absoluta</strong> ($A$1 – fixa coluna e linha), <strong>mista</strong> ($A1 ou A$1). Para concursos, é fundamental entender que <strong>=A1+B1</strong> copiado para a direita vira <strong>=B1+C1</strong>. Mas <strong>=$A$1+B1</strong> copiado para qualquer lugar mantém a referência à célula A1. O Excel suporta diversos tipos de dados: números, texto (alinhado à esquerda), datas, moeda e fórmulas. A <strong>alça de preenchimento</strong> (canto inferior direito da célula) copia valores ou continua sequências (dias da semana, meses, números).</p>
                 </div>
             </div>`,
 
-            // ----- TÓPICO 7: PowerPoint -----
+            // ----- 7: Excel – fórmulas e funções -----
             `<div class="img-text-row right-image">
                 <div class="text-container">
-                    <h3>7. Microsoft PowerPoint – Apresentações</h3>
-                    <p>O <strong>PowerPoint</strong> é o software de criação de apresentações visuais. Cada apresentação é composta por <strong>slides</strong> individuais. O usuário pode inserir texto, imagens, tabelas, gráficos, vídeos e áudio. Para dar dinamismo, aplicam-se <strong>animações</strong> a elementos dentro de um slide (como fazer um texto surgir) e <strong>transições</strong> entre slides (efeitos de passagem). O <strong>Slide Mestre</strong> controla o layout e a formatação de todos os slides, garantindo consistência visual. O PowerPoint oferece modelos pré-definidos (Design) e permite configurar a apresentação para avançar automaticamente com o recurso <strong>Ensaiar Intervalos</strong>.</p>
+                    <h3>7. Excel – Fórmulas e funções para concursos</h3>
+                    <p>Fórmulas começam com <strong>=</strong>. Funções essenciais: <strong>=SOMA(intervalo)</strong>, <strong>=MÉDIA(intervalo)</strong>, <strong>=MÁXIMO(intervalo)</strong>, <strong>=MÍNIMO(intervalo)</strong>, <strong>=CONT.NÚM(intervalo)</strong> (conta células com números), <strong>=CONT.VALORES(intervalo)</strong> (conta células não vazias). A função <strong>=SE(condição; verdadeiro; falso)</strong> avalia uma condição lógica. Exemplo: <strong>=SE(A1>=7;"Aprovado";"Reprovado")</strong>. Para buscas, <strong>=PROCV(valor;matriz;coluna;procurar_intervalo)</strong> pesquisa na vertical, exigindo que a coluna de busca seja a primeira da matriz. <strong>=PROCH</strong> faz o mesmo na horizontal. A função <strong>=CONCATENAR</strong> ou o operador <strong>&</strong> unem textos. <strong>=SOMASE</strong> e <strong>=CONT.SE</strong> permitem soma ou contagem condicional. <strong>=HOJE()</strong> e <strong>=AGORA()</strong> retornam data atual e data/hora.</p>
                 </div>
                 <div class="img-container">
-                    <img src="https://img.freepik.com/free-vector/presentation-concept-illustration_114360-1695.jpg" alt="Ilustração do PowerPoint" aria-hidden="true">
+                    <img src="https://img.freepik.com/free-vector/data-analysis-concept-illustration_114360-30035.jpg" alt="Análise de dados" aria-hidden="true">
                 </div>
             </div>`,
 
-            // ----- TÓPICO 8: Internet -----
+            // ----- 8: Excel – gráficos e análise -----
             `<div class="img-text-row left-image">
                 <div class="img-container">
-                    <img src="https://img.freepik.com/free-vector/internet-communication-concept_114360-1700.jpg" alt="Conceito de Internet" aria-hidden="true">
+                    <img src="https://img.freepik.com/free-vector/business-intelligence-concept-illustration_114360-30036.jpg" alt="Gráficos" aria-hidden="true">
                 </div>
                 <div class="text-container">
-                    <h3>8. Internet – Conceitos e navegação</h3>
-                    <p>A <strong>Internet</strong> é uma rede mundial de computadores interconectados que permite o compartilhamento de informações. O acesso é feito por meio de <strong>navegadores</strong> (browsers) como Google Chrome, Microsoft Edge e Mozilla Firefox. Os endereços da web utilizam <strong>URLs</strong> (Uniform Resource Locator) e são acessados via protocolos como <strong>HTTP</strong> e <strong>HTTPS</strong> (versão segura com criptografia). O <strong>e-mail</strong> (correio eletrônico) é uma das principais ferramentas de comunicação, baseado em servidores que utilizam protocolos SMTP (envio), POP3 e IMAP (recebimento). A segurança digital é fundamental: <strong>firewalls</strong> controlam o tráfego de rede, e um bom <strong>antivírus</strong> protege contra malwares. <strong>Cookies</strong> são pequenos arquivos que armazenam preferências do usuário nos sites.</p>
+                    <h3>8. Excel – Gráficos, formatação condicional e tabelas</h3>
+                    <p>Os principais tipos de gráfico: <strong>Coluna/Barras</strong> (comparação), <strong>Pizza</strong> (proporção), <strong>Linha</strong> (evolução temporal), <strong>Dispersão</strong> (relação entre variáveis). A <strong>Formatação Condicional</strong> (Página Inicial) aplica cores automaticamente com base em regras (ex.: destacar notas abaixo de 5 em vermelho). <strong>Tabela Dinâmica</strong> (Inserir) resume grandes volumes de dados com arrastar e soltar, permitindo cruzamentos. <strong>Filtros</strong> (Dados > Filtro) selecionam subconjuntos de dados. <strong>Validação de Dados</strong> restringe entradas na célula (ex.: apenas números entre 0 e 10). Recursos como <strong>Remover Duplicatas</strong> e <strong>Texto para Colunas</strong> economizam tempo em provas práticas. A extensão padrão é <strong>.xlsx</strong>.</p>
                 </div>
+            </div>`,
+
+            // ----- 9: PowerPoint -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>9. Microsoft PowerPoint – Apresentações</h3>
+                    <p>O PowerPoint compõe apresentações com <strong>slides</strong>. A guia <strong>Design</strong> aplica temas prontos, cores e fontes. O <strong>Slide Mestre</strong> (Exibição) padroniza todo o conjunto de slides. <strong>Animações</strong> são efeitos aplicados a objetos dentro de um slide (texto, imagem); <strong>Transições</strong> são efeitos entre slides (Esmaecer, Empurrar, Revelar). O recurso <strong>Ensaiar Intervalos</strong> grava o tempo de exibição de cada slide, permitindo avanço automático. É possível <strong>ocultar slides</strong> que não devem aparecer na apresentação. A extensão padrão é <strong>.pptx</strong>. O PowerPoint suporta inserção de vídeos, áudios e narrações. Para provas, é importante saber que slides podem ser exportados como PDF, vídeo (MP4) ou imagens.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/presentation-concept-illustration_114360-1695.jpg" alt="PowerPoint" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 10: Internet – fundamentos -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/internet-communication-concept_114360-1700.jpg" alt="Internet" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>10. Internet – Fundamentos e protocolos</h3>
+                    <p>A <strong>Internet</strong> é uma rede global de computadores. O acesso ocorre via <strong>navegadores</strong> (browsers): Google Chrome, Microsoft Edge, Mozilla Firefox. O <strong>protocolo HTTP</strong> (Hypertext Transfer Protocol) permite a comunicação entre cliente e servidor web; <strong>HTTPS</strong> é a versão segura, que utiliza criptografia SSL/TLS. <strong>URL</strong> (endereço web) tem formato: protocolo://domínio/caminho. <strong>DNS</strong> (Sistema de Nomes de Domínio) traduz nomes de sites (ex.: www.google.com) para endereços IP numéricos. O <strong>FTP</strong> (File Transfer Protocol) transfere arquivos, não páginas web. <strong>Cookies</strong> são pequenos arquivos de texto salvos pelo navegador, usados para personalização, autenticação e rastreamento. É importante que provas costumam perguntar sobre a diferença entre HTTP e HTTPS, e a função do DNS.</p>
+                </div>
+            </div>`,
+
+            // ----- 11: E-mail e segurança -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>11. Correio eletrônico e segurança digital</h3>
+                    <p>O e-mail funciona com protocolos: <strong>SMTP</strong> (envio de mensagens), <strong>POP3</strong> (baixa mensagens do servidor para o dispositivo e as remove do servidor) e <strong>IMAP</strong> (mantém as mensagens no servidor, sincronizando entre dispositivos). Campos de e-mail: <strong>Para</strong>, <strong>Cc</strong> (cópia carbono, destinatários visíveis), <strong>Cco</strong> (cópia oculta, destinatários não visíveis). Segurança: <strong>firewall</strong> controla tráfego de rede, <strong>antivírus</strong> protege contra malwares, <strong>phishing</strong> (e-mails fraudulentos que tentam obter dados), <strong>spam</strong> (mensagens não solicitadas em massa). A criptografia ponta a ponta garante que somente remetente e destinatário leiam a mensagem (WhatsApp, Signal). O Outlook é o cliente de e-mail do pacote Office, integrado ao Exchange para ambientes corporativos.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/email-campaign-concept-illustration_114360-1633.jpg" alt="E-mail e segurança" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 12: Questões comentadas -----
+            `<div class="text-container" style="max-width:100%;">
+                <h3>12. Questões comentadas de concursos anteriores</h3>
+                <p><strong>Questão 1:</strong> (VUNESP) No Windows 10, o atalho Win + E tem a função de: <strong>a)</strong> Abrir o Windows Explorer. <strong>b)</strong> Abrir o Menu Iniciar. <strong>c)</strong> Bloquear o computador. <strong>d)</strong> Mostrar a área de trabalho. <strong>Gabarito: A.</strong> O Win + E abre o Explorador de Arquivos.</p>
+                <p><strong>Questão 2:</strong> (FCC) No Word, a tecla F7 aciona: <strong>a)</strong> Localizar e substituir. <strong>b)</strong> Salvar documento. <strong>c)</strong> Verificação ortográfica e gramatical. <strong>d)</strong> Inserir tabela. <strong>Gabarito: C.</strong> F7 é o atalho para o corretor ortográfico no Word.</p>
+                <p><strong>Questão 3:</strong> (CESPE/CEBRASPE) No Excel, a fórmula =MÉDIA(A1:A10) calcula: <strong>a)</strong> A soma dos valores. <strong>b)</strong> A média aritmética dos valores. <strong>c)</strong> O valor máximo. <strong>d)</strong> O valor mínimo. <strong>Gabarito: B.</strong> A função MÉDIA retorna a média aritmética.</p>
+                <p><strong>Questão 4:</strong> (IBFC) O protocolo responsável pelo envio de e-mails é o: <strong>a)</strong> POP3. <strong>b)</strong> IMAP. <strong>c)</strong> SMTP. <strong>d)</strong> HTTP. <strong>Gabarito: C.</strong> SMTP serve para envio; POP3 e IMAP para recebimento.</p>
             </div>`,
 
             // PÁGINA FINAL - CONGRATULAÇÕES
             `<div class="congrats-page">
                 <h2>🎉 Parabéns!</h2>
-                <p>Você concluiu o estudo das noções básicas de informática.</p>
-                <p>Compreender o funcionamento do Windows e das ferramentas do Office, aliado ao conhecimento sobre internet, é essencial para a produtividade no ambiente de trabalho e para a realização de provas de concursos públicos.</p>
-                <p>Continue praticando e explorando os recursos de cada programa!</p>
+                <p>Você concluiu o estudo das noções básicas de informática com foco em concursos.</p>
+                <p>Revisar os atalhos do Windows, as fórmulas essenciais do Excel e os protocolos de internet é o melhor caminho para garantir os pontos certos na sua prova.</p>
+                <p>Continue praticando e realizando simulados!</p>
             </div>`
         ];
 
