@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Temas contemporâneos conforme a BNCC · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">📌 Temas contemporâneos conforme a BNCC</div>
+        <div class="sub">Economia, tecnologia, meio ambiente, diversidade, direitos humanos e cidadania · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Temas contemporâneos conforme a BNCC) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: "A BNCC propõe que a Geografia do Ensino Médio articule competências que permitam analisar as relações entre sociedade, economia, tecnologia e natureza em diferentes escalas.",
+            correct: true,
+            justification: "Segundo a BNCC (EM13CHS101), espera-se que o estudante analise as interações entre trabalho, tecnologia, cultura e as transformações do espaço geográfico."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'globalização como possibilidade', de Milton Santos, sugere que:",
+            correct: 3,
+            options: [
+                "A globalização é um processo irreversível e sem alternativas",
+                "As culturas locais serão todas homogeneizadas",
+                "Apenas as grandes potências podem definir o futuro",
+                "Existe a chance de uma globalização mais solidária, comandada por outras racionalidades"
+            ],
+            justification: "Em 'Por uma outra globalização', Santos defende que a globalização atual é perversa, mas outra, baseada na solidariedade e no respeito às diferenças, é possível."
+        },
+        {
+            type: 'tf',
+            text: "A uberização do trabalho é um fenômeno contemporâneo caracterizado por vínculos formais e pela garantia de direitos trabalhistas integrais.",
+            correct: false,
+            justification: "A uberização se caracteriza pela precarização, ausência de vínculo empregatício, jornadas flexíveis e falta de proteção social, tornando o trabalhador um 'empreendedor de si mesmo'."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'cidadania digital' refere-se:",
+            correct: 2,
+            options: [
+                "Ao uso de equipamentos eletrônicos pelo governo",
+                "À exclusividade de acesso à internet por elites",
+                "Ao direito de acesso, participação e responsabilidade no ambiente online",
+                "À fiscalização governamental de todas as redes sociais"
+            ],
+            justification: "Cidadania digital envolve direitos e deveres no mundo virtual, como liberdade de expressão, privacidade, proteção de dados e combate à desinformação."
+        },
+        {
+            type: 'tf',
+            text: "A BNCC prevê como competência geral a valorização da diversidade de saberes e vivências culturais, o que dialoga diretamente com a ideia de pluralidade de Milton Santos.",
+            correct: true,
+            justification: "A competência 6 da BNCC trata de valorizar a diversidade cultural; Santos enfatiza o respeito às culturas locais como resistência à homogeneização global."
+        },
+        {
+            type: 'mc',
+            text: "As fake news (notícias falsas) representam desafio contemporâneo porque:",
+            correct: 0,
+            options: [
+                "Afetam a democracia, distorcendo o debate público e a tomada de decisões",
+                "São sempre inofensivas",
+                "Aumentam a transparência das informações",
+                "Reforçam a confiança na mídia tradicional"
+            ],
+            justification: "A disseminação de fake news mina a credibilidade das instituições, polariza a sociedade e interfere em processos democráticos."
+        },
+        {
+            type: 'tf',
+            text: "A Agenda 2030 da ONU estabelece 17 Objetivos de Desenvolvimento Sustentável (ODS), que incluem erradicação da pobreza, igualdade de gênero e ação contra a mudança climática.",
+            correct: true,
+            justification: "Os ODS são um plano de ação global adotado em 2015 para promover a paz, a prosperidade e a sustentabilidade até 2030."
+        },
+        {
+            type: 'mc',
+            text: "A expansão do e-commerce e do home office, intensificada na pandemia de Covid-19, alterou a organização espacial principalmente por meio de:",
+            correct: 1,
+            options: [
+                "Esvaziamento absoluto das cidades",
+                "Redesenho dos fluxos logísticos e transformação dos usos do espaço urbano",
+                "Fim do comércio de rua",
+                "Aumento do transporte público"
+            ],
+            justification: "O comércio eletrônico e o teletrabalho redefiniram fluxos de transporte de mercadorias, valorização de imóveis e dinâmicas dos centros urbanos."
+        },
+        {
+            type: 'tf',
+            text: "A BNCC orienta que a Geografia escolar aborde as migrações contemporâneas apenas como deslocamentos econômicos, ignorando causas políticas, ambientais e culturais.",
+            correct: false,
+            justification: "A BNCC estimula a análise multifatorial das migrações, incluindo refugiados, mudanças climáticas, conflitos e busca por direitos (EM13CHS106)."
+        },
+        {
+            type: 'mc',
+            text: "A 'economia de dados', na qual grandes empresas controlam informações pessoais, evidencia:",
+            correct: 2,
+            options: [
+                "A transparência total das plataformas digitais",
+                "Ausência de regulação estatal",
+                "A concentração de poder econômico e político nas mãos de poucas corporações",
+                "A igualdade de acesso à informação"
+            ],
+            justification: "O capitalismo de vigilância extrai dados pessoais para fins comerciais e políticos, gerando assimetrias de poder e riscos à privacidade."
+        },
+        {
+            type: 'tf',
+            text: "O acordo de Escazú, tratado latino-americano, busca garantir acesso à informação ambiental, participação pública e justiça em questões ambientais.",
+            correct: true,
+            justification: "Ratificado pelo Brasil, o Acordo de Escazú protege defensores ambientais e assegura direitos de transparência e participação na gestão ambiental."
+        },
+        {
+            type: 'mc',
+            text: "A 'democracia racial', mito amplamente debatido nas ciências sociais, é contraposta pela constatação de que:",
+            correct: 0,
+            options: [
+                "O racismo estrutural persiste no Brasil, gerando desigualdades de renda, violência e acesso a direitos",
+                "Não há diferenças entre grupos étnicos",
+                "A miscigenação eliminou todos os preconceitos",
+                "Apenas a lei resolve o problema"
+            ],
+            justification: "O mito da democracia racial esconde a realidade das discriminações e da violência que atingem desproporcionalmente a população negra e indígena."
+        },
+        {
+            type: 'tf',
+            text: "A biotecnologia aplicada à agricultura, como os transgênicos, é isenta de controvérsias éticas e ambientais, de acordo com a BNCC.",
+            correct: false,
+            justification: "A BNCC incentiva a análise crítica dos impactos da biotecnologia, incluindo riscos à biodiversidade, dependência de sementes patenteadas e segurança alimentar."
+        },
+        {
+            type: 'mc',
+            text: "O fenômeno da 'securitização' das cidades, com muros, câmeras e segregação, é sintoma da:",
+            correct: 1,
+            options: [
+                "Paz urbana",
+                "Fragmentação do tecido urbano e aumento da desigualdade social",
+                "Ampliação do espaço público",
+                "Igualdade de acesso à moradia"
+            ],
+            justification: "A securitização reflete o medo e a privatização da segurança, agravando a separação entre grupos sociais e o abandono do espaço coletivo."
+        },
+        {
+            type: 'tf',
+            text: "O direito à cidade, concebido por Henri Lefebvre e presente na BNCC, restringe-se ao direito de ir e vir nos centros urbanos.",
+            correct: false,
+            justification: "O direito à cidade é mais amplo: inclui o direito de participar da produção do espaço urbano, à habitação digna e à apropriação coletiva dos recursos da cidade."
+        },
+        {
+            type: 'mc',
+            text: "A 'justiça climática' defende que:",
+            correct: 3,
+            options: [
+                "Todos os países devem reduzir emissões igualmente",
+                "Apenas os países ricos devem agir",
+                "O clima não é questão de justiça",
+                "Os países que menos contribuíram para a crise climática são os mais vulneráveis e devem receber apoio"
+            ],
+            justification: "A justiça climática evidencia a desigualdade entre os que mais emitem gases de efeito estufa e os que mais sofrem as consequências."
+        },
+        {
+            type: 'tf',
+            text: "A educação para o consumo, um dos temas contemporâneos transversais da BNCC, se limita a ensinar a economizar dinheiro.",
+            correct: false,
+            justification: "Ela visa formar consumidores críticos, conscientes dos impactos sociais, ambientais e éticos do ato de consumir, incluindo a valorização de práticas sustentáveis."
+        },
+        {
+            type: 'mc',
+            text: "O trabalho remoto, amplamente adotado no século XXI, trouxe como um de seus efeitos espaciais:",
+            correct: 2,
+            options: [
+                "Esvaziamento completo dos centros",
+                "Fim da globalização",
+                "Novos fluxos migratórios para cidades médias e áreas rurais conectadas",
+                "Concentração total em metrópoles"
+            ],
+            justification: "Profissionais que podem trabalhar à distância buscam locais com menor custo de vida, impulsionando o crescimento de cidades médias e áreas rurais com boa internet."
+        },
+        {
+            type: 'tf',
+            text: "O conceito de 'biopirataria' se refere ao uso não autorizado de conhecimentos tradicionais e recursos genéticos de um país ou comunidade sem compensação.",
+            correct: true,
+            justification: "Biopirataria envolve a apropriação ilegal de biodiversidade e saberes de povos indígenas e comunidades tradicionais, frequentemente por empresas multinacionais."
+        },
+        {
+            type: 'mc',
+            text: "A BNCC sugere que os jovens desenvolvam projetos de vida que articulem:",
+            correct: 0,
+            options: [
+                "A formação técnica e a reflexão sobre responsabilidade social, sustentabilidade e ética",
+                "Apenas o sucesso financeiro",
+                "Exclusivamente o preparo para o vestibular",
+                "A negação do mercado de trabalho"
+            ],
+            justification: "A competência 10 da BNCC aborda a construção do projeto de vida com autonomia, responsabilidade e compromisso com a coletividade."
+        },
+        {
+            type: 'tf',
+            text: "A soberania alimentar, conceito debatido em temas contemporâneos, defende o controle exclusivo das corporações transnacionais sobre a produção de alimentos.",
+            correct: false,
+            justification: "Soberania alimentar é o direito dos povos a definir suas próprias políticas agrícolas e alimentares, priorizando a produção local e a justiça social."
+        },
+        {
+            type: 'mc',
+            text: "As mudanças climáticas são consideradas um 'multiplicador de ameaças' porque:",
+            correct: 1,
+            options: [
+                "Reduzem todos os conflitos",
+                "Agravam escassez de recursos, migrações forçadas e tensões geopolíticas",
+                "Tornam o planeta mais pacífico",
+                "Anulam os desastres naturais"
+            ],
+            justification: "A ONU e especialistas alertam que as mudanças climáticas intensificam pressões sociais e políticas, ampliando riscos de conflitos."
+        },
+        {
+            type: 'tf',
+            text: "O etnocentrismo, tema abordado na BNCC para o ensino de Geografia e História, pode ser definido como a valorização da diversidade cultural em pé de igualdade.",
+            correct: false,
+            justification: "Etnocentrismo é exatamente o oposto: a tendência de julgar outras culturas a partir dos valores da própria, considerando-as inferiores."
+        },
+        {
+            type: 'mc',
+            text: "A 'infosfera', termo que designa o ambiente informacional global, levanta preocupações sobre:",
+            correct: 3,
+            options: [
+                "Excesso de livros",
+                "Falta de satélites",
+                "Redução do comércio eletrônico",
+                "Vigilância em massa, desinformação e manipulação de comportamentos"
+            ],
+            justification: "A infosfera, dominada por poucas big techs, concentra dados e atenção, criando riscos à democracia e à autonomia individual."
+        },
+        {
+            type: 'tf',
+            text: "O Estatuto da Juventude (Lei 12.852/2013) assegura aos jovens brasileiros direitos como educação, saúde, cultura e participação social.",
+            correct: true,
+            justification: "A lei brasileira reconhece os jovens como sujeitos de direitos com garantias específicas, em sintonia com as preocupações da BNCC."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'gentrificação verde' descreve:",
+            correct: 1,
+            options: [
+                "A criação de parques nacionais",
+                "A valorização de áreas urbanas após melhorias ambientais, que expulsa moradores originais de baixa renda",
+                "O plantio de árvores frutíferas",
+                "A proteção de florestas"
+            ],
+            justification: "Gentrificação verde é a expulsão indireta causada por projetos ditos sustentáveis que encarecem o custo de vida nos bairros revitalizados."
+        },
+        {
+            type: 'tf',
+            text: "A BNCC orienta a tratar as tecnologias digitais apenas como ferramentas neutras, sem discutir suas implicações éticas.",
+            correct: false,
+            justification: "A competência 5 da BNCC trata de compreender, utilizar e criar tecnologias digitais de forma crítica, refletindo sobre seus impactos éticos, sociais e políticos."
+        },
+        {
+            type: 'mc',
+            text: "O 'trabalho análogo ao escravo' no Brasil contemporâneo está associado frequentemente a:",
+            correct: 2,
+            options: [
+                "Empregos com carteira assinada",
+                "Setor público",
+                "Atividades agropecuárias e confecções têxteis com jornadas exaustivas e servidão por dívida",
+                "Startups de tecnologia"
+            ],
+            justification: "Apesar de ilegal, o trabalho escravo ainda ocorre, especialmente em fazendas, carvoarias e oficinas de costura, com trabalhadores em condições degradantes."
+        },
+        {
+            type: 'tf',
+            text: "A educação em direitos humanos, tema transversal da BNCC, é restrita à disciplina de Sociologia e não se articula com a Geografia.",
+            correct: false,
+            justification: "A BNCC prevê que a educação em direitos humanos permeie todas as áreas, incluindo a Geografia, ao discutir injustiças espaciais, migrações e acesso à cidade."
+        },
+        {
+            type: 'mc',
+            text: "A noção de 'pequena política' e 'grande política', de Milton Santos, é útil para entender os movimentos sociais contemporâneos. A 'pequena política' refere-se a:",
+            correct: 0,
+            options: [
+                "Ações cotidianas de resistência e solidariedade local que, somadas, podem transformar a sociedade",
+                "Decisões de chefes de Estado",
+                "Tratados internacionais",
+                "Eleições nacionais"
+            ],
+            justification: "Santos valoriza as ações dos pobres e das comunidades como forma de construir uma globalização mais humana a partir de baixo."
+        },
+        {
+            type: 'tf',
+            text: "A crise dos refugiados sírios, venezuelanos e afegãos nas últimas décadas é um exemplo de mobilidade humana forçada por guerras, perseguições e colapso econômico.",
+            correct: true,
+            justification: "Milhões de pessoas foram deslocadas nesses contextos, gerando crises humanitárias e desafios para os países de acolhida."
+        },
+        {
+            type: 'mc',
+            text: "O 'consumo consciente' é um tema transversal que propõe:",
+            correct: 1,
+            options: [
+                "Parar completamente de consumir",
+                "Refletir sobre a real necessidade do consumo e optar por produtos com menor impacto socioambiental",
+                "Aumentar o consumo de luxo",
+                "Apenas reciclar"
+            ],
+            justification: "Consumir de forma consciente envolve escolhas informadas que consideram a cadeia produtiva, os direitos dos trabalhadores e o meio ambiente."
+        },
+        {
+            type: 'tf',
+            text: "A BNCC ignora completamente a geopolítica dos esportes e dos grandes eventos, como Copas e Olimpíadas, por considerá-la tema não acadêmico.",
+            correct: false,
+            justification: "A BNCC permite a análise crítica de grandes eventos esportivos, abordando impactos urbanos, remoções forçadas, gastos públicos e legados."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'racismo ambiental' descreve uma situação na qual:",
+            correct: 3,
+            options: [
+                "Todos têm igual acesso a áreas verdes",
+                "Apenas animais sofrem com poluição",
+                "Não há discriminação na distribuição de riscos ambientais",
+                "Comunidades negras e pobres são desproporcionalmente expostas a poluição e falta de saneamento"
+            ],
+            justification: "O racismo ambiental evidencia a injustiça na distribuição dos impactos ambientais negativos, atingindo mais fortemente minorias étnicas."
+        },
+        {
+            type: 'tf',
+            text: "O fenômeno do 'negacionismo científico', tratado indiretamente na BNCC, é uma postura crítica fundamentada na análise de evidências empíricas.",
+            correct: false,
+            justification: "Negacionismo científico é a rejeição deliberada de evidências científicas consolidadas, como no caso das vacinas e mudanças climáticas, sem base racional."
+        },
+        {
+            type: 'mc',
+            text: "A 'economia prateada' refere-se a:",
+            correct: 2,
+            options: [
+                "Comércio de metais preciosos",
+                "Mercado financeiro de commodities",
+                "Atividades econômicas voltadas ao público idoso, que cresce em todo o mundo",
+                "Produção de joias"
+            ],
+            justification: "Com o envelhecimento populacional, cresce a demanda por serviços, saúde, lazer e produtos específicos para a terceira idade."
+        },
+        {
+            type: 'tf',
+            text: "A emergência climática e os desastres ambientais exigem, segundo a BNCC, atitudes de corresponsabilidade e planejamento territorial sustentável.",
+            correct: true,
+            justification: "BNCC destaca a importância de desenvolver o pensamento espacial para compreender riscos e vulnerabilidades e propor soluções sustentáveis."
+        },
+        {
+            type: 'mc',
+            text: "A 'polícia das famílias', termo foucaultiano, pode ser associada à discussão contemporânea sobre:",
+            correct: 2,
+            options: [
+                "Segurança pública",
+                "Políticas de renda mínima",
+                "Controle do corpo feminino e das configurações familiares por normas sociais e estatais",
+                "Organização do trânsito"
+            ],
+            justification: "Debates sobre direitos reprodutivos, união homoafetiva e definição de família revelam tentativas de regulação do corpo e das relações pessoais."
+        },
+        {
+            type: 'tf',
+            text: "O conceito de 'resiliência urbana' se refere à capacidade das cidades de se adaptar a desastres naturais e choques socioeconômicos sem se preparar antecipadamente.",
+            correct: false,
+            justification: "Resiliência urbana é a capacidade de absorver impactos e se recuperar, mas envolve planejamento prévio, não apenas resposta após os eventos."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você está por dentro dos temas contemporâneos mais relevantes.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Aprofunde-se na obra de Milton Santos sobre globalização e na Agenda 2030.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas vale reler as competências da BNCC e os textos sobre direitos humanos.';
+        else mensagem = '📚 Sugiro revisar os temas transversais da BNCC e os capítulos sobre economia digital e ambiental.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
