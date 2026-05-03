@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Deliberação Ceeteps nº 23/2015 · Atribuição de Aulas nas Etecs</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 auto;
+            max-width: 35vw;
+            text-align: center;
+        }
+        .img-container img {
+            height: 50vh;
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 1;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 40px; color: #1a5e44; }
+        .capa p { font-size: 22px; color: #2a5e4a; }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 { color: #1a5e44; margin-bottom: 10px; font-size: 2rem; }
+        .congrats-page p { margin: 20px 0; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { max-width: 100%; text-align: center; }
+            .img-container img { height: auto; max-height: 300px; width: auto; max-width: 90%; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Deliberação Ceeteps nº 23/2015</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 14</span>
+                <span id="progressPercent">7%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // PÁGINA 0 - CAPA
+            `<div class="capa">
+                <h1>Deliberação Ceeteps nº 23/2015</h1>
+                <h2>Atribuição de aulas nas Etecs</h2>
+                <p>Centro Estadual de Educação Tecnológica Paula Souza</p>
+            </div>`,
+
+            // PÁGINA 1 - ÍNDICE
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 Sumário</h3>
+                <ol>
+                    <li>1. Contexto e fundamentação legal</li>
+                    <li>2. Objeto e etapas da atribuição (arts. 1º e 2º)</li>
+                    <li>3. Classificação Docente (arts. 3º a 8º)</li>
+                    <li>4. Comissão de Pontuação Docente (art. 5º)</li>
+                    <li>5. Documentação e prazos para classificação (arts. 6º e 7º)</li>
+                    <li>6. Publicação e pedido revisional (arts. 7º e 8º)</li>
+                    <li>7. Quadro Geral de Aulas (art. 4º)</li>
+                    <li>8. Ato de Atribuição de Aulas (arts. 9º a 13)</li>
+                    <li>9. Ordem de prioridade (arts. 11 e 13)</li>
+                    <li>10. Definições operacionais (art. 10)</li>
+                    <li>11. Disposições finais e vedações (arts. 14 a 18)</li>
+                    <li>12. Questões comentadas</li>
+                </ol>
+            </div>`,
+
+            // ----- 1: Contexto -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>1. Contexto e fundamentação legal</h3>
+                    <p>A <strong>Deliberação Ceeteps nº 23, de 17 de setembro de 2015</strong>, foi publicada no DOE de 19/09/2015 (Seção I, pág. 80) e retificada em 23/09/2015. Ela dispõe sobre o <strong>procedimento de atribuição de aulas</strong> nas Escolas Técnicas Estaduais (Etecs) do Centro Paula Souza. A sua base legal está nos artigos 215 e 216 da Constituição do Estado de São Paulo, na Lei Complementar nº 1.044/2008 (que institui o Plano de Cargos e Carreiras do Ceeteps) e na Consolidação das Leis do Trabalho (CLT). O objetivo é uniformizar o processo, garantir a impessoalidade e valorizar a qualificação docente, conciliando a necessidade das escolas com os direitos dos professores.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/teacher-standing-near-blackboard-concept-illustration_114360-13806.jpg" alt="Professor na lousa" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 2: Objeto e etapas -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/documents-concept-illustration_114360-924.jpg" alt="Documentos e organograma" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>2. Objeto e etapas da atribuição (arts. 1º e 2º)</h3>
+                    <p>O <strong>art. 1º</strong> estabelece que a carga horária docente decorre de duas fontes: o ato de admissão, conforme edital do concurso, e o procedimento de atribuição, respeitando os direitos trabalhistas e os princípios constitucionais. O <strong>art. 2º</strong> organiza o procedimento em <strong>três etapas sequenciais</strong>: <strong>I. Classificação Docente</strong> (ordenamento dos professores por pontuação); <strong>II. Quadro Geral de Aulas</strong> (relação consolidada de todas as aulas disponíveis na unidade); <strong>III. Ato de Atribuição de Aulas</strong> (ato administrativo que efetivamente designa as aulas aos docentes). Essas três fases formam a espinha dorsal do processo, e cada uma delas será detalhada nas próximas páginas.</p>
+                </div>
+            </div>`,
+
+            // ----- 3: Classificação Docente -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>3. Classificação Docente (arts. 3º a 8º)</h3>
+                    <p>A classificação, segundo o <strong>art. 3º</strong>, fixa a posição dos docentes em ordem numérica <strong>decrescente</strong> de pontuação (do maior para o menor). O <strong>§1º</strong> enumera os critérios: conhecimentos adquiridos, produção acadêmica e experiência profissional, além de <strong>assiduidade, pontualidade e eficiência</strong> no cumprimento de deveres. O <strong>§2º</strong> determina que a classificação seja elaborada <strong>por curso</strong> para o Ensino Técnico e <strong>por componente curricular</strong> para a Base Nacional Comum e Parte Diversificada do Ensino Médio e Técnico Integrado ao Médio. O <strong>§3º</strong> exige listas distintas para docentes licenciados e graduados, e para contratados por prazo indeterminado e determinado. Essa segmentação visa garantir que a atribuição respeite as habilitações específicas.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/exam-concept-illustration_114360-16575.jpg" alt="Avaliação de documentos" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 4: Comissão de Pontuação -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/business-team-meeting-concept-illustration_114360-505.jpg" alt="Reunião de comissão" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>4. Comissão de Pontuação Docente (art. 5º)</h3>
+                    <p>Nos termos do <strong>art. 5º</strong>, a Comissão de Pontuação Docente é presidida pelo <strong>Diretor de Serviço da Área Administrativa</strong> e composta por professores com contrato por prazo indeterminado. A sua constituição formal se dá por <strong>Portaria do Diretor de Escola Técnica</strong> (§1º). Compete a essa comissão analisar a documentação entregue pelos docentes, atribuir as pontuações e elaborar as listas de classificação. É importante que para concursos, memorize: a presidência cabe ao Diretor de Serviço Administrativo, e não ao Diretor da Escola ou ao Coordenador de Curso. A composição com professores efetivos busca assegurar a legitimidade do processo perante o corpo docente.</p>
+                </div>
+            </div>`,
+
+            // ----- 5: Documentação e prazos -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>5. Documentação e prazos para classificação (arts. 6º e 7º)</h3>
+                    <p>O <strong>art. 6º</strong> fixa o prazo para protocolo da documentação classificatória: <strong>até 30 de setembro</strong> de cada ano. O ônus é exclusivo do docente, que deve providenciar os documentos comprobatórios de titulação, experiência e demais requisitos. Caso o docente não protocole nenhum documento, o parágrafo único determina que a Comissão utilize a <strong>documentação já existente</strong> na Escola Técnica para fins de análise, evitando a desclassificação automática. O <strong>art. 7º</strong> estabelece que a classificação será <strong>publicada até o 10º dia útil de novembro</strong> e utilizada para <strong>as duas próximas atribuições</strong> e para aulas que surgirem ao longo do período letivo. Essa estabilidade temporária confere segurança jurídica ao processo.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/calendar-concept-illustration_114360-1619.jpg" alt="Calendário e prazo" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 6: Publicação e revisão -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/feedback-concept-illustration_114360-5814.jpg" alt="Revisão de documento" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>6. Publicação e pedido revisional (arts. 7º e 8º)</h3>
+                    <p>Publicada a classificação, o <strong>art. 8º</strong> faculta ao docente a interposição de <strong>pedido revisional</strong> no prazo de <strong>3 (três) dias úteis</strong>, contados da publicação. O pedido deve ser dirigido ao Diretor da Escola Técnica e conter a <strong>indicação e justificativa</strong> do inconformismo. É uma via administrativa rápida para corrigir eventuais equívocos na pontuação. Esgotado o prazo sem recurso, a classificação torna-se definitiva e norteará as duas atribuições subsequentes. Em provas, a banca costuma cobrar o prazo (3 dias úteis) e a autoridade a quem se dirige o recurso (Diretor da Etec).</p>
+                </div>
+            </div>`,
+
+            // ----- 7: Quadro Geral de Aulas -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>7. Quadro Geral de Aulas (art. 4º)</h3>
+                    <p>O <strong>art. 4º</strong> define o Quadro Geral de Aulas como o documento elaborado pelo <strong>Diretor de Escola Técnica</strong>, contendo a relação consolidada de todas as aulas a serem atribuídas. O parágrafo único estabelece a periodicidade: <strong>semestral</strong> para o Ensino Técnico e <strong>anual</strong> para o Ensino Médio e Ensino Técnico Integrado ao Médio. Os incisos trazem definições importantes: <strong>Aulas livres</strong> (ainda não atribuídas), <strong>Aulas em substituição</strong> (já atribuídas a docente afastado total ou parcialmente), <strong>Aulas atribuídas em caráter excepcional</strong> (para docentes não habilitados pelo Catálogo de Requisito de Titulação para Docência, em caráter temporário). O Quadro deve ser divulgado antes da atribuição.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/schedule-concept-illustration_114360-3052.jpg" alt="Quadro de horários" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 8: Ato de Atribuição -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/contract-concept-illustration_114360-1677.jpg" alt="Designação oficial" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>8. Ato de Atribuição de Aulas (arts. 9º a 13)</h3>
+                    <p>O <strong>art. 9º</strong> estabelece que o ato de atribuição compete ao <strong>Diretor de Escola Técnica</strong> e ocorre no <strong>primeiro dia útil após o Conselho de Classe Final</strong> do respectivo ano ou semestre. O <strong>§1º</strong> exige do docente a juntada de <strong>declaração sobre sua situação funcional de acumulação</strong> de empregos e cargos públicos, verificando compatibilidade de carga horária. O <strong>§3º</strong> impõe ao Diretor que, havendo dúvidas sobre acúmulo, solicite <strong>manifestação conclusiva da Unidade de Recursos Humanos</strong>. O <strong>§5º</strong> prevê que o ato pode resultar em <strong>ampliação, manutenção, redução ou recomposição</strong> da carga horária. O resultado deve ser publicado e, nos termos do art. 13, parágrafo único, o docente que se sentir prejudicado pode apresentar <strong>pedido revisional em 3 dias úteis</strong>.</p>
+                </div>
+            </div>`,
+
+            // ----- 9: Ordem de prioridade -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>9. Ordem de prioridade na atribuição (arts. 11 e 13)</h3>
+                    <p>A ordem de prioridade garante impessoalidade e justiça. O <strong>art. 11</strong> trata das aulas livres que surgem após a atribuição inicial. A primeira prioridade é dos <strong>docentes contratados por prazo indeterminado para recomposição de carga horária decorrente de redução involuntária</strong> (inciso I). Em seguida, vêm docentes com redução involuntária que não envolva recomposição, docentes com ampliação de jornada e, por último, docentes contratados por prazo determinado (inciso V). Já o <strong>art. 13</strong> estabelece que a atribuição na unidade deve observar, em primeiro lugar, a <strong>classificação do docente na própria U.E.</strong>, depois outras situações. O conhecimento dessa ordem é frequentemente cobrado em provas devido à sua relevância prática.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/priority-concept-illustration_114360-12889.jpg" alt="Ordem de prioridade" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 10: Definições operacionais -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/glossary-concept-illustration_114360-9824.jpg" alt="Vocabulário e definições" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>10. Definições operacionais (art. 10)</h3>
+                    <p>O <strong>art. 10</strong> concentra definições essenciais para interpretar a Deliberação: <strong>Calendário escolar</strong> (ato do Diretor, homologado pelo Grupo de Supervisão Educacional, com previsão cronológica das atividades); <strong>Ampliação</strong> (aumento do número de aulas livres); <strong>Manutenção</strong> (continuidade do maior número de aulas livres atribuídas no período anterior); <strong>Redução involuntária</strong> (diminuição decorrente da redução do Quadro Geral de Aulas); <strong>Redução voluntária</strong> (pedido expresso do docente para diminuir aulas livres, sem direito a recomposição posterior – inciso VI); <strong>Recomposição</strong> (restabelecimento da carga); <strong>Aulas em caráter excepcional</strong> e <strong>Catálogo de Requisitos de Titulação para Docência</strong>. Destaca-se a vedação do inciso VI: quem reduz voluntariamente não terá recomposição futura.</p>
+                </div>
+            </div>`,
+
+            // ----- 11: Disposições finais -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>11. Disposições finais e vedações (arts. 14 a 18)</h3>
+                    <p>O <strong>art. 14</strong> veda ao docente ter aulas acima do limite legal. O <strong>§2º</strong> sanciona o descumprimento como <strong>hipótese de improbidade prevista na alínea 'a' do art. 482 da CLT</strong>, e a atribuição é <strong>nula</strong>. O <strong>art. 15</strong> garante ao docente contratado por prazo indeterminado, afastado nos termos das normas do Ceeteps, o <strong>direito de ter seu horário assegurado</strong> na cessação do afastamento. As aulas em substituição não conferem ao substituto direito à retenção das mesmas quando cessadas as razões da substituição (§1º). O <strong>art. 16</strong> atribui a definição do horário ao Diretor, auxiliado pelo Coordenador de Curso e pelo Professor Coordenador de Projetos responsável pela Coordenação Pedagógica. O <strong>art. 17</strong> incumbe a Unidade de Recursos Humanos de orientar as unidades. O <strong>art. 18</strong> prevê regulamentação por Portaria da Unidade do Ensino Médio e Técnico.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/legal-document-concept-illustration_114360-26368.jpg" alt="Documento legal" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 12: Questões comentadas -----
+            `<div class="text-container" style="max-width:100%;">
+                <h3>12. Questões comentadas de fixação</h3>
+                <p><strong>Questão 1:</strong> A Comissão de Pontuação Docente é presidida pelo: <strong>a)</strong> Diretor da Escola Técnica. <strong>b)</strong> Coordenador de Curso. <strong>c)</strong> Diretor de Serviço da Área Administrativa. <strong>d)</strong> Professor mais antigo da unidade. <strong>Gabarito: C.</strong> O art. 5º determina que a presidência cabe ao Diretor de Serviço da Área Administrativa.</p>
+                <p><strong>Questão 2:</strong> O prazo para o docente protocolar a documentação classificatória na Etec é: <strong>a)</strong> Até 31 de outubro. <strong>b)</strong> Até 30 de setembro. <strong>c)</strong> Até 30 de novembro. <strong>d)</strong> Até 10 de novembro. <strong>Gabarito: B.</strong> Conforme art. 6º, o prazo expira em 30 de setembro de cada ano.</p>
+                <p><strong>Questão 3:</strong> A redução voluntária de carga horária: <strong>a)</strong> Garante recomposição posterior. <strong>b)</strong> É determinada pelo Diretor. <strong>c)</strong> É o pedido do docente para diminuir aulas livres, sem direito a recomposição. <strong>d)</strong> Decorre da redução do Quadro Geral. <strong>Gabarito: C.</strong> O art. 10, V e VI, define e veda a recomposição.</p>
+                <p><strong>Questão 4:</strong> Contra o ato de atribuição, o docente prejudicado pode apresentar pedido revisional em: <strong>a)</strong> 5 dias úteis. <strong>b)</strong> 3 dias úteis. <strong>c)</strong> 10 dias corridos. <strong>d)</strong> 24 horas. <strong>Gabarito: B.</strong> O art. 13, parágrafo único, estabelece o prazo de 3 dias úteis.</p>
+            </div>`,
+
+            // PÁGINA FINAL
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo da Deliberação Ceeteps nº 23/2015.</p>
+                <p>Compreender o procedimento de atribuição de aulas é fundamental para a atuação nas Etecs e para a resolução de questões de concursos do Centro Paula Souza.</p>
+                <p>Continue revisando os prazos, as definições e as competências de cada etapa.</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContentDiv = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContentDiv.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContentDiv.scrollTop) pageContentDiv.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContentDiv.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>
