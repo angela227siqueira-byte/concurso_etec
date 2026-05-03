@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Dinâmicas urbanas e rurais · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🏙️🌾 Dinâmicas urbanas e rurais</div>
+        <div class="sub">Milton Santos, Moreira, Vesentini e a BNCC · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Dinâmicas urbanas e rurais) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: "O Brasil tornou-se majoritariamente urbano a partir da década de 1970, quando a população das cidades superou a do campo.",
+            correct: true,
+            justification: "O censo de 1970 já indicava essa virada, resultado da industrialização concentrada e do êxodo rural."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'conurbação' descreve:",
+            correct: 0,
+            options: [
+                "Mancha urbana contínua formada pelo encontro de duas ou mais cidades",
+                "Separação radical entre campo e cidade",
+                "Construção de condomínios rurais",
+                "Expulsão de população para áreas urbanas"
+            ],
+            justification: "Conurbação ocorre quando os perímetros urbanos de municípios vizinhos se unem, formando um contínuo edificado."
+        },
+        {
+            type: 'tf',
+            text: "A metropolização é o processo de concentração populacional e econômica em cidades médias, com esvaziamento das metrópoles.",
+            correct: false,
+            justification: "Metropolização é a concentração nas metrópoles e suas regiões de influência, não nas cidades médias."
+        },
+        {
+            type: 'mc',
+            text: "Segundo a hierarquia urbana brasileira do IBGE, São Paulo é classificada como:",
+            correct: 1,
+            options: [
+                "Capital regional",
+                "Grande metrópole nacional",
+                "Centro local",
+                "Metrópole regional"
+            ],
+            justification: "São Paulo ocupa o topo da hierarquia como grande metrópole nacional, com influência sobre todo o território."
+        },
+        {
+            type: 'tf',
+            text: "As 'cidades dormitório' são aquelas em que a maior parte da população economicamente ativa trabalha na própria cidade.",
+            correct: false,
+            justification: "São cidades onde a maioria dos moradores se desloca diariamente para trabalhar em outra cidade, geralmente uma metrópole."
+        },
+        {
+            type: 'mc',
+            text: "O fenômeno da 'gentrificação' nos centros urbanos refere-se a:",
+            correct: 2,
+            options: [
+                "Diminuição do preço dos aluguéis",
+                "Construção de conjuntos habitacionais periféricos",
+                "Valorização imobiliária que expulsa populações de menor renda de áreas revitalizadas",
+                "Criação de áreas verdes urbanas"
+            ],
+            justification: "Gentrificação ocorre quando melhorias urbanas atraem investimentos, elevam preços e deslocam moradores antigos de bairros valorizados."
+        },
+        {
+            type: 'tf',
+            text: "A reforma agrária, prevista no Estatuto da Terra (1964), tem como objetivo redistribuir terras improdutivas e combater a concentração fundiária.",
+            correct: true,
+            justification: "O Estatuto da Terra estabelece bases para a desapropriação de latifúndios improdutivos com fins de redistribuição."
+        },
+        {
+            type: 'mc',
+            text: "O êxodo rural brasileiro, intensificado nas décadas de 1950 a 1980, teve como principal causa:",
+            correct: 3,
+            options: [
+                "Mecanização agrícola e modernização do campo, expulsando mão de obra",
+                "Alta qualidade de vida nas cidades",
+                "Abertura de fronteiras agrícolas na Amazônia",
+                "A primeira alternativa está correta"
+            ],
+            justification: "A mecanização reduziu a necessidade de trabalhadores no campo, enquanto as cidades ofereciam, em tese, empregos industriais."
+        },
+        {
+            type: 'tf',
+            text: "A agricultura familiar ocupa a maior parte da área cultivada no Brasil, superando amplamente o agronegócio patronal.",
+            correct: false,
+            justification: "O agronegócio detém a maioria das terras; a agricultura familiar ocupa parcela menor, embora produza alimentos básicos essenciais."
+        },
+        {
+            type: 'mc',
+            text: "O MST (Movimento dos Trabalhadores Rurais Sem Terra) luta prioritariamente por:",
+            correct: 0,
+            options: [
+                "Democratização do acesso à terra e reforma agrária",
+                "Expansão do agronegócio",
+                "Urbanização acelerada",
+                "Construção de rodovias no campo"
+            ],
+            justification: "O MST tem como bandeira central a reforma agrária e o acesso à terra para trabalhadores rurais."
+        },
+        {
+            type: 'tf',
+            text: "As 'cidades globais', como Nova York, Londres e Tóquio, concentram serviços avançados e centros de comando da economia mundial.",
+            correct: true,
+            justification: "Cidades globais são nós do sistema financeiro e de informações, sediando conglomerados transnacionais e bolsas de valores."
+        },
+        {
+            type: 'mc',
+            text: "A 'revolução verde' no campo brasileiro caracterizou-se por:",
+            correct: 1,
+            options: [
+                "Distribuição maciça de terras",
+                "Uso de sementes melhoradas, mecanização e insumos químicos",
+                "Abolição do trabalho assalariado",
+                "Retorno à agricultura orgânica"
+            ],
+            justification: "A revolução verde introduziu pacotes tecnológicos que aumentaram a produtividade, mas também a dependência de insumos."
+        },
+        {
+            type: 'tf',
+            text: "O Plano Diretor, obrigatório para municípios com mais de 20 mil habitantes, é o instrumento básico da política urbana, segundo o Estatuto da Cidade.",
+            correct: true,
+            justification: "O Estatuto da Cidade (2001) estabelece o Plano Diretor como ferramenta de ordenamento territorial participativo."
+        },
+        {
+            type: 'mc',
+            text: "A 'especulação imobiliária' ocorre quando:",
+            correct: 3,
+            options: [
+                "Imóveis são vendidos abaixo do preço de mercado",
+                "A prefeitura constrói casas populares",
+                "A população ocupa terrenos vazios",
+                "Terrenos são retidos à espera de valorização, gerando vazios urbanos"
+            ],
+            justification: "Especuladores mantêm terrenos ociosos aguardando que investimentos públicos ou privados os valorizem."
+        },
+        {
+            type: 'tf',
+            text: "O conceito de 'rural' hoje se restringe exclusivamente às atividades agropecuárias, sem outras funções.",
+            correct: false,
+            justification: "O espaço rural contemporâneo abriga agroindústrias, turismo, condomínios, serviços ambientais e lazer."
+        },
+        {
+            type: 'mc',
+            text: "A 'urbanização extensiva' no Brasil resultou em:",
+            correct: 0,
+            options: [
+                "Metrópoles que se espalham horizontalmente, com periferias precárias",
+                "Cidades compactas e verticalizadas",
+                "Desaparecimento do campo",
+                "Plena integração de transporte público"
+            ],
+            justification: "As metrópoles brasileiras expandiram-se de forma espraiada, com periferias marcadas por autoconstrução e falta de infraestrutura."
+        },
+        {
+            type: 'tf',
+            text: "O agronegócio brasileiro contribuiu para a modernização agrícola, mas também para o aumento da concentração de terras e dos conflitos no campo.",
+            correct: true,
+            justification: "Apesar da alta produtividade, o modelo concentrador do agronegócio agravou disparidades fundiárias e disputas territoriais."
+        },
+        {
+            type: 'mc',
+            text: "O 'circuito superior' da economia urbana, segundo Milton Santos, inclui:",
+            correct: 1,
+            options: [
+                "Vendedores ambulantes",
+                "Redes bancárias, grandes indústrias e serviços modernos",
+                "Pequenas oficinas de reparo",
+                "Mercearias de bairro"
+            ],
+            justification: "O circuito superior caracteriza-se por atividades com alto nível de capital, tecnologia e organização corporativa."
+        },
+        {
+            type: 'tf',
+            text: "As regiões metropolitanas brasileiras foram institucionalizadas pela Constituição Federal de 1988.",
+            correct: false,
+            justification: "Foram criadas em 1973, durante o regime militar, por lei federal complementar, e depois consolidadas pela Constituição de 1988."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'periurbano' designa:",
+            correct: 2,
+            options: [
+                "Áreas exclusivamente industriais",
+                "Centros históricos das metrópoles",
+                "Faixa de transição entre campo e cidade, com usos mistos",
+                "Zonas portuárias"
+            ],
+            justification: "Periurbano é o espaço híbrido, nem totalmente rural nem totalmente urbano, onde coexistem atividades agrícolas e urbanas."
+        },
+        {
+            type: 'tf',
+            text: "O IBGE considera população urbana aquela residente nas sedes municipais (cidades) e nas vilas (sedes distritais).",
+            correct: true,
+            justification: "O critério brasileiro é político-administrativo: considera urbano o perímetro definido por lei municipal."
+        },
+        {
+            type: 'mc',
+            text: "A 'segregação socioespacial' nas cidades manifesta-se por:",
+            correct: 3,
+            options: [
+                "Mistura homogênea de classes sociais nos bairros",
+                "Acesso igualitário a equipamentos urbanos",
+                "Distribuição aleatória de serviços públicos",
+                "Separação residencial por renda, com periferização da população de baixa renda"
+            ],
+            justification: "A segregação resulta da desigualdade no acesso à terra urbana e à habitação, concentrando pobres em áreas distantes ou precárias."
+        },
+        {
+            type: 'tf',
+            text: "O 'Movimento dos Atingidos por Barragens' (MAB) luta pelos direitos de populações deslocadas por grandes projetos hidrelétricos no Brasil.",
+            correct: true,
+            justification: "O MAB defende compensação justa e reassentamento adequado para comunidades afetadas por barragens."
+        },
+        {
+            type: 'mc',
+            text: "A cidade do Rio de Janeiro exemplifica qual fenômeno urbano, com sua mancha metropolitana?",
+            correct: 0,
+            options: [
+                "Região metropolitana",
+                "Desconcentração industrial",
+                "Retorno ao campo",
+                "Cidade-estado"
+            ],
+            justification: "O Rio de Janeiro forma uma região metropolitana com municípios conurbados, como Duque de Caxias, Niterói e São Gonçalo."
+        },
+        {
+            type: 'tf',
+            text: "O agronegócio e a agricultura familiar são termos sinônimos, ambos designando pequenas propriedades de subsistência.",
+            correct: false,
+            justification: "Agronegócio é produção patronal integrada ao mercado global; agricultura familiar é baseada em mão de obra familiar, com menor escala."
+        },
+        {
+            type: 'mc',
+            text: "A 'favelização' é um processo associado a:",
+            correct: 1,
+            options: [
+                "Implantação de conjuntos habitacionais de luxo",
+                "Déficit habitacional, pobreza urbana e falta de políticas de moradia",
+                "Criação de áreas verdes",
+                "Expansão de shopping centers"
+            ],
+            justification: "Favelas resultam da incapacidade do mercado formal e do Estado em prover habitação acessível à população de baixa renda."
+        },
+        {
+            type: 'tf',
+            text: "O 'complexo agroindustrial' combina atividades agrícolas com a indústria de insumos e processamento, integrando campo e cidade.",
+            correct: true,
+            justification: "Complexos como o da soja, cana ou carnes ligam produtores rurais a processadores industriais, distribuição e exportação."
+        },
+        {
+            type: 'mc',
+            text: "A Organização das Nações Unidas estima que, em 2050, a porcentagem mundial de população urbana será aproximadamente:",
+            correct: 1,
+            options: [
+                "50%",
+                "68%",
+                "30%",
+                "90%"
+            ],
+            justification: "Projeções da ONU (World Urbanization Prospects) indicam que cerca de 68% da população viverá em cidades até 2050."
+        },
+        {
+            type: 'tf',
+            text: "No Brasil, o módulo rural e o módulo fiscal são conceitos idênticos, estabelecidos pelo INCRA.",
+            correct: false,
+            justification: "Módulo rural é unidade de exploração familiar; módulo fiscal é usado para classificar o tamanho do imóvel rural e fins tributários."
+        },
+        {
+            type: 'mc',
+            text: "As 'cidades inteligentes' (smart cities) têm como característica:",
+            correct: 4,
+            options: [
+                "Inexistência de trânsito",
+                "Uso intensivo de tecnologia da informação para gestão urbana",
+                "Substituição total de veículos",
+                "Fim da administração municipal",
+                "Apenas a segunda alternativa está correta"
+            ],
+            justification: "Smart cities empregam sensores, dados e conectividade para otimizar mobilidade, energia e serviços."
+        },
+        {
+            type: 'tf',
+            text: "A produção de soja no Centro-Oeste brasileiro está associada à expansão da fronteira agrícola sobre o Cerrado e ao desmatamento.",
+            correct: true,
+            justification: "A sojicultura avançou sobre áreas de vegetação nativa alterando a paisagem e os ecossistemas do bioma Cerrado."
+        },
+        {
+            type: 'mc',
+            text: "A 'policentralidade' urbana descreve:",
+            correct: 1,
+            options: [
+                "Concentração de atividade em um centro único",
+                "Múltiplos centros de comércio e serviços dentro de uma mesma região metropolitana",
+                "Desaparecimento do centro histórico",
+                "Cidades sem administração"
+            ],
+            justification: "Policentralidade é a emergência de subcentros que atendem áreas da metrópole, reduzindo a dependência do centro tradicional."
+        },
+        {
+            type: 'tf',
+            text: "A 'luta pela terra' no Brasil é fenômeno restrito à região Norte, onde há mais terras devolutas.",
+            correct: false,
+            justification: "Conflitos fundiários ocorrem em todo o país, especialmente no Nordeste, Centro-Oeste e áreas de expansão do agronegócio."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'desruralização' significa:",
+            correct: 2,
+            options: [
+                "Aumento da população no campo",
+                "Fortalecimento da economia rural",
+                "Perda de população e funções rurais tradicionais",
+                "Retorno à agricultura manual"
+            ],
+            justification: "Desruralização indica o declínio demográfico e socioeconômico do campo, com diminuição das atividades agrícolas tradicionais."
+        },
+        {
+            type: 'tf',
+            text: "O Estatuto da Terra (1964) classificou os imóveis rurais em minifúndio, latifúndio (por extensão e por exploração) e empresa rural.",
+            correct: true,
+            justification: "A lei definiu essas categorias para orientar a política de reforma agrária e o desenvolvimento rural."
+        },
+        {
+            type: 'mc',
+            text: "A 'verticalização' do espaço urbano é fenômeno que:",
+            correct: 3,
+            options: [
+                "Se restringe a bairros periféricos",
+                "Nunca ocorre no Brasil",
+                "É proibida por lei federal",
+                "Intensifica o uso do solo com edifícios altos, adensando áreas centrais"
+            ],
+            justification: "Verticalização é a multiplicação de pavimentos, comum em áreas valorizadas, maximizando o aproveitamento do solo."
+        },
+        {
+            type: 'tf',
+            text: "O 'campesinato' no Brasil é categoria homogênea formada exclusivamente por agricultores orgânicos certificados.",
+            correct: false,
+            justification: "Campesinato abrange diversas formas de produção familiar, incluindo posseiros, comunidades tradicionais, quilombolas e pequenos produtores."
+        },
+        {
+            type: 'mc',
+            text: "As 'cidades médias' brasileiras, nas últimas décadas, apresentam:",
+            correct: 0,
+            options: [
+                "Crescimento populacional superior ao das metrópoles, atraindo novos investimentos",
+                "Encolhimento acelerado",
+                "Nenhuma importância regional",
+                "Concentração de toda a indústria do país"
+            ],
+            justification: "Cidades médias despontam como polos regionais alternativos, com qualidade de vida e dinamismo econômico."
+        },
+        {
+            type: 'tf',
+            text: "A agricultura urbana, como hortas comunitárias em terrenos baldios, contribui para a segurança alimentar e a sustentabilidade das cidades.",
+            correct: true,
+            justification: "Hortas urbanas ocupam espaços ociosos, fornecem alimentos frescos e geram trabalho e renda locais."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você compreende profundamente as dinâmicas urbanas e rurais.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Retome os capítulos de Santos (2006) sobre o circuito superior e inferior da economia urbana.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas convém reler o Estatuto da Cidade e o capítulo sobre reforma agrária.';
+        else mensagem = '📚 Recomendo revisar Santos (2006) e Moreira (2009) sobre campo e cidade.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
