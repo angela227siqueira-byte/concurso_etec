@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Dinâmicas Urbanas e Rurais · Geografia do Brasil</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 auto;
+            max-width: 35vw;
+            text-align: center;
+        }
+        .img-container img {
+            height: 50vh;
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 1;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 40px; color: #1a5e44; }
+        .capa p { font-size: 22px; color: #2a5e4a; }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 { color: #1a5e44; margin-bottom: 10px; font-size: 2rem; }
+        .congrats-page p { margin: 20px 0; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { max-width: 100%; text-align: center; }
+            .img-container img { height: auto; max-height: 300px; width: auto; max-width: 90%; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Dinâmicas Urbanas e Rurais · Brasil Físico e Socioeconômico</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 13</span>
+                <span id="progressPercent">8%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // CAPA
+            `<div class="capa">
+                <h1>Dinâmicas Urbanas e Rurais<br>Geografia do Brasil</h1>
+                <h2>Aspectos físicos, econômicos e sociais</h2>
+                <p>Baseado em Milton Santos, Jurandyr Ross, Ruy Moreira e na BNCC</p>
+            </div>`,
+
+            // SUMÁRIO
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 Sumário</h3>
+                <ol>
+                    <li>1. Urbanização brasileira: êxodo rural e metropolização</li>
+                    <li>2. Hierarquia urbana, conurbação e regiões metropolitanas</li>
+                    <li>3. Problemas urbanos: segregação, gentrificação e mobilidade</li>
+                    <li>4. Espaço rural: modernização e agronegócio</li>
+                    <li>5. Reforma agrária, agricultura familiar e conflitos no campo</li>
+                    <li>6. Relevo brasileiro: classificação de Jurandyr Ross</li>
+                    <li>7. Climas, domínios morfoclimáticos e formações vegetais</li>
+                    <li>8. Hidrografia: bacias e aquíferos</li>
+                    <li>9. População, economia regional e complexos geoeconômicos</li>
+                    <li>10. Questões comentadas</li>
+                </ol>
+            </div>`,
+
+            // 1. Urbanização brasileira
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>1. Urbanização brasileira: êxodo rural e metropolização</h3>
+                    <p>O Brasil tornou-se majoritariamente urbano a partir da década de 1970, impulsionado pela industrialização concentrada no Sudeste e pela modernização do campo. O <strong>êxodo rural</strong> transferiu milhões de trabalhadores para as cidades, resultando em um crescimento urbano acelerado e desordenado. A <strong>metropolização</strong> é a concentração de população e atividades econômicas nas metrópoles, que exercem forte influência regional. São Paulo é a grande metrópole nacional, polarizando fluxos econômicos e culturais. Com o tempo, emergiram novas centralidades: as cidades médias apresentam hoje crescimento superior ao das metrópoles, reconfigurando a rede urbana (Santos, 2006).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/city-skyline-concept-illustration_114360-18021.jpg" alt="Silhueta urbana brasileira" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 2. Hierarquia urbana
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/city-hierarchy-concept-illustration_114360-30370.jpg" alt="Hierarquia urbana" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>2. Hierarquia urbana, conurbação e regiões metropolitanas</h3>
+                    <p>O IBGE classifica as cidades brasileiras em centros locais, centros regionais e metrópoles (nacionais e regionais), formando uma <strong>hierarquia urbana</strong>. A <strong>conurbação</strong> ocorre quando manchas urbanas de municípios vizinhos se unem, formando um contínuo edificado, como no ABCD Paulista ou na Baixada Fluminense. Já as <strong>regiões metropolitanas</strong> são institucionalizadas por lei e abrangem municípios integrados socioeconomicamente. O <strong>Estatuto da Cidade</strong> (2001) exige Plano Diretor para municípios com mais de 20 mil habitantes, orientando o ordenamento territorial e o combate à especulação imobiliária.</p>
+                </div>
+            </div>`,
+
+            // 3. Problemas urbanos
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>3. Problemas urbanos: segregação, gentrificação e mobilidade</h3>
+                    <p>As cidades brasileiras concentram desafios estruturais. A <strong>segregação socioespacial</strong> separa as classes por renda: populações de baixa renda são empurradas para periferias precárias, enquanto áreas centrais se valorizam. A <strong>gentrificação</strong> ocorre quando intervenções urbanas revitalizam bairros degradados, elevando preços e expulsando moradores antigos. A <strong>mobilidade urbana</strong> é outro gargalo: o modelo rodoviarista (prioridade às rodovias desde os anos 1950) gera congestionamentos e poluição. As "cidades dormitório" abrigam trabalhadores que se deslocam diariamente para outras cidades, revelando a dissociação entre local de moradia e de trabalho.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/urban-traffic-concept-illustration_114360-30607.jpg" alt="Trânsito e problemas urbanos" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 4. Espaço rural
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/agriculture-concept-illustration_114360-20735.jpg" alt="Modernização agrícola" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>4. Espaço rural: modernização e agronegócio</h3>
+                    <p>O campo brasileiro passou por profundas transformações a partir da <strong>Revolução Verde</strong> (décadas de 1960-70), com mecanização, uso de sementes melhoradas, fertilizantes e agrotóxicos. A agricultura de precisão (GPS, sensores) exemplifica o <strong>meio técnico-científico-informacional</strong> no campo (Santos, 2006). O <strong>agronegócio</strong> integra produção, processamento industrial e exportação, respondendo por grande parte do PIB e das exportações brasileiras. Contudo, reforça a <strong>concentração fundiária</strong> e avança sobre biomas como o Cerrado (MATOPIBA). A agricultura familiar, que ocupa menos terra mas produz alimentos básicos, emprega a maior parte da mão de obra rural.</p>
+                </div>
+            </div>`,
+
+            // 5. Reforma agrária
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>5. Reforma agrária, agricultura familiar e conflitos no campo</h3>
+                    <p>A reforma agrária brasileira está prevista no <strong>Estatuto da Terra</strong> (1964) e visa redistribuir latifúndios improdutivos. O <strong>MST</strong> e outros movimentos sociais pressionam por assentamentos. Os conflitos fundiários persistem em várias regiões, envolvendo posseiros, indígenas, quilombolas e grileiros. A Lei de Terras de 1850 dificultou o acesso à terra pelos libertos, raiz histórica da desigualdade atual. O <strong>MAB</strong> luta pelos direitos de populações deslocadas por grandes barragens. Apesar da modernização, a pobreza rural e a subnutrição ainda são realidades em muitos municípios do semiárido nordestino e da Amazônia.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/farm-landscape-concept-illustration_114360-15633.jpg" alt="Campo e reforma agrária" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 6. Relevo brasileiro
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/geography-concept-illustration_114360-30923.jpg" alt="Mapa de relevo do Brasil" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>6. Relevo brasileiro: classificação de Jurandyr Ross</h3>
+                    <p>Segundo Ross (2011), o relevo brasileiro divide-se em <strong>planaltos</strong> (onde a erosão supera a sedimentação), <strong>planícies</strong> (predomínio da sedimentação) e <strong>depressões</strong> (áreas rebaixadas por erosão). O Brasil não possui dobramentos modernos; suas estruturas geológicas são antigas (crátons dos éons Arqueano e Proterozoico). Exemplos: Planalto Central (chapadas), planície do Pantanal e depressão sertaneja. O <strong>Domínio dos Mares de Morros</strong> (Aziz Ab'Sáber) abrange o Sudeste e parte do Nordeste, com relevo ondulado e Mata Atlântica. O conhecimento das formas de relevo é essencial para a análise de riscos ambientais, como deslizamentos em encostas.</p>
+                </div>
+            </div>`,
+
+            // 7. Clima e vegetação
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>7. Climas, domínios morfoclimáticos e formações vegetais</h3>
+                    <p>O território brasileiro abriga climas <strong>equatorial</strong> (Norte), <strong>tropical</strong> (Centro-Oeste e Nordeste), <strong>tropical de altitude</strong> (Sudeste), <strong>semiárido</strong> (Sertão), <strong>subtropical</strong> (Sul) e <strong>tropical úmido-seco</strong> (Cerrado). As massas de ar (Equatorial continental, Tropical atlântica, Polar atlântica) controlam os regimes de chuva. Os <strong>domínios morfoclimáticos</strong> (Ab'Sáber) incluem Amazônico, Cerrado, Mares de Morros, Caatinga, Araucárias e Pradarias. A <strong>Mata Atlântica</strong> foi a mais devastada (menos de 30% da original). O <strong>fenômeno El Niño</strong> provoca secas no Nordeste e chuvas torrenciais no Sul e Sudeste.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/climate-change-concept-illustration_114360-29745.jpg" alt="Climas e vegetação" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 8. Hidrografia
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/water-cycle-concept-illustration_114360-30358.jpg" alt="Recursos hídricos" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>8. Hidrografia: bacias e aquíferos</h3>
+                    <p>O Brasil possui a maior reserva de água doce do mundo (cerca de 12%), concentrada na <strong>Bacia Amazônica</strong>. Outras bacias importantes: <strong>Tocantins-Araguaia</strong> (a maior inteiramente brasileira), <strong>Paraná</strong> (grande potencial hidrelétrico), <strong>São Francisco</strong> ("rio da integração nacional"). O país também abriga grandes reservas subterrâneas: o <strong>Aquífero Guarani</strong> (compartilhado com Argentina, Paraguai e Uruguai) e o <strong>Aquífero Alter do Chão</strong> (Amazônia). A <strong>transposição do São Francisco</strong> visa levar água a açudes do semiárido. A gestão dos recursos hídricos é regulada pela Política Nacional de Recursos Hídricos (Lei 9.433/1997).</p>
+                </div>
+            </div>`,
+
+            // 9. População e economia
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>9. População, economia regional e complexos geoeconômicos</h3>
+                    <p>A população brasileira (cerca de 203 milhões) é predominantemente urbana e concentrada no Centro-Sul. Milton Santos e Maria Laura Silveira propuseram a divisão em <strong>três complexos regionais</strong>: <strong>Amazônia</strong> (baixa densidade técnica, extrativismo e mineração), <strong>Nordeste</strong> (semiárido com bolsões modernos) e <strong>Centro-Sul</strong> (Região Concentrada, com maior fluidez, indústria e serviços). A <strong>desconcentração industrial</strong> recente levou fábricas para cidades médias e para o Nordeste (ex.: Zona Franca de Manaus). O <strong>IDH</strong> brasileiro reflete essas desigualdades: Sul e Sudeste apresentam indicadores mais altos; Norte e Nordeste, mais baixos. A migração de retorno (nordestinos voltando do Sudeste) tem modificado o perfil demográfico.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/brazil-map-concept-illustration_114360-30579.jpg" alt="Mapa do Brasil" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 10. Questões comentadas
+            `<div class="text-container" style="max-width:100%;">
+                <h3>10. Questões comentadas</h3>
+                <p><strong>Questão 1:</strong> A classificação do relevo brasileiro em planaltos, planícies e depressões foi proposta por: <strong>a)</strong> Aziz Ab'Sáber. <strong>b)</strong> Milton Santos. <strong>c)</strong> Jurandyr Ross. <strong>d)</strong> Ruy Moreira. <strong>Gabarito: C.</strong> Ross elaborou essa classificação na obra "Geografia do Brasil" (2011).</p>
+                <p><strong>Questão 2:</strong> O processo de conurbação ocorre quando: <strong>a)</strong> Uma cidade torna-se metrópole global. <strong>b)</strong> Manchas urbanas de municípios vizinhos se unem formando um contínuo edificado. <strong>c)</strong> A população rural supera a urbana. <strong>d)</strong> Há expansão do agronegócio. <strong>Gabarito: B.</strong> É a união física dos perímetros urbanos.</p>
+                <p><strong>Questão 3:</strong> O Aquífero Guarani está localizado em: <strong>a)</strong> Apenas no Brasil. <strong>b)</strong> Brasil, Argentina, Paraguai e Uruguai. <strong>c)</strong> Amazônia. <strong>d)</strong> Nordeste. <strong>Gabarito: B.</strong> É um aquífero transfronteiriço.</p>
+            </div>`,
+
+            // PÁGINA FINAL
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo sobre dinâmicas urbanas e rurais e a Geografia do Brasil.</p>
+                <p>A integração entre os aspectos físicos e socioeconômicos é a chave para compreender o país e resolver questões de geografia em concursos.</p>
+                <p>Continue lendo Ross (2011), Santos (2006) e a BNCC para aprofundar os temas.</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContentDiv = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContentDiv.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContentDiv.scrollTop) pageContentDiv.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContentDiv.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>
