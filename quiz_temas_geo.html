@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Temas Contemporâneos em Geografia · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🌍 Temas Contemporâneos em Geografia</div>
+        <div class="sub">Economia, Geopolítica e Conflitos · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            type: 'mc',
+            text: "Milton Santos, em 'Por uma outra globalização' (2000), caracteriza o período atual como marcado por três faces da globalização. São elas:",
+            correct: 1,
+            options: [
+                "Integração, desenvolvimento e paz",
+                "Fábula, perversidade e possibilidade",
+                "Mercado, Estado e sociedade civil",
+                "Produção, circulação e consumo"
+            ],
+            justification: "Santos propõe a fábula (como a globalização é contada), a perversidade (como é vivida pelos mais pobres) e a possibilidade (outra globalização, solidária)."
+        },
+        {
+            type: 'tf',
+            text: "O meio técnico-científico-informacional, conceito de Milton Santos (2006), caracteriza-se pela fusão entre ciência, técnica e informação no território, ampliando a fluidez de bens, capitais e informações.",
+            correct: true,
+            justification: "Esse conceito define o atual período histórico, no qual a informação e a tecnologia são centrais ao processo produtivo (Santos, 2006)."
+        },
+        {
+            type: 'mc',
+            text: "A 'tirania do dinheiro' descrita por Milton Santos refere-se:",
+            correct: 3,
+            options: [
+                "À inflação nos países periféricos",
+                "À dependência do comércio internacional",
+                "Ao controle estatal sobre os bancos",
+                "Ao poder do capital financeiro de impor sua lógica a empresas, Estados e territórios"
+            ],
+            justification: "Santos (2000) denuncia que o dinheiro em estado puro comanda a organização do espaço, subordinando todas as esferas da vida."
+        },
+        {
+            type: 'tf',
+            text: "A fluidez territorial promovida pelo meio técnico-científico-informacional é homogênea, beneficiando igualmente todas as regiões do planeta.",
+            correct: false,
+            justification: "A fluidez é seletiva: as regiões mais densas em tecnologia (Sudeste brasileiro, Europa Ocidental) concentram investimentos, enquanto vastas áreas permanecem à margem."
+        },
+        {
+            type: 'mc',
+            text: "A atual Divisão Internacional do Trabalho (DIT) caracteriza-se por:",
+            correct: 1,
+            options: [
+                "Países centrais exportando apenas matérias-primas",
+                "Fragmentação das cadeias produtivas, com peças e componentes fabricados em diversos países",
+                "Fim da especialização produtiva",
+                "Concentração fabril exclusiva nos países periféricos"
+            ],
+            justification: "A DIT contemporânea é marcada pela fragmentação: um mesmo produto (automóvel, celular) tem partes produzidas em dezenas de países."
+        },
+        {
+            type: 'tf',
+            text: "A deslocalização industrial consiste na transferência de fábricas para países com regulação ambiental e trabalhista menos rigorosa, em busca de menores custos.",
+            correct: true,
+            justification: "Empresas transnacionais deslocam suas plantas produtivas para países periféricos onde encontram mão de obra barata e menos exigências ambientais e trabalhistas."
+        },
+        {
+            type: 'mc',
+            text: "A Nova Rota da Seda (Belt and Road Initiative) é um megaprojeto de infraestrutura global liderado por:",
+            correct: 0,
+            options: [
+                "China",
+                "Estados Unidos",
+                "União Europeia",
+                "Rússia"
+            ],
+            justification: "A China financia portos, ferrovias e dutos na Ásia, África e Europa para expandir sua influência econômica e geopolítica."
+        },
+        {
+            type: 'tf',
+            text: "A guerra comercial entre EUA e China, intensificada a partir de 2018, envolveu a imposição mútua de tarifas sobre bilhões de dólares em mercadorias, afetando as cadeias globais de suprimentos.",
+            correct: true,
+            justification: "Ambos os países adotaram sobretaxas em setores estratégicos, provocando impactos nas exportações e na reorganização das cadeias produtivas mundiais."
+        },
+        {
+            type: 'mc',
+            text: "Segundo Vesentini (2013), a Nova Ordem Mundial que emerge após a Guerra Fria é caracterizada pela:",
+            correct: 2,
+            options: [
+                "Bipolaridade rígida entre EUA e China",
+                "Retomada do colonialismo europeu",
+                "Multipolaridade, com novos polos de poder como China, Índia e potências regionais",
+                "Criação de um governo mundial único"
+            ],
+            justification: "Após o colapso da URSS, o sistema internacional tornou-se multipolar, com diversos centros de poder e influência (Vesentini, 2013)."
+        },
+        {
+            type: 'tf',
+            text: "O grupo BRICS (Brasil, Rússia, Índia, China e África do Sul) constitui um bloco de integração profunda, com moeda única e livre circulação de pessoas.",
+            correct: false,
+            justification: "Os BRICS formam um agrupamento de cooperação política e econômica, mas não um bloco de integração profunda. O grupo criou o Novo Banco de Desenvolvimento."
+        },
+        {
+            type: 'mc',
+            text: "O Conselho de Segurança da ONU é composto por 15 membros, dos quais 5 são permanentes com poder de veto. São eles:",
+            correct: 0,
+            options: [
+                "EUA, Rússia, China, França e Reino Unido",
+                "Brasil, Índia, Japão, Alemanha e África do Sul",
+                "Canadá, Austrália, México, Egito e Coreia do Sul",
+                "Itália, Espanha, Portugal, Grécia e Turquia"
+            ],
+            justification: "Os cinco membros permanentes são as potências vencedoras da Segunda Guerra Mundial, que detêm poder de veto (Vesentini, 2013)."
+        },
+        {
+            type: 'tf',
+            text: "A OTAN (Organização do Tratado do Atlântico Norte) foi criada durante a Guerra Fria como aliança militar do bloco socialista, liderada pela União Soviética.",
+            correct: false,
+            justification: "A OTAN é uma aliança militar ocidental criada em 1949, liderada pelos EUA. O bloco socialista formou o Pacto de Varsóvia."
+        },
+        {
+            type: 'mc',
+            text: "A 'guerra híbrida' na geopolítica contemporânea caracteriza-se por:",
+            correct: 3,
+            options: [
+                "Uso exclusivo de armas nucleares",
+                "Batalhas travadas apenas em ambiente marítimo",
+                "Conflitos resolvidos exclusivamente por negociação diplomática",
+                "Combinação de ações militares convencionais com ciberataques, desinformação e pressão econômica"
+            ],
+            justification: "Guerras híbridas mesclam meios militares e não militares para desestabilizar adversários, como apontado por Vesentini (2013)."
+        },
+        {
+            type: 'tf',
+            text: "O conflito no mar do Sul da China envolve disputas territoriais entre China e diversos países do Sudeste Asiático, como Vietnã, Filipinas, Malásia e Brunei.",
+            correct: true,
+            justification: "A China reivindica soberania sobre grande parte do mar do Sul da China, área rica em recursos e rota estratégica, contestada por outros países da região."
+        },
+        {
+            type: 'mc',
+            text: "A 'doutrina Bush', adotada pelos EUA após os ataques de 11 de setembro de 2001, caracterizou-se por:",
+            correct: 2,
+            options: [
+                "Redução drástica dos gastos militares",
+                "Política exclusivamente diplomática e multilateral",
+                "Ação militar preventiva e unilateralismo, sem necessidade de aval de organismos internacionais",
+                "Respeito irrestrito à soberania de todas as nações"
+            ],
+            justification: "A doutrina Bush autorizava ataques preventivos contra supostas ameaças, inclusive sem aval do Conselho de Segurança da ONU (Vesentini, 2013)."
+        },
+        {
+            type: 'tf',
+            text: "O 'soft power', conceito de Joseph Nye, refere-se à capacidade de um país influenciar outros por meio da força militar e de sanções econômicas.",
+            correct: false,
+            justification: "Soft power é a capacidade de influenciar por atração cultural, ideológica e diplomática, e não por coerção (que caracteriza o hard power)."
+        },
+        {
+            type: 'mc',
+            text: "A transição energética mundial cria novas dependências geopolíticas. A produção de baterias elétricas demanda, entre outros minerais:",
+            correct: 1,
+            options: [
+                "Ferro e alumínio",
+                "Lítio, cobalto e terras raras",
+                "Ouro e prata",
+                "Carvão e urânio"
+            ],
+            justification: "Lítio, cobalto e terras raras são minerais estratégicos para baterias e tecnologias limpas, cuja extração está concentrada em poucos países."
+        },
+        {
+            type: 'tf',
+            text: "O Aquífero Guarani é uma reserva de água subterrânea exclusivamente brasileira, localizada na Região Sul do país.",
+            correct: false,
+            justification: "O Aquífero Guarani é transfronteiriço, abrangendo também Argentina, Paraguai e Uruguai, estendendo-se por partes do Centro-Oeste, Sudeste e Sul do Brasil."
+        },
+        {
+            type: 'mc',
+            text: "O conflito na Síria, iniciado em 2011, tornou-se uma 'guerra por procuração' (proxy war) porque:",
+            correct: 0,
+            options: [
+                "Envolveu a intervenção de potências externas que apoiam diferentes lados do conflito",
+                "Foi resolvido exclusivamente pela diplomacia",
+                "Aconteceu sem nenhuma intervenção externa",
+                "Foi um conflito puramente religioso"
+            ],
+            justification: "EUA, Rússia, Irã e Turquia apoiaram diferentes facções na Síria, transformando a guerra civil em um conflito geopolítico mais amplo."
+        },
+        {
+            type: 'tf',
+            text: "O 'capitalismo de vigilância' refere-se ao modelo de negócios de grandes empresas de tecnologia que extraem, processam e monetizam dados pessoais dos usuários.",
+            correct: true,
+            justification: "Big Techs como Google e Facebook acumulam poder ao controlar dados pessoais, o que constitui uma nova forma de poder geopolítico e econômico."
+        },
+        {
+            type: 'mc',
+            text: "A crise dos refugiados sírios, a partir de 2015, impactou principalmente:",
+            correct: 2,
+            options: [
+                "A América Latina",
+                "O Sudeste Asiático",
+                "A União Europeia, gerando tensões políticas e fortalecimento de movimentos xenófobos",
+                "A Oceania"
+            ],
+            justification: "Milhões de sírios buscaram refúgio na Europa, especialmente na Alemanha, gerando debates sobre acolhimento, segurança e identidade nacional."
+        },
+        {
+            type: 'tf',
+            text: "A 'financeirização' do espaço geográfico significa que o capital financeiro passou a comandar a organização do território, subordinando a produção e o consumo à sua lógica.",
+            correct: true,
+            justification: "Segundo Milton Santos (2000), o dinheiro em estado puro tornou-se o motor da organização territorial, impondo uma tirania que afeta empresas, Estados e indivíduos."
+        },
+        {
+            type: 'mc',
+            text: "O que caracteriza um 'Estado falido' na geopolítica contemporânea?",
+            correct: 3,
+            options: [
+                "País com alta produtividade agrícola",
+                "Estado que aboliu suas forças armadas",
+                "Nação sem constituição escrita",
+                "Perda do monopólio legítimo da força e incapacidade de prover serviços básicos à população"
+            ],
+            justification: "Estados falidos não conseguem controlar seu território, garantir segurança ou prestar serviços essenciais à população."
+        },
+        {
+            type: 'tf',
+            text: "A 'balcanização' é o processo de integração supranacional de Estados que se unem para formar um bloco regional coeso.",
+            correct: false,
+            justification: "Balcanização é o oposto: refere-se à fragmentação territorial de um Estado em unidades menores, frequentemente com conflitos étnicos, como ocorreu nos Bálcãs."
+        },
+        {
+            type: 'mc',
+            text: "A expansão do agronegócio no MATOPIBA (Maranhão, Tocantins, Piauí e Bahia) está associada:",
+            correct: 1,
+            options: [
+                "Ao declínio da agricultura no Cerrado",
+                "À expansão da fronteira agrícola, com avanço da soja sobre o Cerrado e impactos ambientais",
+                "À preservação integral do bioma Cerrado",
+                "Ao predomínio da agricultura de subsistência sem tecnologia"
+            ],
+            justification: "O MATOPIBA é a nova fronteira do agronegócio brasileiro, com rápido avanço da soja, pressionando o desmatamento do Cerrado."
+        },
+        {
+            type: 'tf',
+            text: "O protecionismo comercial é uma política que visa reduzir tarifas alfandegárias e eliminar barreiras ao livre comércio entre as nações.",
+            correct: false,
+            justification: "Protecionismo é exatamente o oposto: consiste em aumentar barreiras tarifárias e não tarifárias para proteger a economia nacional da concorrência externa."
+        },
+        {
+            type: 'mc',
+            text: "A 'uberização' do trabalho, fenômeno contemporâneo, caracteriza-se por:",
+            correct: 2,
+            options: [
+                "Formalização de vínculos empregatícios",
+                "Ampliação de direitos trabalhistas",
+                "Precarização do trabalho, ausência de vínculo empregatício e transferência de riscos ao trabalhador",
+                "Redução da jornada de trabalho"
+            ],
+            justification: "A uberização trata o trabalhador como 'empreendedor de si mesmo', eliminando garantias como férias, 13º salário e previdência."
+        },
+        {
+            type: 'tf',
+            text: "As 'fake news' (notícias falsas) são um fenômeno recente, mas sem impacto sobre processos geopolíticos, pois a população é imune à desinformação.",
+            correct: false,
+            justification: "Fake news têm impacto significativo: distorcem o debate público, influenciam eleições e podem desestabilizar governos e instituições."
+        },
+        {
+            type: 'mc',
+            text: "O acordo de Paris (2015) é um tratado internacional que tem como meta central:",
+            correct: 3,
+            options: [
+                "Reduzir tarifas comerciais entre Europa e EUA",
+                "Criar uma moeda única para os países signatários",
+                "Estabelecer cotas de imigração para países desenvolvidos",
+                "Manter o aumento da temperatura global bem abaixo de 2°C, buscando não ultrapassar 1,5°C"
+            ],
+            justification: "O artigo 2º do Acordo de Paris define essa meta climática, com contribuições nacionalmente determinadas (NDCs) a serem revisadas periodicamente."
+        },
+        {
+            type: 'tf',
+            text: "A Organização Mundial do Comércio (OMC) regula o comércio internacional e resolve disputas entre seus membros, tendo substituído o GATT.",
+            correct: true,
+            justification: "A OMC sucedeu o Acordo Geral de Tarifas e Comércio (GATT) e busca assegurar regras comerciais estáveis e previsíveis entre os países-membros."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'verticalidades' de Milton Santos refere-se a:",
+            correct: 0,
+            options: [
+                "Relações hierárquicas entre pontos do território, comandadas por fluxos de informação e capital",
+                "Relações cotidianas de vizinhança e solidariedade local",
+                "A disposição do relevo em camadas",
+                "A hierarquia urbana das cidades globais"
+            ],
+            justification: "Verticalidades são pontos ligados a centros de decisão distantes (empresas, bolsas de valores), que comandam o território à distância (Santos, 2000)."
+        },
+        {
+            type: 'tf',
+            text: "A 'primavera árabe' (2010-2011) foi uma série de protestos cujas causas foram exclusivamente de natureza religiosa, centradas no fundamentalismo islâmico.",
+            correct: false,
+            justification: "As causas foram múltiplas: autoritarismo, desemprego, corrupção e falta de liberdades políticas, além de elementos religiosos em alguns contextos."
+        },
+        {
+            type: 'mc',
+            text: "O 'Brexit' (saída do Reino Unido da União Europeia), decidido em 2016, reflete:",
+            correct: 2,
+            options: [
+                "O fortalecimento do federalismo europeu",
+                "A criação de uma moeda única na Europa",
+                "O crescimento de discursos nacionalistas e de rejeição à integração supranacional",
+                "A expansão da União Europeia para o Leste"
+            ],
+            justification: "O Brexit foi influenciado por movimentos que defendiam a soberania nacional e criticavam a burocracia e as políticas migratórias da UE."
+        },
+        {
+            type: 'tf',
+            text: "As 'cidades globais' como Nova York, Londres e Tóquio são centros de comando da economia mundial, concentrando serviços financeiros e sedes de corporações transnacionais.",
+            correct: true,
+            justification: "Cidades globais são nós da rede mundial de fluxos financeiros, de informações e de decisões corporativas, exercendo influência sobre vastas regiões."
+        },
+        {
+            type: 'mc',
+            text: "A política de 'uma China' é defendida por Pequim e significa que:",
+            correct: 1,
+            options: [
+                "China e Índia unificaram suas fronteiras",
+                "Taiwan é considerada parte inalienável do território chinês",
+                "Hong Kong possui independência política plena",
+                "A China adota um sistema pluripartidário ocidental"
+            ],
+            justification: "A República Popular da China alega soberania sobre Taiwan, onde funciona a República da China, governo com reconhecimento internacional limitado."
+        },
+        {
+            type: 'tf',
+            text: "O 'neocolonialismo' ou 'imperialismo informal' refere-se ao domínio indireto de países periféricos por potências centrais, via dívida externa, controle de commodities e pressão diplomática.",
+            correct: true,
+            justification: "Diferente do colonialismo formal, o neocolonialismo opera por mecanismos econômicos e financeiros que mantêm a dependência dos países periféricos."
+        },
+        {
+            type: 'mc',
+            text: "A 'justiça climática' é um conceito que defende:",
+            correct: 3,
+            options: [
+                "Que todos os países devem reduzir emissões em percentuais idênticos",
+                "Que somente os países ricos devem agir contra a crise climática",
+                "Que o clima não é uma questão de justiça social",
+                "Que os países que menos contribuíram para a crise são os mais vulneráveis e devem receber apoio"
+            ],
+            justification: "A justiça climática aponta a desigualdade entre os maiores emissores históricos de gases de efeito estufa e aqueles que mais sofrem as consequências."
+        },
+        {
+            type: 'tf',
+            text: "A 'obsolescência programada' é uma estratégia de mercado que reduz intencionalmente a vida útil dos produtos, estimulando o consumo e a geração de resíduos.",
+            correct: true,
+            justification: "Eletrônicos, eletrodomésticos e outros bens são projetados para durar menos, obrigando o consumidor a substituí-los com frequência."
+        },
+        {
+            type: 'mc',
+            text: "A 'diáspora venezuelana' dos últimos anos provocou impactos principalmente em quais países vizinhos?",
+            correct: 0,
+            options: [
+                "Colômbia, Peru e Brasil",
+                "Argentina e Chile",
+                "México e Cuba",
+                "Uruguai e Paraguai"
+            ],
+            justification: "Milhões de venezuelanos deixaram o país devido à crise econômica e política, dirigindo-se principalmente para Colômbia, Peru e, em menor escala, Brasil."
+        },
+        {
+            type: 'tf',
+            text: "O 'protecionismo verde' refere-se a medidas ambientais legítimas que todos os países aplicam de forma igualitária, sem impactos sobre o comércio internacional.",
+            correct: false,
+            justification: "O protecionismo verde é criticado quando países ricos usam exigências ambientais como barreiras comerciais disfarçadas contra produtos de países em desenvolvimento."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você domina os temas contemporâneos da Geografia.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Reforce os conceitos de Milton Santos sobre globalização e a geopolítica atual.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas revise os temas de divisão internacional do trabalho, conflitos e recursos estratégicos.';
+        else mensagem = '📚 Sugiro reler Santos (2000, 2006) e Vesentini (2013) para consolidar estes temas.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
