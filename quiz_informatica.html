@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Noções Básicas de Informática · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">💻 Noções Básicas de Informática</div>
+        <div class="sub">Windows, Word, Excel, PowerPoint e Internet · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            type: 'tf',
+            text: "No Windows 10 e 11, a combinação de teclas Ctrl + Alt + Del abre o Gerenciador de Tarefas, que permite finalizar programas que não estão respondendo.",
+            correct: true,
+            justification: "Ctrl + Alt + Del é um atalho clássico que abre uma tela de opções de segurança, incluindo o acesso ao Gerenciador de Tarefas. Em versões recentes do Windows, ele abre um menu com opções como Bloquear, Trocar usuário, Sair e Gerenciador de Tarefas."
+        },
+        {
+            type: 'mc',
+            text: "No Windows, qual é a função do Explorador de Arquivos?",
+            correct: 0,
+            options: [
+                "Gerenciar arquivos e pastas do computador",
+                "Editar textos e imagens",
+                "Controlar as configurações de rede",
+                "Executar backups automáticos"
+            ],
+            justification: "O Explorador de Arquivos (antigo Windows Explorer) é o gerenciador de arquivos padrão do Windows, permitindo navegar, copiar, mover, renomear e excluir arquivos e pastas."
+        },
+        {
+            type: 'tf',
+            text: "A Lixeira do Windows armazena permanentemente os arquivos excluídos, impedindo qualquer tentativa de recuperação.",
+            correct: false,
+            justification: "A Lixeira é uma área temporária onde os arquivos excluídos permanecem até serem removidos definitivamente. É possível restaurá-los de volta ao local original enquanto estiverem na Lixeira."
+        },
+        {
+            type: 'mc',
+            text: "Qual comando no Word é utilizado para localizar uma palavra específica no documento e substituí-la por outra?",
+            correct: 2,
+            options: [
+                "Ctrl + L (Localizar)",
+                "Revisão > Ortografia",
+                "Localizar e Substituir (Ctrl + U)",
+                "Layout > Pesquisar"
+            ],
+            justification: "O recurso 'Localizar e Substituir' (atalho padrão Ctrl + U, embora algumas versões usem Ctrl + Alt + U ou Página Inicial > Substituir) permite buscar termos e trocá-los por outros automaticamente."
+        },
+        {
+            type: 'tf',
+            text: "No Excel, a fórmula =SOMA(A1:A5) calcula o total dos valores contidos nas células A1, A2, A3, A4 e A5.",
+            correct: true,
+            justification: "A função SOMA é uma das mais básicas do Excel. O intervalo A1:A5 inclui todas as células de A1 até A5, e a função retorna a soma aritmética de todos os valores numéricos nesse intervalo."
+        },
+        {
+            type: 'mc',
+            text: "No PowerPoint, qual recurso é usado para aplicar movimento aos objetos de um slide?",
+            correct: 1,
+            options: [
+                "Design de Slides",
+                "Animações",
+                "Layout de Página",
+                "Transições"
+            ],
+            justification: "As Animações são aplicadas a elementos individuais dentro de um slide (textos, imagens, formas), diferentemente das Transições, que são efeitos visuais aplicados à passagem entre slides inteiros."
+        },
+        {
+            type: 'tf',
+            text: "O protocolo HTTPS é uma versão segura do HTTP, que utiliza criptografia para proteger a comunicação entre o navegador e o servidor web.",
+            correct: true,
+            justification: "HTTPS (Hypertext Transfer Protocol Secure) utiliza SSL/TLS para criptografar os dados transmitidos, garantindo confidencialidade e integridade na comunicação entre cliente e servidor."
+        },
+        {
+            type: 'mc',
+            text: "Qual é o software padrão do Windows para acessar e gerenciar e-mails, calendários e contatos?",
+            correct: 0,
+            options: [
+                "Microsoft Outlook",
+                "Windows Mail",
+                "Mozilla Thunderbird",
+                "Gmail"
+            ],
+            justification: "O Microsoft Outlook é o cliente de e-mail padrão integrado ao pacote Microsoft Office, amplamente utilizado em ambientes corporativos e pessoais para gerenciamento de mensagens, calendários e contatos."
+        },
+        {
+            type: 'tf',
+            text: "No Word, a tecla F7 é utilizada para ativar o corretor ortográfico e gramatical do documento.",
+            correct: true,
+            justification: "A tecla F7 aciona a ferramenta de revisão ortográfica e gramatical no Microsoft Word, percorrendo o documento e sugerindo correções para possíveis erros."
+        },
+        {
+            type: 'mc',
+            text: "No Excel, uma referência de célula que utiliza $A$1 é conhecida como:",
+            correct: 1,
+            options: [
+                "Referência relativa",
+                "Referência absoluta",
+                "Referência mista",
+                "Referência híbrida"
+            ],
+            justification: "O símbolo $ antes da letra e do número ($A$1) fixa tanto a coluna quanto a linha, tornando a referência absoluta. Ao copiar a fórmula, essa referência não se altera."
+        },
+        {
+            type: 'tf',
+            text: "O PowerPoint permite que o usuário insira uma narração de áudio nos slides, que pode ser reproduzida durante a apresentação.",
+            correct: true,
+            justification: "O PowerPoint oferece o recurso 'Gravar Narração' (ou 'Inserir Áudio'), permitindo adicionar comentários falados que serão executados junto com os slides durante a apresentação."
+        },
+        {
+            type: 'mc',
+            text: "Qual navegador de internet é desenvolvido pela Microsoft e vem integrado ao sistema operacional Windows?",
+            correct: 3,
+            options: [
+                "Google Chrome",
+                "Mozilla Firefox",
+                "Safari",
+                "Microsoft Edge"
+            ],
+            justification: "O Microsoft Edge é o navegador padrão do Windows 10/11, substituindo o antigo Internet Explorer. É desenvolvido pela Microsoft e utiliza o motor Chromium em suas versões recentes."
+        },
+        {
+            type: 'tf',
+            text: "No Windows, a área de trabalho (desktop) não pode ter seu plano de fundo personalizado pelo usuário.",
+            correct: false,
+            justification: "É possível personalizar o plano de fundo da área de trabalho do Windows, alterando a imagem, a cor sólida ou configurando uma apresentação de slides, por meio das Configurações de Personalização."
+        },
+        {
+            type: 'mc',
+            text: "No Word, para se inserir uma tabela em um documento, deve-se acessar a guia:",
+            correct: 0,
+            options: [
+                "Inserir",
+                "Design",
+                "Layout da Página",
+                "Revisão"
+            ],
+            justification: "A guia 'Inserir' concentra os principais objetos que podem ser adicionados ao documento, incluindo tabelas, imagens, formas, gráficos e outros elementos."
+        },
+        {
+            type: 'tf',
+            text: "A função =MÉDIA(B2:B10) do Excel retorna o valor que aparece com mais frequência no intervalo.",
+            correct: false,
+            justification: "A função =MÉDIA calcula a média aritmética dos valores de um intervalo. A moda (valor mais frequente) é calculada pela função =MODO ou =MODO.ÚNICO, dependendo da versão do Excel."
+        },
+        {
+            type: 'mc',
+            text: "Um arquivo com extensão .pptx corresponde a:",
+            correct: 2,
+            options: [
+                "Um documento de texto do Word",
+                "Uma planilha eletrônica do Excel",
+                "Uma apresentação do PowerPoint",
+                "Um arquivo de imagem"
+            ],
+            justification: "A extensão .pptx identifica arquivos criados no Microsoft PowerPoint a partir da versão 2007, que utilizam o formato XML compactado."
+        },
+        {
+            type: 'tf',
+            text: "O navegador Google Chrome permite a navegação anônima, que não registra o histórico de páginas visitadas nem os cookies durante a sessão.",
+            correct: true,
+            justification: "O modo anônimo (Ctrl + Shift + N) abre uma janela onde o histórico de navegação, cookies e dados de formulários não são armazenados ao fechar a sessão. Downloads e favoritos ainda são salvos."
+        },
+        {
+            type: 'mc',
+            text: "Para selecionar todos os arquivos de uma pasta no Windows, utiliza-se o atalho:",
+            correct: 0,
+            options: [
+                "Ctrl + A",
+                "Ctrl + T",
+                "Ctrl + S",
+                "Ctrl + P"
+            ],
+            justification: "O atalho Ctrl + A é universal no Windows e na maioria dos aplicativos para 'Selecionar Tudo'. Aplica-se a arquivos, textos, células no Excel e outros elementos."
+        },
+        {
+            type: 'tf',
+            text: "No Word, o alinhamento justificado distribui o texto uniformemente entre as margens esquerda e direita, deixando ambas as bordas alinhadas.",
+            correct: true,
+            justification: "O alinhamento justificado (Ctrl + J) ajusta o espaçamento entre palavras para que as linhas do parágrafo ocupem toda a largura entre as margens, alinhando tanto à esquerda quanto à direita."
+        },
+        {
+            type: 'mc',
+            text: "No Excel, para calcular o maior valor em um conjunto de células de A1 a A10, usa-se a função:",
+            correct: 1,
+            options: [
+                "=MIN(A1:A10)",
+                "=MÁXIMO(A1:A10)",
+                "=MAIOR(A1:A10)",
+                "=SOMA(A1:A10)"
+            ],
+            justification: "A função =MÁXIMO retorna o maior valor numérico presente em um intervalo. A função =MAIOR exige um segundo argumento que indica a posição (ex.: =MAIOR(A1:A10;1) também retornaria o maior)."
+        },
+        {
+            type: 'tf',
+            text: "No PowerPoint, é possível configurar a apresentação para avançar os slides automaticamente, sem necessidade de intervenção manual, utilizando o recurso de ensaio de intervalos.",
+            correct: true,
+            justification: "O recurso 'Ensaiar Intervalos' (guia Apresentação de Slides) permite gravar o tempo de exibição de cada slide, e a apresentação pode ser configurada para usar esses intervalos, avançando automaticamente."
+        },
+        {
+            type: 'mc',
+            text: "Qual é a função do firewall em um sistema de computador conectado à internet?",
+            correct: 3,
+            options: [
+                "Aumentar a velocidade de navegação",
+                "Armazenar senhas de usuários",
+                "Compactar arquivos para download",
+                "Monitorar e controlar o tráfego de rede, bloqueando acessos não autorizados"
+            ],
+            justification: "O firewall é um sistema de segurança (software ou hardware) que monitora o tráfego de entrada e saída, filtrando pacotes de dados com base em regras de segurança para bloquear ameaças."
+        },
+        {
+            type: 'tf',
+            text: "O Windows Defender é um antivírus gratuito integrado ao sistema operacional Windows, que oferece proteção contra vírus, malware e outras ameaças.",
+            correct: true,
+            justification: "O Microsoft Defender (anteriormente Windows Defender) é uma solução de segurança integrada ao Windows desde o Windows 7, oferecendo proteção em tempo real, firewall e outras funcionalidades de segurança."
+        },
+        {
+            type: 'mc',
+            text: "No Word, a 'Mala Direta' é um recurso que permite:",
+            correct: 2,
+            options: [
+                "Enviar o documento diretamente por e-mail",
+                "Traduzir o documento para vários idiomas",
+                "Criar documentos personalizados em massa, combinando um modelo com uma lista de destinatários",
+                "Realizar cópias de segurança automáticas"
+            ],
+            justification: "A Mala Direta é um recurso que mescla um documento principal (carta, etiqueta, envelope) com uma fonte de dados (planilha, banco de dados), gerando múltiplos documentos personalizados para cada destinatário."
+        },
+        {
+            type: 'tf',
+            text: "No Excel, a alça de preenchimento (pequeno quadrado no canto inferior direito da célula selecionada) permite copiar o conteúdo ou criar uma sequência numérica rapidamente.",
+            correct: true,
+            justification: "A alça de preenchimento é uma ferramenta que, quando arrastada, copia o conteúdo ou continua sequências lógicas (números, datas, dias da semana), além de copiar fórmulas ajustando referências relativas."
+        },
+        {
+            type: 'mc',
+            text: "Qual extensão de arquivo indica um documento de texto simples (sem formatação) que pode ser aberto em qualquer sistema operacional?",
+            correct: 0,
+            options: [
+                ".txt",
+                ".docx",
+                ".xlsx",
+                ".pptx"
+            ],
+            justification: "Arquivos .txt (texto simples) contêm apenas caracteres de texto, sem formatação, imagens ou outros elementos. São compatíveis com praticamente todos os sistemas operacionais e editores."
+        },
+        {
+            type: 'tf',
+            text: "No Windows, a opção 'Desfragmentar e Otimizar Unidades' reorganiza os arquivos fragmentados no disco rígido para melhorar o desempenho de leitura e gravação.",
+            correct: true,
+            justification: "A desfragmentação reorganiza os dados fragmentados de modo que as partes de um arquivo fiquem contíguas, reduzindo o tempo de acesso do cabeçote de leitura do disco rígido (HD). Não se aplica a SSDs, para os quais é recomendada a otimização."
+        },
+        {
+            type: 'mc',
+            text: "No PowerPoint, a 'Transição' entre slides é configurada na guia:",
+            correct: 3,
+            options: [
+                "Inserir",
+                "Design",
+                "Animações",
+                "Transições"
+            ],
+            justification: "A guia 'Transições' é específica para configurar os efeitos visuais aplicados à passagem de um slide para outro durante a apresentação, como 'Esmaecer', 'Empurrar', 'Revelar', entre outros."
+        },
+        {
+            type: 'tf',
+            text: "O e-mail com o campo 'Cco' (Cópia Carbono Oculta) permite enviar uma cópia da mensagem para destinatários cujos nomes ficam visíveis para todos os outros.",
+            correct: false,
+            justification: "O campo Cco (Cópia Carbono Oculta) envia uma cópia para o destinatário, mas seu nome e e-mail ficam ocultos para todos os outros destinatários da mensagem, preservando a privacidade."
+        },
+        {
+            type: 'mc',
+            text: "No Excel, qual é a finalidade principal da função =PROCV?",
+            correct: 1,
+            options: [
+                "Calcular a média de valores em uma coluna",
+                "Buscar um valor verticalmente em uma tabela e retornar um dado correspondente",
+                "Proteger a planilha com senha",
+                "Criar gráficos dinâmicos"
+            ],
+            justification: "A função PROCV (Procura Vertical) busca um valor na primeira coluna de uma matriz e retorna o conteúdo de uma célula na mesma linha, em uma coluna especificada. É amplamente usada para consultas em tabelas."
+        },
+        {
+            type: 'tf',
+            text: "No Word, as 'Seções' permitem dividir o documento em partes com formatações independentes, como orientações de página, margens e numeração de páginas diferentes.",
+            correct: true,
+            justification: "As quebras de seção no Word permitem que cada parte do documento tenha sua própria configuração de layout (margens, orientação retrato/paisagem, cabeçalhos e rodapés independentes), sendo um recurso avançado de formatação."
+        },
+        {
+            type: 'mc',
+            text: "O que são cookies em navegação na internet?",
+            correct: 2,
+            options: [
+                "Programas que aceleram a conexão",
+                "Vírus que infectam o computador",
+                "Pequenos arquivos de texto armazenados no navegador que guardam informações sobre a visita ao site",
+                "Ferramentas de busca avançada"
+            ],
+            justification: "Cookies são pequenos arquivos enviados por sites e armazenados no navegador do usuário. Eles contêm dados como preferências, itens de carrinho de compras e informações de login, permitindo personalizar a experiência."
+        },
+        {
+            type: 'tf',
+            text: "No Windows, a ferramenta 'Restauração do Sistema' permite reverter o sistema operacional a um estado anterior, desfazendo alterações que possam ter causado problemas.",
+            correct: true,
+            justification: "A Restauração do Sistema cria e gerencia pontos de restauração que contêm informações sobre arquivos do sistema, programas instalados e configurações do registro. Ao restaurar, o Windows volta ao estado daquele ponto específico."
+        },
+        {
+            type: 'mc',
+            text: "Para inserir um gráfico no Excel a partir de dados selecionados, utiliza-se a guia:",
+            correct: 1,
+            options: [
+                "Fórmulas",
+                "Inserir",
+                "Dados",
+                "Revisão"
+            ],
+            justification: "A guia 'Inserir' contém o grupo 'Gráficos', que oferece diversos tipos (Coluna, Linha, Pizza, Barras, Dispersão) para representar visualmente os dados selecionados."
+        },
+        {
+            type: 'tf',
+            text: "No PowerPoint, os slides mestres controlam o layout e a formatação de todos os slides da apresentação, garantindo consistência visual.",
+            correct: true,
+            justification: "O slide mestre é um modelo que define a aparência padrão da apresentação (fontes, cores, plano de fundo, logotipos e placeholders). Alterações feitas no slide mestre se refletem em todos os slides baseados nele."
+        },
+        {
+            type: 'mc',
+            text: "Qual serviço de armazenamento em nuvem é oferecido pela Microsoft e está integrado ao Office 365 e ao Windows?",
+            correct: 0,
+            options: [
+                "OneDrive",
+                "Google Drive",
+                "Dropbox",
+                "iCloud"
+            ],
+            justification: "O OneDrive é o serviço de armazenamento em nuvem da Microsoft, profundamente integrado ao Windows 10/11 e ao Microsoft 365 (antigo Office 365), permitindo salvar e sincronizar arquivos automaticamente."
+        },
+        {
+            type: 'tf',
+            text: "No Word, a tecla de atalho Ctrl + V é usada para recortar o texto selecionado.",
+            correct: false,
+            justification: "Ctrl + V é o atalho para 'Colar' o conteúdo da área de transferência. O atalho para 'Recortar' é Ctrl + X."
+        },
+        {
+            type: 'mc',
+            text: "No Excel, um endereço de e-mail ou uma URL da internet podem ser inseridos em uma célula e, por padrão, tornam-se:",
+            correct: 2,
+            options: [
+                "Texto simples sem formatação",
+                "Uma fórmula de cálculo",
+                "Um hiperlink clicável",
+                "Uma imagem"
+            ],
+            justification: "Por padrão, o Excel converte automaticamente endereços de e-mail e URLs digitados em células em hiperlinks ativos, que podem ser clicados para abrir o programa de e-mail ou o navegador."
+        },
+        {
+            type: 'tf',
+            text: "O protocolo FTP (File Transfer Protocol) é utilizado para navegar em páginas web e exibir seu conteúdo.",
+            correct: false,
+            justification: "O FTP é um protocolo para transferência de arquivos entre computadores em uma rede, permitindo upload e download. A navegação em páginas web utiliza o HTTP ou HTTPS."
+        },
+        {
+            type: 'mc',
+            text: "No Windows, o atalho Alt + Tab é muito utilizado para:",
+            correct: 1,
+            options: [
+                "Fechar o programa ativo",
+                "Alternar entre janelas e aplicativos abertos",
+                "Abrir o menu Iniciar",
+                "Salvar o arquivo atual"
+            ],
+            justification: "Alt + Tab exibe uma miniatura de todas as janelas abertas e permite alternar rapidamente entre elas. É uma das combinações de teclas mais produtivas do Windows."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você domina as noções básicas de informática.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Revise funções do Excel e atalhos do Windows para melhorar ainda mais.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas reforce o estudo de fórmulas do Excel e recursos de navegação na internet.';
+        else mensagem = '📚 Recomendo revisar os conceitos fundamentais de cada programa abordado.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
