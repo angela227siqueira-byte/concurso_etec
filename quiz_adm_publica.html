@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Deliberação Ceeteps nº 23/2015 · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">📋 Deliberação Ceeteps nº 23/2015</div>
+        <div class="sub">Atribuição de aulas nas Escolas Técnicas Estaduais do Centro Paula Souza · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            type: 'tf',
+            text: "A fixação de carga horária para os docentes das Etecs decorre tanto do ato de admissão do docente, segundo o edital do concurso público, quanto do procedimento de atribuição de aulas, nos termos do art. 1º da Deliberação 23/2015.",
+            correct: true,
+            justification: "O art. 1º, I e II, estabelece exatamente estas duas fontes para a fixação da carga horária docente, com obediência aos princípios constitucionais e garantia dos direitos trabalhistas."
+        },
+        {
+            type: 'mc',
+            text: "De acordo com o art. 2º da Deliberação 23/2015, o procedimento de atribuição é composto por três etapas sequenciais. São elas:",
+            correct: 0,
+            options: ["Classificação docente, quadro geral de aulas e ato de atribuição de aulas", "Inscrição, prova didática e entrevista", "Solicitação, análise e homologação", "Publicação do edital, inscrição e classificação"],
+            justification: "O art. 2º elenca: I. classificação docente; II. quadro geral de aulas; III. ato de atribuição de aulas."
+        },
+        {
+            type: 'tf',
+            text: "A classificação docente, prevista no art. 3º da Deliberação, objetiva fixar a posição dos docentes na Escola Técnica, escalonando-os em pontuação numérica crescente, do menor para o maior.",
+            correct: false,
+            justification: "O art. 3º determina que a pontuação é numérica decrescente, ou seja, da maior para a menor pontuação."
+        },
+        {
+            type: 'mc',
+            text: "Nos termos do art. 3º, §1º, a pontuação docente é aferida por uma Comissão de Pontuação e leva em consideração conhecimentos adquiridos, produção acadêmica, experiência profissional e:",
+            correct: 3,
+            options: ["Tempo de magistério exclusivamente", "Apenas títulos de pós-graduação", "Exclusivamente a assiduidade", "Aspectos de assiduidade, pontualidade e eficiência no cumprimento de deveres"],
+            justification: "O §1º menciona expressamente os aspectos de assiduidade, pontualidade e eficiência no cumprimento de deveres como critérios de aferição."
+        },
+        {
+            type: 'tf',
+            text: "Segundo o art. 3º, §2º, a classificação docente deve ser elaborada por curso para o Ensino Técnico e por componente curricular para a Base Nacional Comum e Parte Diversificada do Ensino Médio e Ensino Técnico Integrado ao Médio.",
+            correct: true,
+            justification: "É o que estabelece literalmente o §2º do art. 3º, diferenciando o critério conforme a modalidade de ensino."
+        },
+        {
+            type: 'mc',
+            text: "O Quadro Geral de Aulas, de acordo com o art. 4º, é elaborado por qual autoridade da Escola Técnica?",
+            correct: 1,
+            options: ["Coordenador de Curso", "Diretor de Escola Técnica", "Diretor Superintendente do Ceeteps", "Professor Coordenador de Projetos"],
+            justification: "O caput do art. 4º expressamente atribui ao Diretor de Escola Técnica a elaboração do Quadro Geral de Aulas."
+        },
+        {
+            type: 'tf',
+            text: "O art. 4º, VII, define aulas atribuídas em caráter excepcional como aquelas ofertadas a docentes não habilitados pelo Catálogo de Requisito de Titulação para Docência, apenas em caráter temporário.",
+            correct: true,
+            justification: "O inciso VII define exatamente este conceito, com a finalidade de garantir a totalidade das aulas do plano de curso até que docente habilitado assuma ou seja contratado."
+        },
+        {
+            type: 'mc',
+            text: "A Comissão de Pontuação Docente, conforme o art. 5º, será presidida pelo:",
+            correct: 2,
+            options: ["Diretor da Escola Técnica", "Professor mais antigo da unidade", "Diretor de Serviço da Área Administrativa", "Supervisor Educacional"],
+            justification: "O caput do art. 5º estabelece que a Comissão será presidida pelo Diretor de Serviço da Área Administrativa e composta por professores com contrato por prazo indeterminado."
+        },
+        {
+            type: 'tf',
+            text: "Conforme o art. 5º, §1º, a Comissão de Pontuação Docente é constituída por meio de Portaria do Diretor de Escola Técnica.",
+            correct: true,
+            justification: "O §1º do art. 5º determina que a constituição da Comissão se dá por meio de Portaria do Diretor de Escola Técnica."
+        },
+        {
+            type: 'mc',
+            text: "O art. 6º estabelece que compete exclusivamente ao docente protocolar na Escola Técnica a documentação para análise classificatória até qual data?",
+            correct: 0,
+            options: ["Até o dia 30 de setembro de cada ano", "Até o dia 31 de outubro de cada ano", "Até o dia 30 de novembro de cada ano", "Até o dia 31 de dezembro de cada ano"],
+            justification: "O caput do art. 6º fixa o prazo de 30 de setembro de cada ano para protocolo da documentação classificatória."
+        },
+        {
+            type: 'tf',
+            text: "Caso o docente não protocole qualquer documento para análise classificatória, a comissão deverá desclassificá-lo automaticamente do processo de atribuição.",
+            correct: false,
+            justification: "O parágrafo único do art. 6º estabelece que, na hipótese de não ter sido protocolado qualquer documento, será utilizada a documentação já existente na Escola Técnica para fins de análise classificatória."
+        },
+        {
+            type: 'mc',
+            text: "Nos termos do art. 7º, a Classificação Docente será publicada até qual prazo e valerá para quantas atribuições?",
+            correct: 2,
+            options: ["Até o 5º dia útil de novembro; uma atribuição", "Até o 10º dia útil de outubro; três atribuições", "Até o 10º dia útil de novembro; duas próximas atribuições", "Até o 20º dia útil de dezembro; quatro atribuições"],
+            justification: "O art. 7º dispõe que a classificação será publicada até o 10º dia útil de novembro e será utilizada para as duas próximas atribuições de aulas e para as aulas que surgirem ao longo do período letivo."
+        },
+        {
+            type: 'tf',
+            text: "Segundo o art. 8º, o docente pode interpor pedido revisional de sua classificação no prazo de 3 (três) dias úteis contados da publicação, com indicação e justificativa do inconformismo.",
+            correct: true,
+            justification: "É o que expressamente dispõe o art. 8º: prazo de 3 dias úteis, com indicação e justificativa do inconformismo, dirigido ao Diretor da Escola Técnica."
+        },
+        {
+            type: 'mc',
+            text: "O ato administrativo de Atribuição de Aulas, conforme o art. 9º, compete ao Diretor de Escola Técnica e acontecerá em que momento?",
+            correct: 1,
+            options: ["No primeiro dia do ano letivo", "No primeiro dia útil após o Conselho de Classe Final", "No dia 15 de fevereiro de cada ano", "Após a publicação do calendário escolar"],
+            justification: "O caput do art. 9º determina que o ato de atribuição acontecerá no primeiro dia útil após o Conselho de Classe Final do respectivo ano ou semestre letivo."
+        },
+        {
+            type: 'tf',
+            text: "Conforme o art. 9º, §1º, constitui formalidade essencial para o ato de atribuição de aulas a juntada, por parte do docente, de declaração sobre sua situação funcional de acumulação de empregos e cargos públicos.",
+            correct: true,
+            justification: "O §1º do art. 9º estabelece esta formalidade essencial, abrangendo declaração sobre acumulação de cargos públicos, limite e compatibilidade de carga horária."
+        },
+        {
+            type: 'mc',
+            text: "O art. 9º, §5º, estabelece que o ato de atribuição de aulas pode resultar em alterações das condições de trabalho do docente relacionadas à carga horária. Essas alterações podem ser de quais tipos?",
+            correct: 0,
+            options: ["Ampliação, manutenção, redução ou recomposição", "Apenas ampliação e redução", "Somente manutenção e recomposição", "Exclusivamente ampliação e manutenção"],
+            justification: "O §5º enumera exatamente quatro possibilidades: ampliação, manutenção, redução ou recomposição de carga horária."
+        },
+        {
+            type: 'tf',
+            text: "O art. 10, V, define redução voluntária como o pedido expresso do docente em aumentar o número de aulas livres de sua carga horária.",
+            correct: false,
+            justification: "O inciso V do art. 10 define redução voluntária como o pedido expresso do docente em diminuir o número de aulas livres de sua carga horária, e não aumentar."
+        },
+        {
+            type: 'mc',
+            text: "Nos termos do art. 10, IV, a redução involuntária da carga horária é a diminuição do quantitativo das aulas livres do docente decorrente da:",
+            correct: 2,
+            options: ["Solicitação expressa do professor", "Punição por falta disciplinar", "Redução do quantitativo do Quadro Geral de Aulas", "Mudança de componente curricular pelo docente"],
+            justification: "O inciso IV do art. 10 define a redução involuntária como aquela oriunda da redução do quantitativo do Quadro Geral de Aulas."
+        },
+        {
+            type: 'tf',
+            text: "De acordo com o art. 10, VI, o docente que solicitar a redução voluntária de carga horária mantém o direito à recomposição posterior.",
+            correct: false,
+            justification: "O inciso VI do art. 10 é categórico: não haverá a recomposição da carga horária do docente que solicitar a redução voluntária."
+        },
+        {
+            type: 'mc',
+            text: "O art. 11 estabelece a ordem de prioridade para atribuição das aulas livres que surgirem após a atribuição inicial. Qual é a primeira prioridade?",
+            correct: 0,
+            options: ["Docentes contratados por prazo indeterminado para recomposição de carga horária decorrente de redução involuntária", "Docentes de outras unidades de ensino", "Docentes com contrato por prazo determinado", "Docentes que solicitaram redução voluntária na última atribuição"],
+            justification: "O inciso I do art. 11 fixa como primeira prioridade os docentes contratados por prazo indeterminado para recomposição de carga horária decorrente de redução involuntária."
+        },
+        {
+            type: 'tf',
+            text: "O art. 12 da Deliberação trata da hipótese de o docente manifestar interesse em ampliar sua carga horária em outra Escola Técnica, cabendo à Escola Técnica Sede viabilizar os procedimentos necessários.",
+            correct: true,
+            justification: "É o que dispõe o caput do art. 12, atribuindo à Escola Técnica Sede a responsabilidade de viabilizar o encaminhamento da documentação."
+        },
+        {
+            type: 'mc',
+            text: "Segundo o art. 13, o ato de atribuição de aulas deve observar uma ordem de prioridades. Entre as listadas abaixo, qual é a primeira?",
+            correct: 3,
+            options: ["Docentes de outras U.Es. contratados por prazo indeterminado", "Docentes contratados por prazo determinado", "Docentes licenciados e graduados da própria U.E.", "A classificação do docente na Unidade de Ensino"],
+            justification: "O inciso I do art. 13 estabelece como primeira providência a classificação do docente na Unidade de Ensino."
+        },
+        {
+            type: 'tf',
+            text: "O art. 13, parágrafo único, concede ao docente que se sentir prejudicado com sua atribuição o direito de apresentar pedido revisional no prazo de 5 (cinco) dias úteis, a contar do ato de atribuição.",
+            correct: false,
+            justification: "O parágrafo único do art. 13 fixa o prazo de 3 (três) dias úteis, e não 5 (cinco), para apresentação do pedido revisional."
+        },
+        {
+            type: 'mc',
+            text: "O art. 14 da Deliberação estabelece vedação ao docente de ter atribuído número de aulas acima do limite legal. Qual a consequência prevista no §2º para o descumprimento?",
+            correct: 1,
+            options: ["Advertência verbal", "Hipótese de prática de improbidade prevista na alínea 'a' do art. 482 da CLT, sendo nula a atribuição", "Apenas redução da carga horária excedente", "Exclusivamente multa administrativa"],
+            justification: "O §2º do art. 14 declara que a contrariedade constitui hipótese de improbidade prevista na alínea 'a' do art. 482 da CLT e nula será a atribuição de aulas."
+        },
+        {
+            type: 'tf',
+            text: "O art. 15 da Deliberação garante ao docente contratado por prazo indeterminado e afastado nos termos das normas do Ceeteps o direito de ter seu horário de trabalho assegurado na eventualidade de cessação do afastamento.",
+            correct: true,
+            justification: "O caput do art. 15 estabelece exatamente esta garantia, protegendo o horário de trabalho do docente afastado quando cessado o afastamento."
+        },
+        {
+            type: 'mc',
+            text: "De acordo com o art. 15, §1º, as aulas atribuídas em substituição:",
+            correct: 3,
+            options: ["Garantem ao substituto o direito à efetivação na vaga", "Configuram direito adquirido após 6 meses", "São automaticamente convertidas em aulas livres", "Não configuram, para o docente substituto, direito à retenção das mesmas quando cessadas as razões da substituição"],
+            justification: "O §1º do art. 15 é claro: as aulas em substituição não conferem ao substituto direito à retenção das aulas quando findo o prazo ou cessadas as razões da substituição."
+        },
+        {
+            type: 'tf',
+            text: "Segundo o art. 15, §4º, será considerada redução voluntária de carga horária a recusa do docente em aceitar a atribuição de aulas disponíveis para serem ministradas em períodos fora da disponibilidade de horário declarada.",
+            correct: true,
+            justification: "O §4º estabelece exatamente que a recusa em aceitar aulas disponíveis em períodos fora da disponibilidade declarada configura redução voluntária de carga horária."
+        },
+        {
+            type: 'mc',
+            text: "O art. 16 determina que a definição do horário das aulas compete ao Diretor de Escola Técnica, auxiliado pelo:",
+            correct: 0,
+            options: ["Coordenador de Curso e pelo Professor Coordenador de Projetos responsável pela Coordenação Pedagógica", "Apenas pelo Coordenador de Curso", "Somente pelo Diretor de Serviço da Área Administrativa", "Exclusivamente pelo Supervisor Educacional"],
+            justification: "O art. 16 especifica que o Diretor é auxiliado pelo Coordenador de Curso e pelo Professor Coordenador de Projetos Responsável pela Coordenação Pedagógica."
+        },
+        {
+            type: 'tf',
+            text: "O art. 17 atribui à Unidade de Recursos Humanos a competência para orientar as unidades quanto aos impactos decorrentes do ato de atribuição de aulas, incluindo afastamentos, suspensão, rescisão, acumulação de função e transferência de Escola Sede.",
+            correct: true,
+            justification: "É exatamente o rol de matérias que o art. 17 atribui à Unidade de Recursos Humanos para orientação das unidades."
+        },
+        {
+            type: 'mc',
+            text: "O art. 18 da Deliberação 23/2015 prevê que a matéria será regulamentada por:",
+            correct: 1,
+            options: ["Decreto do Governador do Estado", "Portaria da Unidade do Ensino Médio e Técnico", "Resolução do Conselho Estadual de Educação", "Instrução Normativa da Procuradoria Geral do Estado"],
+            justification: "O art. 18 determina que a Deliberação será regulamentada por Portaria da Unidade do Ensino Médio e Técnico."
+        },
+        {
+            type: 'tf',
+            text: "A Deliberação Ceeteps nº 23 foi publicada originalmente no Diário Oficial do Estado de São Paulo em 19 de setembro de 2015 e retificada em 23 de setembro de 2015.",
+            correct: true,
+            justification: "Conforme consta da parte final da Deliberação, a publicação ocorreu no DOE de 19/09/2015, Seção I, pág. 80, com retificação em 23/09/2015."
+        },
+        {
+            type: 'mc',
+            text: "Segundo o art. 10, III, a manutenção da carga horária do docente é definida como:",
+            correct: 2,
+            options: ["O aumento da quantidade de aulas livres", "A diminuição do número de aulas", "A continuidade do maior número de aulas livres atribuídas no ano ou semestre letivo anterior", "A atribuição de novas disciplinas ao docente"],
+            justification: "O inciso III define manutenção como a continuidade do maior número de aulas livres atribuídas ao docente no ano ou semestre letivo anterior."
+        },
+        {
+            type: 'tf',
+            text: "Nos termos do art. 11, os docentes com contrato por prazo determinado têm prioridade sobre os docentes contratados por prazo indeterminado na atribuição de aulas livres que surgirem após a atribuição inicial.",
+            correct: false,
+            justification: "O art. 11 estabelece ordem de prioridade inversa: primeiro os contratados por prazo indeterminado (incisos I a IV), e somente depois os contratados por prazo determinado (inciso V)."
+        },
+        {
+            type: 'mc',
+            text: "O art. 4º, parágrafo único, estabelece que o Quadro Geral de Aulas será divulgado:",
+            correct: 3,
+            options: ["Anualmente para todas as modalidades", "Semestralmente para todas as modalidades", "Mensalmente para o Ensino Médio e anualmente para o Ensino Técnico", "Antes da atribuição semestral para o Ensino Técnico e anual para o Ensino Médio e Ensino Técnico Integrado ao Médio"],
+            justification: "O parágrafo único do art. 4º diferencia a periodicidade: semestral para o Ensino Técnico e anual para o Ensino Médio e Ensino Técnico Integrado ao Médio."
+        },
+        {
+            type: 'tf',
+            text: "O art. 10, I, define calendário escolar como o ato do Diretor de Escola Técnica, homologado pelo Grupo de Supervisão Educacional, que estabelece a previsão cronológica das atividades da Unidade de Ensino durante o semestre ou ano letivo.",
+            correct: true,
+            justification: "É a definição exata do inciso I do art. 10, exigindo consulta à comunidade escolar e homologação pelo Grupo de Supervisão Educacional."
+        },
+        {
+            type: 'mc',
+            text: "Segundo o art. 3º, §3º, as listas de classificação deverão ser distintas, contemplando:",
+            correct: 2,
+            options: ["Apenas docentes licenciados", "Exclusivamente docentes graduados", "Docentes licenciados e graduados e os contratados por prazo indeterminado e determinado", "Somente docentes com doutorado e mestrado"],
+            justification: "O §3º do art. 3º determina que as listas de classificação contemplem distintamente docentes licenciados e graduados e os contratados por prazo indeterminado e determinado."
+        },
+        {
+            type: 'tf',
+            text: "Conforme o art. 9º, §3º, o Diretor de Escola Técnica, em caso de dúvidas sobre docentes em situação de acúmulo, deverá solicitar manifestação conclusiva da Unidade de Recursos Humanos.",
+            correct: true,
+            justification: "O §3º do art. 9º impõe ao Diretor da Escola o dever de solicitar manifestação conclusiva da Unidade de Recursos Humanos em caso de dúvidas sobre acumulação de cargos e compatibilidade de horários."
+        },
+        {
+            type: 'mc',
+            text: "O art. 4º, V, define aulas em substituição como:",
+            correct: 0,
+            options: ["Aquelas que já foram atribuídas a um docente afastado, total ou parcialmente, de sua função", "Aulas ainda não atribuídas a nenhum docente", "Aulas de reforço escolar", "Aulas ministradas em laboratórios"],
+            justification: "O inciso V do art. 4º define aulas em substituição como aquelas que já foram atribuídas a um docente afastado, total ou parcialmente, de sua função."
+        },
+        {
+            type: 'tf',
+            text: "De acordo com o art. 10, VIII, o Catálogo de Requisitos de Titulação para Docência é o documento que estabelece, para cada componente curricular do curso, a correspondente titulação dos docentes em condições de ministrá-los.",
+            correct: true,
+            justification: "É exatamente a definição do inciso VIII do art. 10, estabelecendo a vinculação entre titulação e habilitação para ministrar cada componente curricular."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você domina os principais dispositivos da Deliberação Ceeteps 23/2015.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Reforce os prazos e as etapas do procedimento de atribuição.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas releia os arts. 9 a 15, que tratam do ato de atribuição e da ordem de prioridades.';
+        else mensagem = '📚 Recomendo ler a íntegra da Deliberação 23/2015, especialmente os arts. 3, 4, 9, 10, 11 e 13.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
