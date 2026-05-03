@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Decreto nº 68.155/2023 (Regulamento da LAI no Estado de São Paulo) · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">📜 Regulamento da LAI no Estado de São Paulo</div>
+        <div class="sub">Decreto nº 68.155, de 18 de dezembro de 2023 · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Decreto nº 68.155/2023) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: "O Decreto nº 68.155/2023 regulamenta a Lei Federal nº 12.527/2011 exclusivamente no âmbito do Poder Executivo do Estado de São Paulo.",
+            correct: true,
+            justification: "O art. 1º do Decreto delimita seu âmbito aos órgãos e entidades da administração pública estadual direta e indireta do Poder Executivo."
+        },
+        {
+            type: 'mc',
+            text: "Nos termos do Decreto nº 68.155/2023, qual órgão é responsável pelo monitoramento da implementação da LAI no âmbito do Estado de São Paulo?",
+            correct: 1,
+            options: [
+                "Secretaria da Fazenda e Planejamento",
+                "Controladoria Geral do Estado (CGE)",
+                "Secretaria de Governo",
+                "Procuradoria Geral do Estado (PGE)"
+            ],
+            justification: "O Decreto atribui à Controladoria Geral do Estado (CGE) a função de monitorar a aplicação da LAI, orientar órgãos e consolidar estatísticas (art. 45 e seguintes)."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto prevê a criação do Serviço de Informações ao Cidadão (SIC) em todos os órgãos e entidades do Poder Executivo Estadual, em até 60 dias da publicação do decreto.",
+            correct: false,
+            justification: "O Decreto prevê os SICs, mas o prazo de adequação e o atendimento presencial devem observar o cronograma estabelecido pela CGE e o princípio da eficiência, sem um prazo único e fixo de 60 dias para todos os órgãos."
+        },
+        {
+            type: 'mc',
+            text: "No âmbito do Estado de São Paulo, o recurso contra negativa de acesso à informação, em primeira instância, deve ser dirigido:",
+            correct: 3,
+            options: [
+                "Ao Ouvidor Geral do Estado",
+                "Ao Chefe do SIC do órgão",
+                "À Controladoria Geral do Estado",
+                "À autoridade hierarquicamente superior à que proferiu a decisão"
+            ],
+            justification: "O Decreto, alinhado ao art. 15 da LAI, estabelece que o recurso de primeira instância se dirige à autoridade hierarquicamente superior àquela que negou a informação."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto prevê que, esgotadas as instâncias recursais administrativas, o requerente pode apresentar recurso à Comissão Estadual de Acesso à Informação (CEAI).",
+            correct: true,
+            justification: "O Decreto institui a CEAI como instância recursal final dentro do âmbito administrativo estadual, conforme arts. 33 a 36."
+        },
+        {
+            type: 'mc',
+            text: "A Comissão Estadual de Acesso à Informação (CEAI), criada pelo Decreto, tem sua composição definida como:",
+            correct: 2,
+            options: [
+                "Exclusivamente por membros da sociedade civil",
+                "Apenas por servidores da Controladoria Geral do Estado",
+                "Órgão colegiado composto por representantes de diferentes Secretarias de Estado e da sociedade civil",
+                "Comissão unicamente formada por Desembargadores do Tribunal de Justiça"
+            ],
+            justification: "O Decreto estabelece uma composição mista, com membros do poder público e representantes da sociedade civil organizada (arts. 33-35)."
+        },
+        {
+            type: 'tf',
+            text: "No âmbito do Decreto, a autoridade máxima do órgão ou entidade pode delegar a competência de classificação de informação no grau ultrassecreto.",
+            correct: true,
+            justification: "Seguindo a lógica da LAI (art. 27, §1º), o Decreto permite a delegação para classificação de informações, embora a subdelegação seja vedada."
+        },
+        {
+            type: 'mc',
+            text: "De acordo com o Decreto, qual o prazo para resposta ao pedido de acesso à informação, nos mesmos moldes da Lei Federal?",
+            correct: 2,
+            options: [
+                "10 (dez) dias",
+                "5 (cinco) dias",
+                "20 (vinte) dias, prorrogáveis por mais 10 (dez) dias",
+                "30 (dias), prorrogáveis por mais 20 (vinte) dias"
+            ],
+            justification: "O prazo de 20 dias prorrogáveis por mais 10 dias, estabelecido pelo art. 11 da LAI, é replicado no Decreto."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto nº 68.155/2023 veda expressamente a exigência de justificativa para o pedido de acesso à informação, conforme o princípio de que a informação pública pertence ao cidadão e não ao Estado.",
+            correct: true,
+            justification: "Em consonância com o art. 10, §3º, da LAI, o Decreto proíbe que se exija do requerente os motivos determinantes da sua solicitação."
+        },
+        {
+            type: 'mc',
+            text: "De acordo com o Decreto, as informações pessoais relativas à vida privada e à intimidade terão restrição de acesso pelo prazo máximo de:",
+            correct: 1,
+            options: [
+                "50 (cinquenta) anos",
+                "100 (cem) anos",
+                "Permanente, sem possibilidade de acesso",
+                "25 (vinte e cinco) anos"
+            ],
+            justification: "Seguindo o art. 31 da LAI, o Decreto mantém o prazo máximo de restrição de 100 anos para as informações pessoais."
+        },
+        {
+            type: 'tf',
+            text: "A divulgação de informações sobre licitações e contratos administrativos no Portal da Transparência do Estado de São Paulo é exemplo de transparência ativa, conforme determina o Decreto.",
+            correct: true,
+            justification: "O Decreto, em seu art. 5º e seguintes, detalha as obrigações de transparência ativa, que incluem a divulgação de contratos, licitações, repasses e convênios nos portais oficiais."
+        },
+        {
+            type: 'mc',
+            text: "O Decreto estabelece que o Serviço de Informações ao Cidadão (SIC) no Estado de São Paulo deve funcionar:",
+            correct: 0,
+            options: [
+                "Em unidades físicas e também por meio eletrônico, preferencialmente via internet",
+                "Exclusivamente por telefone",
+                "Apenas mediante agendamento presencial",
+                "Somente em formato físico e por correspondência"
+            ],
+            justification: "O Decreto determina a instituição de SICs físicos em cada órgão ou entidade, com atendimento presencial, além do sistema eletrônico unificado para pedidos de informação."
+        },
+        {
+            type: 'tf',
+            text: "O pedido de acesso à informação formulado com base no Decreto pode ser negado se a informação requerida for genérica, desproporcional ou desarrazoada, ou exigir trabalhos adicionais de consolidação de dados não disponíveis.",
+            correct: false,
+            justification: "De acordo com o art. 13 da LAI e o entendimento adotado pelo Decreto, pedidos genéricos podem ser rejeitados, assim como os que exijam trabalhos adicionais de análise ou consolidação que não estejam prontamente disponíveis."
+        },
+        {
+            type: 'mc',
+            text: "No contexto do Decreto estadual, a autoridade de monitoramento da LAI é exercida pela CGE. Qual das alternativas NÃO é uma de suas atribuições?",
+            correct: 3,
+            options: [
+                "Orientar as unidades sobre o cumprimento da LAI",
+                "Consolidar e divulgar estatísticas anuais dos pedidos de acesso à informação",
+                "Recomendar medidas para aperfeiçoar a transparência",
+                "Decidir de forma terminativa sobre a concessão de habite-se em obras públicas"
+            ],
+            justification: "As atribuições da CGE elencadas no Decreto incluem orientação, monitoramento e consolidação estatística, jamais alcançando funções de aprovação de projetos de construção civil como a concessão de habite-se."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto nº 68.155/2023 estabelece que, em caso de extravio ou destruição de informação pública, o órgão deverá instaurar sindicância para apurar responsabilidade, além de comunicar o fato ao requerente.",
+            correct: true,
+            justification: "Em consonância com os princípios da LAI, o Decreto determina que a destruição não autorizada de documentos ou informações públicas deve ser objeto de apuração imediata."
+        },
+        {
+            type: 'mc',
+            text: "A negativa de acesso à informação deve ser comunicada ao requerente com:",
+            correct: 2,
+            options: [
+                "Uma justificativa verbal simples",
+                "Apenas a negativa, sem fundamentação",
+                "A fundamentação legal, as razões da negativa e as informações sobre possibilidade de recurso",
+                "Um formulário para ser preenchido e entregue pessoalmente"
+            ],
+            justification: "O art. 14 da LAI e o Decreto determinam que a negativa deve conter fundamentação legal e fática, além de informar sobre prazos e órgãos para interposição de recurso."
+        },
+        {
+            type: 'tf',
+            text: "As audiências públicas para discussão de políticas de transparência são obrigatórias, segundo o Decreto, em todos os órgãos estaduais de forma semestral.",
+            correct: false,
+            justification: "O Decreto incentiva a participação social, mas não impõe uma obrigação semestral de audiências públicas em todos os órgãos. Ele prevê mecanismos de consulta pública quando pertinente."
+        },
+        {
+            type: 'mc',
+            text: "O Decreto determina que cada órgão ou entidade designe um responsável pela implementação da LAI, conhecido como:",
+            correct: 1,
+            options: [
+                "Ouvidor Setorial",
+                "Autoridade de Monitoramento da LAI no órgão",
+                "Delegado de Polícia",
+                "Chefe de Gabinete"
+            ],
+            justification: "Cada órgão e entidade deve designar um servidor ou unidade responsável por coordenar o atendimento, a tramitação e o monitoramento dos pedidos de acesso à informação (Autoridade de Monitoramento local)."
+        },
+        {
+            type: 'tf',
+            text: "A CEAI julga os recursos contra negativa de acesso à informação no âmbito estadual e suas decisões podem ser questionadas diretamente na via judicial, sem necessidade de trânsito em julgado administrativo.",
+            correct: false,
+            justification: "A decisão da CEAI é a última instância administrativa. O acesso ao Judiciário é possível, mas a decisão da CEAI encerra a via administrativa. Não é necessário 'questionar diretamente na via judicial' como substituto ao recurso administrativo; o caminho judicial é paralelo e pode ser acionado a qualquer tempo, independentemente do esgotamento da via administrativa."
+        },
+        {
+            type: 'mc',
+            text: "O Decreto define que a publicação de dados abertos pelos órgãos estaduais deve seguir o princípio de:",
+            correct: 3,
+            options: [
+                "Restrição máxima com sigilo automático",
+                "Formato exclusivamente PDF",
+                "Publicação apenas mediante solicitação",
+                "Dados abertos, legíveis por máquina e em formatos reutilizáveis"
+            ],
+            justification: "Em conformidade com as diretrizes nacionais, o Decreto orienta a transparência ativa por meio de formatos abertos, que permitam o processamento automatizado e a reutilização dos dados."
+        },
+        {
+            type: 'tf',
+            text: "A classificação de informação no grau secreto, no âmbito do Poder Executivo do Estado de São Paulo, compete exclusivamente ao Chefe do Poder Executivo (Governador).",
+            correct: false,
+            justification: "De acordo com o art. 27 da LAI, a competência para classificar como secreto alcança também autoridades como Secretários de Estado, Chefes de Missões Diplomáticas e Comandantes das Forças Armadas, conforme aplicável à esfera estadual e reproduzido pelo Decreto."
+        },
+        {
+            type: 'mc',
+            text: "Em relação à proteção de dados pessoais, o Decreto nº 68.155/2023 estabelece que:",
+            correct: 2,
+            options: [
+                "Todo dado pessoal deve ser público",
+                "A LAI não se aplica a dados pessoais em hipótese alguma",
+                "O tratamento de dados pessoais deve respeitar a Lei Geral de Proteção de Dados (LGPD), preservando a intimidade e a privacidade",
+                "Os dados pessoais podem ser divulgados sem restrição após 5 anos"
+            ],
+            justification: "O Decreto reconhece a interface entre a LAI e a LGPD, determinando que os dados pessoais contidos em documentos públicos só podem ser acessados conforme as hipóteses legais e com respeito à privacidade."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto permite que a Controladoria Geral do Estado (CGE) recomende a abertura de sindicância ou processo administrativo disciplinar contra agentes públicos que descumprirem a LAI.",
+            correct: true,
+            justification: "Entre as atribuições da CGE está recomendar medidas corretivas e a apuração de responsabilidades por descumprimentos, podendo sugerir a instauração de sindicâncias."
+        },
+        {
+            type: 'mc',
+            text: "Segundo a redação do Decreto, o sistema eletrônico estadual de pedidos de acesso à informação deve possibilitar, entre outros:",
+            correct: 0,
+            options: [
+                "O registro e acompanhamento do pedido, a resposta eletrônica e a interposição de recursos",
+                "Apenas o envio do pedido, sem acompanhamento",
+                "Exclusivamente pedidos feitos por escrito em papel timbrado",
+                "A divulgação automática de todos os pedidos e dados pessoais dos requerentes"
+            ],
+            justification: "O Decreto prevê um sistema informatizado único que permita ao cidadão protocolar, acompanhar e recorrer dos seus pedidos pela internet."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto nº 68.155/2023 revogou expressamente o Decreto estadual nº 58.052/2012, que anteriormente regulamentava a LAI em São Paulo.",
+            correct: true,
+            justification: "O art. 62 do Decreto 68.155/2023 revoga expressamente o Decreto 58.052/2012, consolidando a nova regulamentação da LAI no estado."
+        },
+        {
+            type: 'mc',
+            text: "Quando um pedido de informação contém dados parcialmente sigilosos, o procedimento a ser adotado pelo órgão, conforme o Decreto, é:",
+            correct: 1,
+            options: [
+                "Negar o pedido integralmente",
+                "Conceder o acesso à parte não sigilosa, ocultando a parte sigilosa",
+                "Solicitar autorização judicial para divulgação",
+                "Transformar todo o documento em informação reservada"
+            ],
+            justification: "A LAI e o Decreto garantem o acesso à parte não sigilosa de documentos, por meio de tarjamento ou extração da parte pública (art. 7º, §2º, da LAI)."
+        },
+        {
+            type: 'tf',
+            text: "O rol de informações desclassificadas e classificadas deve ser publicado anualmente pela autoridade máxima de cada órgão, conforme determina expressamente o Decreto, em cumprimento ao art. 30 da LAI.",
+            correct: true,
+            justification: "O art. 30 da LAI é de observância obrigatória e replicado no Decreto, determinando a publicação anual do rol de documentos desclassificados e do rol de documentos classificados."
+        },
+        {
+            type: 'mc',
+            text: "O prazo máximo para classificação de uma informação como ultrassecreta é de:",
+            correct: 2,
+            options: [
+                "15 (quinze anos)",
+                "5 (cinco) anos",
+                "25 (vinte e cinco) anos",
+                "100 (cem) anos"
+            ],
+            justification: "De acordo com o art. 24, §1º, I, da LAI, o prazo para a classificação ultrassecreta é de 25 (vinte e cinco) anos."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto permite a cobrança de taxa para ressarcimento de custos de reprodução de documentos, mas isenta de pagamento aqueles que não possuem condições financeiras de arcar com o valor, nos termos da lei.",
+            correct: true,
+            justification: "O Decreto reproduz a previsão legal de cobrança apenas dos custos de reprodução de documentos, garantindo isenção aos hipossuficientes, conforme art. 12 da LAI."
+        },
+        {
+            type: 'mc',
+            text: "Caso um agente público destrua ou oculte informação solicitada com o fim de impedir o acesso, ele estará sujeito, segundo a LAI e o Decreto, a:",
+            correct: 3,
+            options: [
+                "Advertência verbal apenas",
+                "Isenção de responsabilidade se for servidor efetivo",
+                "Multa administrativa simples",
+                "Responsabilização por improbidade administrativa, sem prejuízo de sanções penais e civis"
+            ],
+            justification: "A destruição ou ocultação de documentos públicos constitui ato de improbidade administrativa e pode configurar crime tipificado na Lei de Arquivos (Lei nº 8.159/91) e no Código Penal."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto prevê que o pedido de informação pode ser anônimo, pois a LAI não exige identificação do requerente.",
+            correct: false,
+            justification: "O art. 10 da LAI exige a identificação do requerente para viabilizar o protocolo e a comunicação dos atos e decisões relativos ao pedido. O pedido anônimo, portanto, não atende a esse requisito."
+        },
+        {
+            type: 'mc',
+            text: "No Estado de São Paulo, a autoridade que classificar documento como secreto tem competência originária ou delegada. Dentre as autoridades abaixo, qual delas o Decreto NÃO autoriza a classificar documentos como secretos?",
+            correct: 2,
+            options: [
+                "O Governador do Estado",
+                "Os Secretários de Estado",
+                "Todo e qualquer servidor público que tenha acesso à informação",
+                "As autoridades delegadas pelo Governador ou Secretários"
+            ],
+            justification: "A competência para classificação nos graus de sigilo é restrita a altas autoridades (art. 27 da LAI), não sendo extensível a qualquer servidor. A delegação, quando permitida, não se confunde com a permissão a todos os agentes."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto estabelece que a transparência ativa nos portais deve incluir informações sobre a remuneração e subsídio recebidos por ocupantes de cargos e empregos públicos, de forma individualizada.",
+            correct: true,
+            justification: "O Decreto segue a diretriz nacional de divulgação nominal da remuneração dos servidores públicos, em conformidade com a Lei e a decisão do STF na SS 3902."
+        },
+        {
+            type: 'mc',
+            text: "O Decreto prevê que a Controladoria Geral do Estado (CGE) publicará anualmente relatório estatístico contendo:",
+            correct: 1,
+            options: [
+                "Somente o número total de pedidos, sem detalhamento",
+                "Número de pedidos recebidos, atendidos, indeferidos e motivos do indeferimento",
+                "Apenas os pedidos que viraram processos judiciais",
+                "Exclusivamente os nomes dos solicitantes"
+            ],
+            justification: "O Decreto determina a consolidação de dados estatísticos detalhados, incluindo a quantidade de pedidos, o tipo de resposta (deferido/indeferido) e as razões dos indeferimentos."
+        },
+        {
+            type: 'tf',
+            text: "Os militares do Estado de São Paulo (Polícia Militar e Corpo de Bombeiros) estão sujeitos às regras de conduta ilícita por descumprimento da LAI listadas no Decreto, incluindo a penalidade de responsabilização disciplinar.",
+            correct: true,
+            justification: "O Decreto, ao regulamentar a LAI no Poder Executivo Estadual, alcança todos os seus órgãos, incluindo as corporações militares estaduais. O art. 32 da LAI, que lista condutas ilícitas, aplica-se inclusive a militares."
+        },
+        {
+            type: 'mc',
+            text: "A autoridade de monitoramento da LAI em cada órgão deve, conforme o Decreto, entre outras atribuições:",
+            correct: 1,
+            options: [
+                "Somente coletar os pedidos sem participar das respostas",
+                "Orientar as suas respectivas unidades quanto ao cumprimento do Decreto e da lei",
+                "Assumir a gestão financeira do órgão",
+                "Representar o órgão em juízo"
+            ],
+            justification: "As autoridades de monitoramento locais são responsáveis por orientar as unidades na correta aplicação da LAI e do Decreto, além de coordenar o fluxo de pedidos."
+        },
+        {
+            type: 'tf',
+            text: "O Decreto estadual trouxe uma grande inovação legislativa ao reduzir o prazo de sigilo de informações ultrassecretas para 15 anos no âmbito de São Paulo.",
+            correct: false,
+            justification: "O Decreto não pode inovar e reduzir prazos de sigilo estabelecidos pela Lei Federal (art. 24), que fixa o prazo de 25 anos para informações ultrassecretas. A regra federal prevalece sobre o decreto estadual."
+        },
+        {
+            type: 'mc',
+            text: "A Comissão Estadual de Acesso à Informação (CEAI), entre suas atribuições no Decreto, deve:",
+            correct: 3,
+            options: [
+                "Executar diretamente obras públicas",
+                "Substituir o Governador em suas ausências",
+                "Definir a política monetária estadual",
+                "Decidir os recursos contra decisões denegatórias de acesso proferidas pela CGE ou autoridade hierarquicamente superior"
+            ],
+            justification: "A CEAI é o órgão colegiado de última instância administrativa para julgar os recursos contra negativas de acesso à informação, conforme arts. 33 e seguintes."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você domina a regulamentação da LAI no Estado de São Paulo.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Reforce a composição da CEAI e as atribuições da CGE.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas vale rever o Decreto 68.155/2023, especialmente os artigos sobre a CEAI e os SICs.';
+        else mensagem = '📚 Recomendo a leitura integral do Decreto 68.155/2023 e da LAI (Lei 12.527/2011).';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
