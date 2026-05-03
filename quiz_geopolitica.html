@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Produção e organização do espaço geográfico · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🏭 Produção e organização do espaço geográfico</div>
+        <div class="sub">Milton Santos, Ruy Moreira e a BNCC · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Produção e organização do espaço geográfico) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: "Para Milton Santos, o espaço geográfico é um sistema de objetos e ações, indissociáveis entre si.",
+            correct: true,
+            justification: "Santos (2006) define o espaço como conjunto indissociável de sistemas de objetos (fixos) e sistemas de ações (fluxos)."
+        },
+        {
+            type: 'mc',
+            text: "Segundo Ruy Moreira (2009), qual das categorias abaixo corresponde ao espaço vivido, dotado de identidade e afetividade?",
+            correct: 3,
+            options: ["Território", "Região", "Paisagem", "Lugar"],
+            justification: "Lugar é a categoria associada à vivência, ao cotidiano e à subjetividade dos indivíduos (Moreira, 2009, cap. 2)."
+        },
+        {
+            type: 'tf',
+            text: "O meio técnico-científico-informacional, conceito de Milton Santos, caracteriza-se pela fusão entre técnica, ciência e informação no território.",
+            correct: true,
+            justification: "Esse meio emerge a partir da segunda metade do século XX, integrando ciência, tecnologia e informação ao processo produtivo (Santos, 2006)."
+        },
+        {
+            type: 'mc',
+            text: "A ideia de 'território usado', em Milton Santos, enfatiza:",
+            correct: 1,
+            options: [
+                "A extensão geométrica de um Estado",
+                "O espaço vivido e apropriado por atores sociais",
+                "Os limites políticos de um país",
+                "A área de influência de uma multinacional"
+            ],
+            justification: "Território usado é o território tal como efetivamente apropriado, moldado por usos múltiplos e conflitivos."
+        },
+        {
+            type: 'tf',
+            text: "A paisagem, para Moreira (2009), é apenas a aparência visual do espaço, sem relação com processos históricos.",
+            correct: false,
+            justification: "A paisagem acumula tempos históricos: ela é herança de processos naturais e sociais que podem ser decifrados."
+        },
+        {
+            type: 'mc',
+            text: "A regionalização do Brasil em três complexos geoeconômicos (Amazônia, Nordeste e Centro-Sul) foi proposta por:",
+            correct: 0,
+            options: ["Milton Santos e Maria Laura Silveira", "Jurandyr Ross", "Aziz Ab'Sáber", "José William Vesentini"],
+            justification: "Santos e Silveira propuseram essa divisão baseada na fluidez e densidade do meio técnico-científico-informacional."
+        },
+        {
+            type: 'tf',
+            text: "As verticalidades são relações hierárquicas entre pontos do território, comandadas por fluxos de informação e capital.",
+            correct: true,
+            justification: "Santos (2000) define verticalidades como pontos ligados a centros de decisão distantes, estruturados por fluxos hegemônicos."
+        },
+        {
+            type: 'tf',
+            text: "As horizontalidades dizem respeito às relações cotidianas de vizinhança, copresença e solidariedade local.",
+            correct: true,
+            justification: "Horizontalidades são o espaço de todos, onde as relações são mais próximas e menos subordinadas a comandos externos (Santos, 2000)."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'rugosidade', segundo Milton Santos, refere-se a:",
+            correct: 2,
+            options: [
+                "Formas de relevo acidentado",
+                "Espaços pouco urbanizados",
+                "Heranças materiais e sociais de tempos passados incrustadas no espaço presente",
+                "Regiões de baixa densidade técnica"
+            ],
+            justification: "Rugosidades são heranças físico-territoriais e socioterritoriais que permanecem no espaço, condicionando usos futuros."
+        },
+        {
+            type: 'tf',
+            text: "A revolução da informação tornou o espaço geográfico mais homogêneo, eliminando as desigualdades regionais.",
+            correct: false,
+            justification: "A difusão do meio técnico-científico-informacional é seletiva, acentuando desigualdades entre áreas mais e menos densas em tecnologia."
+        },
+        {
+            type: 'mc',
+            text: "A Divisão Internacional do Trabalho (DIT) influencia a organização do espaço porque:",
+            correct: 1,
+            options: [
+                "Define os fusos horários dos países",
+                "Atribui funções produtivas distintas às regiões, configurando especializações territoriais",
+                "Organiza a distribuição dos paralelos e meridianos",
+                "Estabelece os idiomas oficiais das nações"
+            ],
+            justification: "A DIT designa papéis produtivos a cada país ou região, moldando a estrutura econômica de seus territórios."
+        },
+        {
+            type: 'tf',
+            text: "O Brasil sempre ocupou posição central na Divisão Internacional do Trabalho, desde o período colonial.",
+            correct: false,
+            justification: "Historicamente o Brasil ocupou posição periférica, como fornecedor de matérias-primas e importador de manufaturados."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'meio natural' descreve:",
+            correct: 3,
+            options: [
+                "O período posterior à Revolução Verde",
+                "A fase atual, comandada pelos satélites",
+                "O espaço urbano-industrial do século XIX",
+                "O período em que as técnicas eram majoritariamente extensão do corpo humano e o ritmo era dado pela natureza"
+            ],
+            justification: "No meio natural as ações humanas se harmonizavam com os ciclos da natureza, com técnicas simples (Santos, 2006)."
+        },
+        {
+            type: 'tf',
+            text: "Milton Santos considera que o período da globalização atual é também o período do fim da geografia, pois as distâncias deixaram de importar.",
+            correct: false,
+            justification: "Santos argumenta que a globalização reforça a importância da geografia, pois o capital escolhe os lugares mais vantajosos para se instalar."
+        },
+        {
+            type: 'mc',
+            text: "A 'guerra dos lugares', expressão cunhada por Milton Santos, significa:",
+            correct: 2,
+            options: [
+                "Conflitos militares entre países",
+                "Disputa por territórios indígenas",
+                "Competição entre cidades e regiões para atrair investimentos, gerando desregulação fiscal e social",
+                "Luta pela preservação de parques nacionais"
+            ],
+            justification: "Cidades e regiões competem ferozmente por capitais voláteis, oferecendo isenções e infraestrutura, muitas vezes em detrimento do bem-estar social."
+        },
+        {
+            type: 'tf',
+            text: "A região, segundo Moreira (2009), é uma porção do espaço definida por critérios de homogeneidade ou de relações funcionais.",
+            correct: true,
+            justification: "A região pode ser homogênea (atributos comuns) ou funcional (articulada por fluxos e polarização)."
+        },
+        {
+            type: 'mc',
+            text: "O estudo da paisagem como 'máscara' que revela processos históricos está associado a qual autor?",
+            correct: 0,
+            options: ["Milton Santos", "Jurandyr Ross", "Paulo Araújo Duarte", "Aziz Ab'Sáber"],
+            justification: "Santos afirma que a paisagem é como uma máscara: revela e esconde processos sociais e históricos simultaneamente."
+        },
+        {
+            type: 'tf',
+            text: "A industrialização brasileira concentrou-se no Centro-Sul, reforçando as desigualdades regionais herdadas do período colonial.",
+            correct: true,
+            justification: "A industrialização tardia brasileira privilegiou o Sudeste, especialmente São Paulo, mantendo o Nordeste e a Amazônia como periferias."
+        },
+        {
+            type: 'mc',
+            text: "O fenômeno da 'deseconomia de aglomeração' ocorre quando:",
+            correct: 2,
+            options: [
+                "A população rural ultrapassa a urbana",
+                "Há excesso de mão de obra qualificada",
+                "Os custos de concentração (trânsito, poluição, aluguéis) superam as vantagens da aglomeração",
+                "As indústrias se instalam em zonas rurais"
+            ],
+            justification: "Deseconomias de aglomeração são efeitos negativos da concentração excessiva, levando à dispersão de atividades para outras localidades."
+        },
+        {
+            type: 'tf',
+            text: "As zonas de processamento de exportação (ZPEs) são territórios nos quais a produção é voltada ao mercado interno exclusivamente.",
+            correct: false,
+            justification: "ZPEs são áreas de livre comércio exterior, onde a produção destina-se prioritariamente à exportação, com incentivos fiscais."
+        },
+        {
+            type: 'mc',
+            text: "A formação de 'cidades gêmeas' na fronteira do Brasil com países vizinhos está associada a:",
+            correct: 1,
+            options: [
+                "Políticas de reforma agrária",
+                "Fluxos comerciais, migratórios e de integração regional",
+                "Eventos naturais como terremotos",
+                "Projetos de reflorestamento"
+            ],
+            justification: "Cidades gêmeas resultam de interações transfronteiriças intensas, com dinâmicas econômicas e culturais compartilhadas."
+        },
+        {
+            type: 'tf',
+            text: "A globalização neoliberal, segundo Milton Santos, tende a fortalecer o poder dos Estados nacionais sobre os fluxos financeiros.",
+            correct: false,
+            justification: "Santos (2000) argumenta que o capital global reduz a soberania dos Estados, impondo lógicas econômicas supranacionais."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'formação socioespacial' de Milton Santos articula:",
+            correct: 0,
+            options: [
+                "Modo de produção, formação social e espaço",
+                "Clima, vegetação e solo",
+                "Idioma, religião e costume",
+                "Longitude, latitude e altitude"
+            ],
+            justification: "A formação socioespacial é a expressão espacial do modo de produção em uma formação social específica, integrando sociedade e território."
+        },
+        {
+            type: 'tf',
+            text: "O espaço rural contemporâneo brasileiro é exclusivamente agrícola, sem atividades industriais ou de serviços.",
+            correct: false,
+            justification: "O campo brasileiro se diversifica com agroindústrias, turismo rural, condomínios e serviços, tornando-se pluriativo."
+        },
+        {
+            type: 'mc',
+            text: "A 'acumulação flexível' no espaço geográfico caracteriza-se por:",
+            correct: 1,
+            options: [
+                "Produção em massa padronizada",
+                "Produção descentralizada, terceirização e estoques reduzidos",
+                "Exclusividade do trabalho escravo",
+                "Concentração fabril em um único distrito"
+            ],
+            justification: "A acumulação flexível fragmenta a produção em redes de fornecedores, alterando a organização territorial do trabalho."
+        },
+        {
+            type: 'tf',
+            text: "O Espaço Schengen, na Europa, é exemplo de um território onde as fronteiras internas foram suprimidas para livre circulação de pessoas.",
+            correct: true,
+            justification: "O Acordo de Schengen elimina controles de passaporte entre países-membros, redefinindo a noção de fronteira territorial."
+        },
+        {
+            type: 'mc',
+            text: "A regionalização do IBGE de 1969 dividiu o Brasil em cinco macrorregiões. Qual foi o critério principal?",
+            correct: 0,
+            options: [
+                "Agrupamento de estados por características físicas e econômicas",
+                "Distribuição igualitária do PIB",
+                "Homogeneidade linguística",
+                "Quantidade de municípios"
+            ],
+            justification: "A divisão de 1969 levou em conta aspectos naturais e socioeconômicos, resultando nas cinco regiões atuais."
+        },
+        {
+            type: 'tf',
+            text: "O conceito de 'paisagem cultural' abrange apenas monumentos e sítios arqueológicos tombados.",
+            correct: false,
+            justification: "Paisagem cultural inclui também modos de vida, práticas agrícolas, festas e saberes que moldam a aparência do espaço."
+        },
+        {
+            type: 'mc',
+            text: "As 'cidades-região' são formações espaciais em que:",
+            correct: 0,
+            options: [
+                "Uma metrópole polariza vasta área, integrando municípios vizinhos em uma mancha urbana contínua",
+                "Todas as cidades são independentes e igualmente desenvolvidas",
+                "O campo predomina sobre a cidade",
+                "Não há fluxo de transportes intermunicipais"
+            ],
+            justification: "Cidades-região são aglomerações metropolitanas expandidas, com intensa integração funcional e fluxos cotidianos."
+        },
+        {
+            type: 'tf',
+            text: "A 'fragmentação territorial' é consequência, entre outros fatores, da segregação socioespacial nas metrópoles.",
+            correct: true,
+            justification: "A fragmentação se manifesta em condomínios fechados, muros e falta de espaços públicos compartilhados."
+        },
+        {
+            type: 'mc',
+            text: "A 'logística' tornou-se fator central na organização do espaço porque:",
+            correct: 0,
+            options: [
+                "Determina a localização de centros de distribuição, portos e rodovias, influenciando o uso do solo",
+                "Substituiu a agricultura",
+                "Reduziu a importância das cidades",
+                "Eliminou a necessidade de transporte"
+            ],
+            justification: "A logística moderna reorganiza os fluxos de mercadorias e informação, tornando-se fator locacional de primeira ordem."
+        },
+        {
+            type: 'tf',
+            text: "O 'Brasil arquipélago', expressão do geógrafo Milton Santos, refere-se à fragmentação do território nacional em ilhas de modernidade cercadas por vastas áreas de baixa densidade técnica.",
+            correct: true,
+            justification: "Santos descreveu o Brasil como arquipélago econômico, com manchas modernas isoladas e desarticuladas entre si."
+        },
+        {
+            type: 'mc',
+            text: "A principal diferença entre território e espaço, para Moreira (2009), é que o território:",
+            correct: 2,
+            options: [
+                "É sinônimo de paisagem",
+                "É a base física apenas",
+                "Envolve relações de poder, apropriação e delimitação",
+                "Não tem relação com o Estado"
+            ],
+            justification: "Território é espaço delimitado e apropriado, marcado por relações de poder e controle."
+        },
+        {
+            type: 'tf',
+            text: "A criação de territórios federais no Brasil, como Roraima e Amapá, visava integrar áreas de fronteira à soberania nacional.",
+            correct: true,
+            justification: "Os territórios federais foram criados para garantir a ocupação e a defesa de áreas estratégicas da faixa de fronteira."
+        },
+        {
+            type: 'mc',
+            text: "O 'efeito túnel' nas infraestruturas de transporte refere-se a:",
+            correct: 3,
+            options: [
+                "Construção de túneis urbanos",
+                "Ligação por ferrovias subterrâneas",
+                "Redução do custo de frete",
+                "Corredores que conectam pontos de interesse, mas não beneficiam as áreas atravessadas"
+            ],
+            justification: "Efeito túnel ocorre quando uma rodovia ou ferrovia liga dois polos, mas as populações locais não são beneficiadas."
+        },
+        {
+            type: 'tf',
+            text: "A agricultura de precisão é exemplo de aplicação do meio técnico-científico-informacional no campo.",
+            correct: true,
+            justification: "Ela emprega GPS, sensores e softwares de gerenciamento, integrando ciência e informação à produção rural."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'deslocalização industrial' designa:",
+            correct: 3,
+            options: [
+                "Fim da atividade industrial",
+                "Concentração fabril em um único país",
+                "Fusão de empresas",
+                "Transferência de unidades produtivas para países com custos menores"
+            ],
+            justification: "Deslocalização é a realocação de fábricas em busca de mão de obra barata, incentivos fiscais e regulação ambiental frouxa."
+        },
+        {
+            type: 'tf',
+            text: "A reestruturação produtiva do campo brasileiro, a partir dos anos 1990, resultou na expansão do agronegócio e na concentração fundiária.",
+            correct: true,
+            justification: "A modernização agrícola privilegiou grandes propriedades voltadas à exportação, aprofundando a desigualdade no acesso à terra."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'circuito inferior da economia urbana', de Milton Santos, refere-se a:",
+            correct: 2,
+            options: [
+                "Bancos e corretoras de valores",
+                "Indústrias de alta tecnologia",
+                "Atividades de pequena escala, informais, com baixa tecnologia e crédito limitado",
+                "Grandes redes varejistas"
+            ],
+            justification: "O circuito inferior é formado por pequenas oficinas, vendedores ambulantes e serviços de subsistência, usando trabalho intensivo."
+        },
+        {
+            type: 'tf',
+            text: "A urbanização extensiva do território brasileiro resultou na formação de um espaço rural cada vez mais autônomo, desconectado das dinâmicas urbanas.",
+            correct: false,
+            justification: "O campo brasileiro está cada vez mais integrado às lógicas urbanas, com atividades não agrícolas e forte influência das cidades."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você compreende profundamente a produção do espaço.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Revise os conceitos de Milton Santos e Moreira com atenção.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas retome as categorias de análise do espaço geográfico.';
+        else mensagem = '📚 Recomendo reler os capítulos 2 a 10 de Santos (2006) e Moreira (2009).';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
