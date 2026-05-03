@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Geografia do Brasil · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🇧🇷 Geografia do Brasil</div>
+        <div class="sub">Aspectos físicos, econômicos e sociais · Ross, Santos e a BNCC · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Geografia do Brasil) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: "O relevo brasileiro é majoritariamente formado por dobramentos modernos da Era Cenozoica, o que explica a existência de altas cadeias montanhosas.",
+            correct: false,
+            justification: "O Brasil não possui dobramentos modernos; seu relevo é antigo, com predomínio de estruturas geológicas dos éons Arqueano e Proterozoico, desgastadas pela erosão (Ross, 2011)."
+        },
+        {
+            type: 'mc',
+            text: "Segundo Jurandyr Ross (2011), o relevo brasileiro é classificado em três tipos principais. São eles:",
+            correct: 0,
+            options: [
+                "Planaltos, planícies e depressões",
+                "Montanhas, vales e cânions",
+                "Planaltos, cordilheiras e inselbergs",
+                "Planícies, cuestas e dobramentos"
+            ],
+            justification: "Ross propôs a classificação em planaltos (onde a erosão supera a sedimentação), planícies (predomínio da sedimentação) e depressões (rebaixadas por erosão)."
+        },
+        {
+            type: 'tf',
+            text: "A Bacia Sedimentar do Paraná abriga rochas magmáticas extrusivas (basaltos) que deram origem ao solo de terra roxa, fértil para a agricultura.",
+            correct: true,
+            justification: "Os derrames basálticos ocorridos no Mesozoico formaram o solo vermelho-escuro conhecido como terra roxa, encontrado no interior de São Paulo e norte do Paraná (Ross, 2011)."
+        },
+        {
+            type: 'mc',
+            text: "O Planalto Central Brasileiro tem como característica marcante:",
+            correct: 2,
+            options: [
+                "Predomínio de planícies aluviais",
+                "Existência de vulcões ativos",
+                "Presença de chapadas, como a dos Veadeiros e dos Guimarães, e de depressões",
+                "Relevo de cuestas exclusivamente"
+            ],
+            justification: "O Planalto Central é um conjunto de chapadas e chapadões, com altitudes entre 800 e 1.200 metros, recortado por depressões (Ross, 2011)."
+        },
+        {
+            type: 'tf',
+            text: "A depressão sertaneja, no Nordeste brasileiro, é uma área de planície litorânea com sedimentação recente.",
+            correct: false,
+            justification: "A depressão sertaneja é uma depressão interplanáltica, rebaixada por erosão, com clima semiárido e vegetação de caatinga, não é planície litorânea (Ross, 2011)."
+        },
+        {
+            type: 'mc',
+            text: "O clima equatorial úmido domina a porção noroeste do Brasil. Suas características são:",
+            correct: 1,
+            options: [
+                "Estações secas prolongadas e baixa pluviosidade",
+                "Altas temperaturas o ano todo e chuvas abundantes, sem estação seca definida",
+                "Invernos frios e verões brandos",
+                "Precipitação concentrada em apenas um mês"
+            ],
+            justification: "O clima equatorial, sob influência da massa Equatorial continental, apresenta temperaturas médias elevadas (acima de 24°C) e chuvas regulares o ano inteiro."
+        },
+        {
+            type: 'tf',
+            text: "O Brasil possui três fusos horários, todos a Oeste de Greenwich, dado que todo o território nacional está no hemisfério Oeste.",
+            correct: true,
+            justification: "De acordo com o Decreto nº 6.117/2007, o Brasil tem três fusos: UTC -2 (Fernando de Noronha), UTC -3 (Brasília) e UTC -4 (parte da Amazônia). A afirmação é verdadeira, pois a faixa de UTC -5 do Acre foi extinta em 2008, e todo o país está a Oeste do Meridiano de Greenwich."
+        },
+        {
+            type: 'mc',
+            text: "A Amazônia Legal, criada pela lei 1.806/1953, abrange:",
+            correct: 1,
+            options: [
+                "Apenas os estados da Região Norte",
+                "Estados da Região Norte, parte do Mato Grosso e do Maranhão",
+                "Todos os estados do Nordeste",
+                "Apenas o estado do Amazonas"
+            ],
+            justification: "A Amazônia Legal abrange os estados do Norte, mais o Mato Grosso e o oeste do Maranhão (a Oeste do meridiano 44°)."
+        },
+        {
+            type: 'tf',
+            text: "O Aquífero Guarani é um reservatório de água subterrânea exclusivamente brasileiro, situado na Região Sul.",
+            correct: false,
+            justification: "O Aquífero Guarani é transfronteiriço, abrangendo também Argentina, Paraguai e Uruguai, e estende-se por partes do Centro-Oeste, Sudeste e Sul do Brasil (Ross, 2011)."
+        },
+        {
+            type: 'mc',
+            text: "O domínio morfoclimático dos 'Mares de Morros', definido por Aziz Ab'Sáber, corresponde:",
+            correct: 0,
+            options: [
+                "À faixa oriental do Sudeste e Nordeste, com morros arredondados e cobertura original de Mata Atlântica",
+                "À Planície Amazônica, com florestas inundáveis",
+                "Ao Pantanal Mato-Grossense",
+                "À Caatinga nordestina"
+            ],
+            justification: "O domínio dos Mares de Morros estende-se do litoral nordestino oriental ao Sudeste, com relevo ondulado e floresta tropical úmida."
+        },
+        {
+            type: 'tf',
+            text: "O Brasil possui a maior reserva de nióbio do mundo, mineral utilizado na produção de ligas metálicas de alta resistência.",
+            correct: true,
+            justification: "O país detém mais de 90% das reservas mundiais economicamente viáveis de nióbio, concentradas principalmente em Minas Gerais, Goiás e Amazonas."
+        },
+        {
+            type: 'mc',
+            text: "A Região Concentrada, termo cunhado por Milton Santos e Maria Laura Silveira, refere-se:",
+            correct: 0,
+            options: [
+                "Ao Centro-Sul brasileiro, onde se concentram infraestrutura, indústria e serviços modernos",
+                "À Amazônia, pela concentração de biodiversidade",
+                "Ao Nordeste, pela densidade demográfica elevada",
+                "À região de Brasília, pela centralidade política"
+            ],
+            justification: "A Região Concentrada corresponde ao polígono que vai de Belo Horizonte a Porto Alegre, concentrando a maior densidade técnica e econômica do país."
+        },
+        {
+            type: 'tf',
+            text: "O pré-sal é uma camada de petróleo localizada em águas ultraprofundas, abaixo de uma espessa camada de sal, na plataforma continental brasileira.",
+            correct: true,
+            justification: "Descoberto em 2006, o pré-sal localiza-se na Bacia de Santos, Campos e Espírito Santo, entre 5.000 e 7.000 metros de profundidade."
+        },
+        {
+            type: 'mc',
+            text: "O clima tropical de altitude, característico do Sudeste brasileiro, apresenta:",
+            correct: 3,
+            options: [
+                "Temperaturas constantemente acima de 30°C",
+                "Baixa amplitude térmica anual",
+                "Estiagem prolongada durante todo o ano",
+                "Verões quentes e chuvosos, invernos mais amenos e secos"
+            ],
+            justification: "Típico de cidades como São Paulo, Belo Horizonte e Campos do Jordão, com variação sazonal e influência da altitude sobre as temperaturas."
+        },
+        {
+            type: 'tf',
+            text: "A Bacia do Paraná é a maior bacia hidrográfica inteiramente em território brasileiro.",
+            correct: false,
+            justification: "A Bacia do Tocantins-Araguaia é a maior bacia inteiramente brasileira; a do Paraná atravessa também Paraguai e Argentina."
+        },
+        {
+            type: 'mc',
+            text: "O 'Polígono das Secas', delimitado por lei em 1936, abrange:",
+            correct: 2,
+            options: [
+                "A Amazônia Ocidental",
+                "O litoral do Sul",
+                "Parte do Nordeste, incluindo o Sertão e parte do norte de Minas Gerais",
+                "O estado de São Paulo"
+            ],
+            justification: "O Polígono das Secas foi criado para orientar políticas de combate à estiagem no semiárido nordestino e norte de Minas."
+        },
+        {
+            type: 'tf',
+            text: "O complexo regional da Amazônia, proposto por Milton Santos, caracteriza-se por baixa densidade técnica e economia baseada principalmente no extrativismo e na mineração.",
+            correct: true,
+            justification: "Comparada ao Centro-Sul, a Amazônia apresenta menor densidade em transportes, comunicação e indústria, com predomínio de economia extrativa e grandes projetos minerais."
+        },
+        {
+            type: 'mc',
+            text: "O bioma Pampa, no sul do Brasil, tem como característica:",
+            correct: 3,
+            options: [
+                "Florestas de coníferas densas",
+                "Vegetação xerófita",
+                "Grande diversidade de epífitas",
+                "Predomínio de campos (gramíneas) e vegetação herbácea"
+            ],
+            justification: "O Pampa gaúcho é um bioma de campos temperados, com relevo suavemente ondulado e coxilhas."
+        },
+        {
+            type: 'tf',
+            text: "O Brasil é autossuficiente em trigo, sendo um dos maiores exportadores mundiais desse cereal.",
+            correct: false,
+            justification: "O Brasil importa a maior parte do trigo consumido, principalmente da Argentina e de outros países, devido a limitações climáticas e de produtividade."
+        },
+        {
+            type: 'mc',
+            text: "A desconcentração industrial no Brasil a partir da década de 1990 significou:",
+            correct: 1,
+            options: [
+                "Concentração ainda maior em São Paulo",
+                "Migração de indústrias para cidades médias e outras regiões, como Sul e Nordeste",
+                "Fim da atividade industrial no país",
+                "Nacionalização completa do setor"
+            ],
+            justification: "Incentivos fiscais, menores custos e infraestrutura levaram indústrias a se instalarem em locais como Manaus, Curitiba e interior de São Paulo."
+        },
+        {
+            type: 'tf',
+            text: "Segundo o IBGE, a população brasileira está entre as dez maiores do mundo, ultrapassando 200 milhões de habitantes.",
+            correct: true,
+            justification: "Censo 2022 indica cerca de 203 milhões de habitantes, sendo o Brasil o 7º país mais populoso do planeta."
+        },
+        {
+            type: 'mc',
+            text: "A Zona Franca de Manaus, criada em 1967, caracteriza-se por:",
+            correct: 2,
+            options: [
+                "Ser uma área exclusivamente agrícola",
+                "Restringir o comércio com outros estados",
+                "Incentivos fiscais para atrair indústrias de eletrônicos e bens de consumo",
+                "Produzir apenas matérias-primas minerais"
+            ],
+            justification: "A Zona Franca de Manaus oferece isenção de impostos para atrair montadoras e indústrias, dinamizando a economia da Amazônia Ocidental."
+        },
+        {
+            type: 'tf',
+            text: "O 'cinturão verde' no entorno das grandes cidades brasileiras é produtor de hortifrutigranjeiros para abastecimento local.",
+            correct: true,
+            justification: "Os cinturões verdes são áreas periurbanas dedicadas ao cultivo intensivo de verduras, legumes e frutas de ciclo curto."
+        },
+        {
+            type: 'mc',
+            text: "A Bacia do São Francisco é conhecida como 'rio da integração nacional' porque:",
+            correct: 2,
+            options: [
+                "Deságua no Oceano Atlântico",
+                "Nasce na Argentina",
+                "Atravessa vários estados e conecta regiões de características distintas, do Sudeste ao Nordeste",
+                "É navegável do alto ao baixo curso"
+            ],
+            justification: "O São Francisco percorre Minas Gerais, Bahia, Pernambuco, Alagoas e Sergipe, ligando o Sudeste ao Nordeste."
+        },
+        {
+            type: 'tf',
+            text: "Os latifúndios por extensão, conforme o Estatuto da Terra, são grandes propriedades que, mesmo improdutivas, não podem ser desapropriadas para reforma agrária.",
+            correct: false,
+            justification: "Justamente os latifúndios improdutivos (por extensão e por exploração) são passíveis de desapropriação para reforma agrária, conforme a legislação."
+        },
+        {
+            type: 'mc',
+            text: "A região do MATOPIBA (Maranhão, Tocantins, Piauí e Bahia) destaca-se atualmente por:",
+            correct: 1,
+            options: [
+                "Declínio da agricultura",
+                "Expansão da fronteira agrícola moderna, especialmente de soja",
+                "Predomínio da agricultura de subsistência sem uso de tecnologia",
+                "Baixa produtividade e isolamento"
+            ],
+            justification: "O MATOPIBA é a nova fronteira do agronegócio, com rápido avanço da soja sobre o Cerrado, impulsionado por investimentos em tecnologia e logística."
+        },
+        {
+            type: 'tf',
+            text: "O Índice de Desenvolvimento Humano (IDH) brasileiro é uniforme em todas as unidades da federação.",
+            correct: false,
+            justification: "Há grande desigualdade: regiões como Sul e Sudeste têm IDH alto, enquanto partes do Nordeste e Norte apresentam índices mais baixos."
+        },
+        {
+            type: 'mc',
+            text: "O fenômeno das 'ilhas de calor' nas cidades brasileiras é agravado por:",
+            correct: 1,
+            options: [
+                "Presença de extensas áreas verdes",
+                "Concentração de edifícios, asfalto e escassez de vegetação",
+                "Alta pluviosidade",
+                "Proximidade do litoral"
+            ],
+            justification: "Materiais como concreto e asfalto absorvem calor, e a falta de cobertura vegetal reduz o resfriamento natural, elevando a temperatura urbana."
+        },
+        {
+            type: 'tf',
+            text: "O Brasil figura entre os maiores produtores e exportadores mundiais de café, soja e carne bovina.",
+            correct: true,
+            justification: "O país lidera as exportações de soja e carne bovina e é o maior produtor mundial de café, com relevante participação no comércio internacional."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'meio técnico-científico-informacional' aplicado ao Brasil mostra que:",
+            correct: 0,
+            options: [
+                "As regiões Sul e Sudeste concentram maior densidade técnica e informacional que a Amazônia",
+                "Todo o território é igualmente integrado",
+                "Não há desigualdades regionais",
+                "Apenas a Amazônia possui alta tecnologia"
+            ],
+            justification: "O meio técnico-científico-informacional é seletivo: as áreas mais dinâmicas (Centro-Sul) concentram ciência, técnica e informação, enquanto outras permanecem à margem."
+        },
+        {
+            type: 'tf',
+            text: "As terras indígenas no Brasil são bens da União destinados à posse permanente dos povos indígenas, com usufruto exclusivo das riquezas do solo, rios e lagos.",
+            correct: true,
+            justification: "A Constituição de 1988 reconhece aos índios a posse permanente e o usufruto exclusivo das riquezas naturais nesses territórios."
+        },
+        {
+            type: 'mc',
+            text: "O 'rodoviarismo' na matriz de transportes brasileira significou:",
+            correct: 3,
+            options: [
+                "Investimento prioritário em navegação fluvial",
+                "Equilíbrio entre modais de carga",
+                "Expansão da malha ferroviária como principal",
+                "Opção pelas rodovias como principal meio de transporte de cargas e passageiros"
+            ],
+            justification: "A partir dos anos 1950, o Brasil priorizou as rodovias, que respondem por mais de 60% do transporte de cargas, em detrimento de ferrovias e hidrovias."
+        },
+        {
+            type: 'tf',
+            text: "As migrações de retorno no Brasil, a partir dos anos 1990, caracterizam-se pelo movimento de nordestinos que deixam o Sudeste e voltam para sua região de origem.",
+            correct: true,
+            justification: "Muitos migrantes que haviam ido para São Paulo e Rio de Janeiro retornaram ao Nordeste devido ao desemprego e à melhora relativa da economia nordestina."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'complexo cafeeiro' no Sudeste brasileiro, no século XIX e início do XX, abrangeu:",
+            correct: 1,
+            options: [
+                "Apenas o cultivo do café",
+                "Produção de café, ferrovias, portos, bancos e imigração, integrando atividades complementares",
+                "Exclusivamente a exportação",
+                "A produção de cana-de-açúcar"
+            ],
+            justification: "O complexo cafeeiro envolveu desde a lavoura até ferrovias, portos (como Santos), financiamento e atração de imigrantes, estruturando o espaço regional."
+        },
+        {
+            type: 'tf',
+            text: "O relevo do Pantanal Mato-Grossense é caracterizado por planícies alagáveis, sujeitas a inundações sazonais dos rios da Bacia do Paraguai.",
+            correct: true,
+            justification: "O Pantanal é uma planície sedimentar que sofre inundações periódicas, funcionando como uma enorme área de retenção de águas (Ross, 2011)."
+        },
+        {
+            type: 'mc',
+            text: "A transposição do Rio São Francisco é uma obra de infraestrutura hídrica que visa:",
+            correct: 1,
+            options: [
+                "Gerar energia para o Nordeste",
+                "Levar água a açudes e rios intermitentes do semiárido nordestino",
+                "Navegar do Atlântico ao interior",
+                "Drenar áreas alagadas"
+            ],
+            justification: "O Projeto de Integração do Rio São Francisco (PISF) conduz água para bacias do Ceará, Rio Grande do Norte, Paraíba e Pernambuco."
+        },
+        {
+            type: 'tf',
+            text: "O crescimento vegetativo da população brasileira nas últimas décadas aumentou, impulsionado pela elevação da taxa de fecundidade.",
+            correct: false,
+            justification: "O crescimento vegetativo caiu, pois a taxa de fecundidade declinou de cerca de 6 filhos por mulher nos anos 1960 para menos de 2 atualmente, reduzindo o ritmo de crescimento populacional."
+        },
+        {
+            type: 'mc',
+            text: "O processo de industrialização do Brasil, entre 1930 e 1980, foi caracterizado pelo modelo de:",
+            correct: 0,
+            options: [
+                "Substituição de importações, com forte intervenção estatal",
+                "Liberalização comercial total",
+                "Dependência exclusiva de capital estrangeiro sem ação estatal",
+                "Industrialização voltada apenas à agricultura"
+            ],
+            justification: "A industrialização foi impulsionada pelo Estado (Vargas, JK, regime militar) em um modelo de substituição de bens antes importados."
+        },
+        {
+            type: 'tf',
+            text: "A região Sul do Brasil destaca-se pela produção de carvão mineral, utilizado em siderurgia, com as maiores reservas do país.",
+            correct: true,
+            justification: "O carvão do Sul (Santa Catarina e Rio Grande do Sul) é o principal do Brasil, embora de baixa qualidade, sendo usado em termelétricas e siderurgia."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você tem sólido conhecimento da Geografia do Brasil.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Reforce os estudos sobre domínios morfoclimáticos e aspectos econômicos.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas retome Ross (2011) e os complexos regionais de Milton Santos.';
+        else mensagem = '📚 Sugiro reler Ross (2011) sobre relevo e os capítulos sobre economia brasileira.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
