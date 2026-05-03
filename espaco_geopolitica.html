@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Produção do Espaço e Geopolítica · Geografia</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 auto;
+            max-width: 35vw;
+            text-align: center;
+        }
+        .img-container img {
+            height: 50vh;
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 1;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 40px; color: #1a5e44; }
+        .capa p { font-size: 22px; color: #2a5e4a; }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 { color: #1a5e44; margin-bottom: 10px; font-size: 2rem; }
+        .congrats-page p { margin: 20px 0; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { max-width: 100%; text-align: center; }
+            .img-container img { height: auto; max-height: 300px; width: auto; max-width: 90%; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Produção do Espaço e Geopolítica</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 14</span>
+                <span id="progressPercent">7%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // CAPA
+            `<div class="capa">
+                <h1>Produção e Organização do Espaço Geográfico<br>Geopolítica e Globalização</h1>
+                <h2>Fundamentos da Geografia contemporânea</h2>
+                <p>Baseado em Milton Santos, Ruy Moreira, José William Vesentini e na BNCC</p>
+            </div>`,
+
+            // SUMÁRIO
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 Sumário</h3>
+                <ol>
+                    <li>1. O espaço geográfico como sistema de objetos e ações (Milton Santos)</li>
+                    <li>2. Meios geográficos: natural, técnico e técnico-científico-informacional</li>
+                    <li>3. Categorias de análise: paisagem, território, região e lugar (Ruy Moreira)</li>
+                    <li>4. Território usado e rugosidades espaciais</li>
+                    <li>5. Globalização: fábula, perversidade e possibilidade (Milton Santos)</li>
+                    <li>6. Geopolítica mundial: da Guerra Fria à Nova Ordem (Vesentini)</li>
+                    <li>7. Blocos econômicos, BRICS e organismos internacionais</li>
+                    <li>8. Conflitos contemporâneos e a multipolaridade</li>
+                    <li>9. Questões comentadas</li>
+                </ol>
+            </div>`,
+
+            // 1. Espaço geográfico – objetos e ações
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>1. O espaço geográfico como sistema de objetos e ações</h3>
+                    <p>Para Milton Santos (2006), o espaço geográfico é indissociável do conjunto de <strong>objetos</strong> (fixos) e <strong>ações</strong> (fluxos). Os objetos podem ser naturais ou artificiais; as ações são as práticas sociais, econômicas e políticas que animam esses objetos. Essa concepção supera a dicotomia entre sociedade e natureza, mostrando que o espaço é uma <strong>totalidade dinâmica</strong>. A cada período histórico, o espaço se recria com novos objetos e novas relações. Na atualidade, o meio técnico-científico-informacional integra ciência, tecnologia e informação ao processo produtivo, acelerando a fluidez do capital e alterando as configurações territoriais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/cityscape-concept-illustration_114360-18020.jpg" alt="Cidade como espaço geográfico" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 2. Meios geográficos
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/evolution-concept-illustration_114360-1206.jpg" alt="Evolução dos meios geográficos" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>2. Meios geográficos: natural, técnico e técnico-científico-informacional</h3>
+                    <p>Santos distingue três momentos da relação sociedade/espaço: no <strong>meio natural</strong>, os ritmos da natureza predominavam e as técnicas eram extensão do corpo humano; no <strong>meio técnico</strong> (Revolução Industrial), as máquinas e as ferrovias começam a mecanizar o território; já o atual <strong>meio técnico-científico-informacional</strong> (período da globalização) une indissoluvelmente técnica, ciência e informação. Esse último é seletivo: as regiões mais densas em infraestrutura e conhecimento concentram os investimentos, aprofundando as desigualdades territoriais. No Brasil, a Região Concentrada (Centro-Sul) exemplifica essa densidade, enquanto a Amazônia apresenta baixa fluidez.</p>
+                </div>
+            </div>`,
+
+            // 3. Categorias de Moreira
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>3. Categorias de análise: paisagem, território, região e lugar</h3>
+                    <p>Ruy Moreira (2009) sistematiza quatro categorias fundamentais para a Geografia: <strong>paisagem</strong> é a aparência visível do espaço, que acumula tempos históricos; <strong>território</strong> é o espaço delimitado por relações de poder, apropriado por algum agente; <strong>região</strong> é uma porção do espaço definida por critérios de homogeneidade ou por relações funcionais; <strong>lugar</strong> é o espaço vivido, dotado de identidade e afetividade. Essas categorias não são excludentes: um mesmo recorte espacial pode ser analisado sob as quatro lentes. Em concursos, é comum associar região ao planejamento estatal e lugar à resistência local.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/map-concept-illustration_114360-2076.jpg" alt="Mapa e categorias geográficas" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 4. Território usado e rugosidades
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/urban-planning-concept-illustration_114360-17791.jpg" alt="Território e planejamento" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>4. Território usado e rugosidades espaciais</h3>
+                    <p>Milton Santos propõe o conceito de <strong>território usado</strong> como aquele efetivamente apropriado pelos atores sociais, distinto do território meramente jurídico ou geométrico. As <strong>rugosidades</strong> são heranças físicas e sociais de tempos passados incrustadas no espaço presente, condicionando os usos futuros. Um exemplo é a malha ferroviária brasileira do século XIX, que ainda orienta parte da ocupação econômica. A formação socioespacial é, para Santos, a expressão territorial de um modo de produção em uma formação social específica, integrando economia, política e cultura na produção do espaço.</p>
+                </div>
+            </div>`,
+
+            // 5. Globalização – fábula, perversidade, possibilidade
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>5. Globalização: fábula, perversidade e possibilidade</h3>
+                    <p>Em "Por uma outra globalização", Milton Santos (2000) desvenda três faces do fenômeno global. A <strong>fábula</strong> é o discurso oficial que apresenta a globalização como integração benéfica e inevitável; a <strong>perversidade</strong> revela seus efeitos reais: concentração de renda, desemprego estrutural, financeirização da economia e aprofundamento das desigualdades; a <strong>possibilidade</strong> é a construção de uma outra globalização, baseada na solidariedade, no respeito às diferenças culturais e em uma economia voltada às necessidades humanas. Para o autor, essa transformação depende da ação dos "de baixo" – movimentos sociais, comunidades locais, pequenas solidariedades.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/globalization-concept-illustration_114360-29842.jpg" alt="Globalização" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 6. Geopolítica mundial
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/world-map-with-flags-concept-illustration_114360-30730.jpg" alt="Mapa político mundial" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>6. Geopolítica mundial: da Guerra Fria à Nova Ordem</h3>
+                    <p>Conforme Vesentini (2013), a geopolítica moderna nasce com Ratzel e se consolida durante a <strong>Guerra Fria</strong>, que dividiu o planeta em dois blocos: capitalista (EUA, OTAN) e socialista (URSS, Pacto de Varsóvia). Com o colapso soviético (1991), emergiu uma <strong>Nova Ordem Mundial</strong>, caracterizada pela multipolaridade e por novos atores, como China, Índia e blocos regionais. A doutrina Bush de ataques preventivos (pós-11/09), a guerra híbrida (ações militares combinadas com ciberataques e desinformação) e a disputa tecnológica entre EUA e China são marcos dessa nova fase. O soft power (influência cultural) e o hard power (força militar) coexistem na busca por hegemonia.</p>
+                </div>
+            </div>`,
+
+            // 7. Blocos e organismos
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>7. Blocos econômicos, BRICS e organismos internacionais</h3>
+                    <p>A integração regional visa ampliar mercados e poder de negociação. A <strong>União Europeia</strong> é o exemplo mais avançado, com moeda única, livre circulação e instituições supranacionais. O <strong>MERCOSUL</strong> (Brasil, Argentina, Uruguai, Paraguai) é uma união aduaneira imperfeita. Os <strong>BRICS</strong> (Brasil, Rússia, Índia, China e África do Sul) formam um agrupamento de cooperação política e econômica que criou o <strong>Novo Banco de Desenvolvimento</strong>. Organismos como a <strong>ONU</strong> (com seu Conselho de Segurança e os cinco membros permanentes com poder de veto), a <strong>OMC</strong> e o <strong>FMI</strong> seguem centrais, embora sua governança seja criticada por refletir a distribuição de poder do pós-Segunda Guerra.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/international-trade-concept-illustration_114360-30321.jpg" alt="Blocos econômicos" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 8. Conflitos contemporâneos
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/conflict-concept-illustration_114360-29368.jpg" alt="Conflitos mundiais" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>8. Conflitos contemporâneos e a multipolaridade</h3>
+                    <p>A multipolaridade atual não significa paz: conflitos como a guerra da Síria, a disputa no mar do Sul da China, a tensão entre Rússia e Ucrânia e os conflitos no Iêmen demonstram que as rivalidades geopolíticas persistem. A <strong>guerra comercial</strong> entre EUA e China a partir de 2018 evidencia a competição por hegemonia tecnológica e econômica. O <strong>terrorismo transnacional</strong> opera em redes descentralizadas. Questões como a crise dos refugiados, a securitização das fronteiras e a geopolítica do petróleo e da água são centrais para entender o século XXI. Vesentini destaca que a geopolítica atual é marcada pela fluidez e pela sobreposição de múltiplas escalas de poder.</p>
+                </div>
+            </div>`,
+
+            // 9. Questões comentadas
+            `<div class="text-container" style="max-width:100%;">
+                <h3>9. Questões comentadas</h3>
+                <p><strong>Questão 1:</strong> (Adaptada) Para Milton Santos, o conceito de "rugosidade" refere-se a: <strong>a)</strong> Formas de relevo acidentado. <strong>b)</strong> Heranças materiais e sociais de tempos passados incrustadas no espaço presente. <strong>c)</strong> Áreas de baixa densidade técnica. <strong>d)</strong> Espaços rurais não urbanizados. <strong>Gabarito: B.</strong> As rugosidades são "rugas" do passado que condicionam o presente.</p>
+                <p><strong>Questão 2:</strong> A Nova Ordem Mundial pós-Guerra Fria é caracterizada por: <strong>a)</strong> Bipolaridade rígida entre EUA e URSS. <strong>b)</strong> Multipolaridade e ascensão de potências regionais como China e Índia. <strong>c)</strong> Fim dos conflitos militares. <strong>d)</strong> Domínio exclusivo da Europa. <strong>Gabarito: B.</strong> O colapso soviético deu lugar a uma ordem mais complexa, com vários polos de poder.</p>
+                <p><strong>Questão 3:</strong> A categoria geográfica que enfatiza as relações de poder e apropriação é: <strong>a)</strong> Paisagem. <strong>b)</strong> Lugar. <strong>c)</strong> Território. <strong>d)</strong> Região. <strong>Gabarito: C.</strong> Território é espaço delimitado e controlado por um sujeito ou instituição.</p>
+            </div>`,
+
+            // PÁGINA FINAL
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo sobre produção do espaço geográfico e geopolítica contemporânea.</p>
+                <p>A compreensão dos conceitos de Milton Santos e das dinâmicas geopolíticas mundiais é essencial para a prova de Geografia e para entender o mundo em que vivemos.</p>
+                <p>Continue aprofundando seus estudos com a BNCC e os livros da bibliografia indicada.</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContentDiv = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContentDiv.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContentDiv.scrollTop) pageContentDiv.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContentDiv.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>
