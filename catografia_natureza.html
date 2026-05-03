@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Cartografia e Questões Ambientais · Geografia</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 auto;
+            max-width: 35vw;
+            text-align: center;
+        }
+        .img-container img {
+            height: 50vh;
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 1;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 40px; color: #1a5e44; }
+        .capa p { font-size: 22px; color: #2a5e4a; }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 { color: #1a5e44; margin-bottom: 10px; font-size: 2rem; }
+        .congrats-page p { margin: 20px 0; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { max-width: 100%; text-align: center; }
+            .img-container img { height: auto; max-height: 300px; width: auto; max-width: 90%; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Cartografia e Questões Ambientais</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 12</span>
+                <span id="progressPercent">8%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // CAPA
+            `<div class="capa">
+                <h1>Cartografia Básica<br>Relação Sociedade–Natureza</h1>
+                <h2>Leitura de mapas · escalas · representações · questões ambientais</h2>
+                <p>Baseado em Paulo Araújo Duarte, Milton Santos, Jurandyr Ross e na BNCC</p>
+            </div>`,
+
+            // SUMÁRIO
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 Sumário</h3>
+                <ol>
+                    <li>1. Cartografia: definição e elementos do mapa (Duarte, 2002)</li>
+                    <li>2. Escalas: numérica e gráfica – cálculos e aplicações</li>
+                    <li>3. Coordenadas geográficas, fusos horários e projeções</li>
+                    <li>4. Curvas de nível, relevo e interpretação de cartas topográficas</li>
+                    <li>5. Sensoriamento remoto, GPS e geoprocessamento</li>
+                    <li>6. Relação sociedade–natureza: técnica como mediação (Santos, 2006)</li>
+                    <li>7. Desenvolvimento sustentável e agendas ambientais</li>
+                    <li>8. Clima, efeito estufa e mudanças climáticas</li>
+                    <li>9. Biomas, biodiversidade e unidades de conservação</li>
+                    <li>10. Poluição, recursos hídricos e resíduos sólidos</li>
+                    <li>11. Questões comentadas</li>
+                </ol>
+            </div>`,
+
+            // 1. Cartografia: definição e elementos
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>1. Cartografia: definição e elementos do mapa</h3>
+                    <p>Segundo Duarte (2002), a Cartografia é o conjunto de estudos e operações científicas, técnicas e artísticas para elaboração de mapas. Um mapa completo deve conter: <strong>título</strong> (assunto e área), <strong>legenda</strong> (símbolos e cores), <strong>escala</strong> (relação com o real), <strong>orientação</strong> (rosa dos ventos ou seta indicando o norte) e <strong>fonte</strong> (origem dos dados). Mapas temáticos utilizam o método coroplético (cores por classes) ou isoplético (linhas de igual valor). O mapa é sempre uma <strong>representação seletiva</strong> e simplificada da realidade, sujeita a distorções dependendo da projeção adotada.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/topographic-map-concept-illustration_114360-30597.jpg" alt="Mapa e seus elementos" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 2. Escalas
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/measurement-concept-illustration_114360-17782.jpg" alt="Escala e medição" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>2. Escalas: numérica e gráfica – cálculos e aplicações</h3>
+                    <p>A <strong>escala numérica</strong> é expressa como fração (1:50.000). Cada centímetro no mapa equivale a 50.000 centímetros (500 metros) no terreno. Quanto <strong>menor o denominador</strong>, maior a escala e maior o detalhamento. A <strong>escala gráfica</strong> é uma barra graduada que acompanha o mapa; sua vantagem é permanecer correta mesmo após ampliações ou reduções. Cálculo básico: <strong>distância real = distância no mapa × denominador da escala</strong>. Exemplo: 4 cm em um mapa 1:250.000 → 4 × 250.000 cm = 10 km. Escalas grandes (ex.: 1:10.000) são usadas em plantas urbanas; escalas pequenas (ex.: 1:1.000.000) em mapas-múndi.</p>
+                </div>
+            </div>`,
+
+            // 3. Coordenadas, fusos e projeções
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>3. Coordenadas geográficas, fusos horários e projeções</h3>
+                    <p>As <strong>coordenadas geográficas</strong> (latitude e longitude) localizam pontos na superfície terrestre. A latitude varia de 0° (Equador) a 90° Norte ou Sul; a longitude, de 0° (Greenwich) a 180° Leste ou Oeste. Os <strong>fusos horários</strong> são 24 faixas de 15° cada; as horas aumentam para Leste e diminuem para Oeste. Projeções cartográficas: <strong>Mercator</strong> (conforme, preserva ângulos, mas distorce áreas polares); <strong>Peters</strong> (equivalente, preserva áreas, mas distorce formas); <strong>Azimutal</strong> (útil para rotas aéreas). O Brasil adota três fusos: UTC -2 (Fernando de Noronha), UTC -3 (Brasília) e UTC -4 (Amazônia).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/globe-concept-illustration_114360-30586.jpg" alt="Globo terrestre e coordenadas" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 4. Curvas de nível e relevo
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/geography-concept-illustration_114360-30923.jpg" alt="Curvas de nível e relevo" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>4. Curvas de nível, relevo e interpretação de cartas topográficas</h3>
+                    <p>As <strong>curvas de nível</strong> são linhas que unem pontos de mesma altitude. Quando estão <strong>próximas</strong>, indicam alta declividade; quando <strong>distantes</strong>, relevo suave. Círculos concêntricos com valores crescentes para o centro indicam <strong>morros</strong>; se os valores decrescem, trata-se de uma <strong>depressão</strong>. A carta topográfica (Duarte, cap. 6) inclui coordenadas UTM (Universal Transversa de Mercator), escala gráfica e numérica, rede de drenagem, estradas e edificações. A <strong>declividade</strong> é calculada pela razão entre a diferença de altura e a distância horizontal entre dois pontos.</p>
+                </div>
+            </div>`,
+
+            // 5. Sensoriamento remoto
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>5. Sensoriamento remoto, GPS e geoprocessamento</h3>
+                    <p>O <strong>sensoriamento remoto</strong> capta imagens da superfície terrestre por satélites (Landsat, CBERS) ou drones. As <strong>ortofotos</strong> são fotografias aéreas corrigidas geometricamente. O <strong>GPS</strong> (Sistema de Posicionamento Global) determina coordenadas tridimensionais utilizando no mínimo 4 satélites. O <strong>geoprocessamento</strong> integra hardware, software e dados espaciais para produzir mapas, monitorar desmatamento, planejar cidades e analisar impactos ambientais. Em concursos, é importante distinguir Cartografia Sistemática (mapas de base, como cartas topográficas) da Cartografia Temática (mapas com temas específicos, como densidade demográfica).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/satellite-concept-illustration_114360-30595.jpg" alt="Satélite e geoprocessamento" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 6. Relação sociedade–natureza
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/environment-concept-illustration_114360-9884.jpg" alt="Sociedade e natureza" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>6. Relação sociedade–natureza: técnica como mediação</h3>
+                    <p>Para Milton Santos (2006), a relação entre sociedade e natureza é mediada pela <strong>técnica</strong>. A natureza deixa de ser algo exterior ao homem e se torna cada vez mais <strong>artificializada</strong>. O meio deixou de ser natural e passou a ser <strong>técnico-científico-informacional</strong>. Isso permitiu uma enorme capacidade de transformar a paisagem, mas também gerou passivos ambientais e riscos globais. As <strong>rugosidades</strong> espaciais podem ser tanto naturais (relevo, clima) quanto sociais (infraestruturas antigas). A sustentabilidade exige precisamente repensar essa relação, reconhecendo os limites do planeta.</p>
+                </div>
+            </div>`,
+
+            // 7. Desenvolvimento sustentável
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>7. Desenvolvimento sustentável e agendas ambientais</h3>
+                    <p>O Relatório Brundtland (1987) definiu <strong>desenvolvimento sustentável</strong> como aquele que atende às necessidades do presente sem comprometer as futuras gerações. A <strong>Agenda 21</strong> (Rio-92) trouxe diretrizes locais e globais. A <strong>Agenda 2030</strong> estabeleceu 17 <strong>Objetivos de Desenvolvimento Sustentável</strong> (ODS), abrangendo erradicação da pobreza, igualdade de gênero e ação climática. O <strong>Acordo de Paris</strong> (2015) tem como meta manter o aquecimento global bem abaixo de 2°C. A <strong>economia circular</strong> propõe reduzir, reutilizar e reciclar, fechando o ciclo produtivo sem descarte. O <strong>eco-turismo</strong> e a <strong>agricultura sintrópica</strong> são exemplos de práticas sustentáveis.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/sustainability-concept-illustration_114360-30240.jpg" alt="Sustentabilidade" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 8. Clima
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/climate-change-concept-illustration_114360-29745.jpg" alt="Mudanças climáticas" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>8. Clima, efeito estufa e mudanças climáticas</h3>
+                    <p>O <strong>efeito estufa</strong> é um fenômeno natural que mantém a temperatura terrestre. Porém, a queima de combustíveis fósseis e o desmatamento intensificam a emissão de gases (CO₂, metano), provocando o <strong>aquecimento global</strong>. Consequências: derretimento de geleiras e do <strong>permafrost</strong> (que libera mais metano), elevação do nível do mar, eventos climáticos extremos. O <strong>Protocolo de Kyoto</strong> (1997) impôs metas obrigatórias apenas para países desenvolvidos. A <strong>justiça climática</strong> evidencia que as populações mais pobres e vulneráveis são as mais atingidas. O <strong>negacionismo científico</strong> é hoje um obstáculo político à ação climática.</p>
+                </div>
+            </div>`,
+
+            // 9. Biomas
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>9. Biomas, biodiversidade e unidades de conservação</h3>
+                    <p>O Brasil abriga <strong>seis biomas</strong>: Amazônia, Cerrado, Mata Atlântica, Caatinga, Pampa e Pantanal. É o país com a maior <strong>megadiversidade</strong> do planeta (cerca de 20% das espécies conhecidas). As <strong>Unidades de Conservação</strong> (SNUC, Lei 9.985/2000) dividem-se em <strong>proteção integral</strong> (Parques, Reservas Biológicas) e <strong>uso sustentável</strong> (APAs, Reservas Extrativistas). <strong>Corredores ecológicos</strong> conectam fragmentos de vegetação, permitindo o fluxo gênico. A <strong>Mata Atlântica</strong> foi a mais devastada (restam menos de 30% da cobertura original). A <strong>desertificação</strong> atinge o semiárido nordestino, agravada pelo desmatamento da Caatinga e pelo manejo inadequado do solo.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/biodiversity-concept-illustration_114360-30399.jpg" alt="Biodiversidade" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 10. Poluição e recursos hídricos
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/water-pollution-concept-illustration_114360-30299.jpg" alt="Poluição e água" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>10. Poluição, recursos hídricos e resíduos sólidos</h3>
+                    <p>O Brasil possui cerca de 12% da água doce mundial, mas distribuída de forma desigual. A <strong>Política Nacional de Recursos Hídricos</strong> (Lei 9.433/1997) institui a gestão participativa por bacias. A <strong>Política Nacional de Resíduos Sólidos</strong> (Lei 12.305/2010) determina a erradicação dos lixões, a <strong>logística reversa</strong> e a responsabilidade compartilhada. Problemas comuns: <strong>inversão térmica</strong> (aprisiona poluentes), <strong>chuva ácida</strong> (SO₂ e NOₓ), poluição por plásticos (microplásticos nos oceanos), e contaminação de aquíferos por agrotóxicos. O <strong>racismo ambiental</strong> revela que populações negras e pobres estão desproporcionalmente expostas à poluição e à falta de saneamento.</p>
+                </div>
+            </div>`,
+
+            // 11. Questões comentadas
+            `<div class="text-container" style="max-width:100%;">
+                <h3>11. Questões comentadas de concursos</h3>
+                <p><strong>Questão 1:</strong> Em um mapa de escala 1:100.000, duas cidades distam 6 cm. No terreno, a distância real em quilômetros é: <strong>a)</strong> 0,6 km. <strong>b)</strong> 6 km. <strong>c)</strong> 60 km. <strong>d)</strong> 600 km. <strong>Gabarito: B.</strong> Cálculo: 6 cm × 100.000 = 600.000 cm = 6.000 m = 6 km.</p>
+                <p><strong>Questão 2:</strong> A projeção de Peters é classificada como: <strong>a)</strong> Conforme. <strong>b)</strong> Equivalente. <strong>c)</strong> Azimutal. <strong>d)</strong> Cilíndrica conforme. <strong>Gabarito: B.</strong> Peters preserva a proporcionalidade das áreas, mas distorce as formas.</p>
+                <p><strong>Questão 3:</strong> O fenômeno que aprisiona poluentes próximos ao solo nas cidades é: <strong>a)</strong> Efeito estufa. <strong>b)</strong> Chuva ácida. <strong>c)</strong> Inversão térmica. <strong>d)</strong> El Niño. <strong>Gabarito: C.</strong> A inversão térmica retém os poluentes, piorando a qualidade do ar.</p>
+                <p><strong>Questão 4:</strong> O Acordo de Paris (2015) tem como meta central: <strong>a)</strong> Reduzir tarifas comerciais. <strong>b)</strong> Manter o aumento da temperatura global bem abaixo de 2°C. <strong>c)</strong> Criar uma moeda única. <strong>d)</strong> Expandir a produção de carvão. <strong>Gabarito: B.</strong> É o que estabelece o artigo 2º do Acordo.</p>
+            </div>`,
+
+            // PÁGINA FINAL
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo de Cartografia Básica e Relação Sociedade–Natureza.</p>
+                <p>Dominar os conceitos de escala, projeções e coordenadas é tão importante quanto compreender os desafios ambientais contemporâneos.</p>
+                <p>Consulte Duarte (2002), Santos (2006) e Ross (2011) para se aprofundar ainda mais.</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContentDiv = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContentDiv.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContentDiv.scrollTop) pageContentDiv.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContentDiv.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>
