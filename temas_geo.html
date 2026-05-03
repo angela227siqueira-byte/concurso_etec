@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Temas Contemporâneos em Geografia · Economia, Geopolítica e Conflitos</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p { margin-bottom: 1em; }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 auto;
+            max-width: 35vw;
+            text-align: center;
+        }
+        .img-container img {
+            height: 50vh;
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container { flex: 1; min-width: 200px; }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+        .capa { text-align: center; padding: 40px 20px; }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 40px; color: #1a5e44; }
+        .capa p { font-size: 22px; color: #2a5e4a; }
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 { color: #1a5e44; margin-bottom: 10px; font-size: 2rem; }
+        .congrats-page p { margin: 20px 0; }
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { max-width: 100%; text-align: center; }
+            .img-container img { height: auto; max-height: 300px; width: auto; max-width: 90%; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Temas Contemporâneos em Geografia</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 13</span>
+                <span id="progressPercent">8%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // CAPA
+            `<div class="capa">
+                <h1>Temas Contemporâneos em Geografia</h1>
+                <h2>Economia, Geopolítica e Conflitos</h2>
+                <p>BNCC · Milton Santos · José William Vesentini</p>
+            </div>`,
+
+            // SUMÁRIO
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 Sumário</h3>
+                <ol>
+                    <li>1. Globalização econômica e financeirização do espaço (Santos, 2000)</li>
+                    <li>2. Meio técnico-científico-informacional e fluidez territorial</li>
+                    <li>3. Divisão Internacional do Trabalho e especialização produtiva</li>
+                    <li>4. Megablocos econômicos e a nova ordem comercial</li>
+                    <li>5. Geopolítica mundial: da bipolaridade à multipolaridade</li>
+                    <li>6. Potências emergentes, BRICS e a disputa hegemônica</li>
+                    <li>7. Conflitos regionais atuais e suas raízes geopolíticas</li>
+                    <li>8. Geopolítica dos recursos: energia, água e minerais estratégicos</li>
+                    <li>9. Ciberguerra, desinformação e a nova geopolítica digital</li>
+                    <li>10. Migrações forçadas, refugiados e direitos humanos</li>
+                    <li>11. Questões comentadas</li>
+                </ol>
+            </div>`,
+
+            // 1. Globalização econômica e financeirização
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>1. Globalização econômica e financeirização do espaço</h3>
+                    <p>A globalização contemporânea é comandada pelo <strong>capital financeiro</strong>. Para Milton Santos (2000), o dinheiro em estado puro tornou-se o motor da organização do território, impondo uma <strong>tirania do dinheiro</strong> que submete empresas, Estados e indivíduos. A <strong>financeirização</strong> fez com que as bolsas de valores, os bancos e os fundos de investimento passassem a ditar fluxos e fixos no espaço mundial. As <strong>crises financeiras</strong> (como a de 2008) são contágios instantâneos que afetam desigualmente as regiões do planeta. Essa lógica produz espaços altamente fluidos (centros financeiros globais) e espaços opacos (áreas de baixa densidade técnica), fragmentando ainda mais o território.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/finance-concept-illustration_114360-2066.jpg" alt="Financeirização global" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 2. Meio técnico-científico-informacional
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/technology-concept-illustration_114360-1708.jpg" alt="Fluidez territorial" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>2. Meio técnico-científico-informacional e fluidez territorial</h3>
+                    <p>O atual período histórico é marcado pelo <strong>meio técnico-científico-informacional</strong> (Santos, 2006), em que ciência, técnica e informação estão indissoluvelmente ligadas ao processo produtivo. As <strong>infovias</strong> (redes de fibra óptica, satélites) e os <strong>sistemas de transporte</strong> intermodais ampliam a <strong>fluidez</strong> do território — capacidade de circulação de bens, capitais e informações. Porém, essa fluidez é <strong>seletiva</strong>: as regiões mais densas em tecnologia (Sudeste brasileiro, Europa Ocidental, costa Leste dos EUA) concentram investimentos, enquanto vastas áreas permanecem à margem. A <strong>logística</strong> tornou-se fator locacional decisivo para empresas e Estados.</p>
+                </div>
+            </div>`,
+
+            // 3. Divisão Internacional do Trabalho
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>3. Divisão Internacional do Trabalho e especialização produtiva</h3>
+                    <p>A <strong>Divisão Internacional do Trabalho (DIT)</strong> distribui funções produtivas entre os países: nações centrais concentram pesquisa, design e serviços financeiros; nações periféricas fornecem matérias-primas e mão de obra barata. Nas últimas décadas, a <strong>DIT se complexificou</strong> com a fragmentação das cadeias produtivas — um mesmo produto (automóvel, celular) é montado com peças de dezenas de países. A China, por exemplo, deixou de ser apenas exportadora de bens de baixo valor e hoje disputa a liderança tecnológica com os EUA (5G, inteligência artificial). A <strong>deslocalização industrial</strong> transfere fábricas para países com regulação ambiental e trabalhista frouxa.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/global-trade-concept-illustration_114360-29954.jpg" alt="Divisão Internacional do Trabalho" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 4. Megablocos econômicos
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/international-trade-concept-illustration_114360-30321.jpg" alt="Blocos econômicos" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>4. Megablocos econômicos e a nova ordem comercial</h3>
+                    <p>Os blocos econômicos evoluíram para além do livre comércio. A <strong>União Europeia</strong> é o caso mais avançado de integração supranacional, com moeda única, parlamento e livre circulação. Os EUA lideram o <strong>USMCA</strong> (sucessor do NAFTA). A China avança com a <strong>Nova Rota da Seda</strong> (Belt and Road Initiative), financiando infraestrutura na Ásia, África e Leste Europeu. O <strong>MERCOSUL</strong> oscila entre avanços e crises, e o <strong>Acordo Mercosul-União Europeia</strong>, ainda não ratificado, pode reconfigurar a economia sul-americana. A <strong>guerra comercial EUA-China</strong> (2018–...) evidencia que o protecionismo ressurge como arma geopolítica.</p>
+                </div>
+            </div>`,
+
+            // 5. Geopolítica mundial
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>5. Geopolítica mundial: da bipolaridade à multipolaridade</h3>
+                    <p>Durante a <strong>Guerra Fria</strong> (1947–1991), o mundo se dividiu entre EUA (capitalismo) e URSS (socialismo). Com o colapso soviético, emergiu uma <strong>Nova Ordem Mundial</strong> (Vesentini, 2013). Houve quem anunciasse o "fim da história" e uma era de paz liberal; em vez disso, o que se viu foi a multiplicação de <strong>polos de poder</strong>. Hoje, a geopolítica é marcada pela rivalidade entre EUA e China, pela atuação de potências regionais (Rússia, Índia, Turquia, Irã) e pela proliferação de conflitos assimétricos. A <strong>OTAN</strong> expandiu-se para o Leste, e a <strong>OCS</strong> (Organização para Cooperação de Xangai) projeta a influência sino-russa na Ásia Central.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/world-map-concept-illustration_114360-30580.jpg" alt="Mapa geopolítico mundial" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 6. BRICS e potências emergentes
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/global-partnership-concept-illustration_114360-30732.jpg" alt="Potências emergentes" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>6. Potências emergentes, BRICS e a disputa hegemônica</h3>
+                    <p>O grupo <strong>BRICS</strong> (Brasil, Rússia, Índia, China e África do Sul) representa a aspiração do "Sul Global" por maior peso nas instituições internacionais. O <strong>Novo Banco de Desenvolvimento</strong> (NDB), criado pelo grupo, financia projetos de infraestrutura e sustentabilidade em países em desenvolvimento. As potências emergentes disputam a reforma de organismos como o <strong>Conselho de Segurança da ONU</strong> e o <strong>FMI</strong>. Entretanto, os BRICS são heterogêneos: enquanto China e Índia têm rivalidades fronteiriças históricas, Brasil e Rússia possuem interesses diversos. Ainda assim, sua existência sinaliza a <strong>multipolaridade</strong> e o enfraquecimento relativo das potências ocidentais tradicionais.</p>
+                </div>
+            </div>`,
+
+            // 7. Conflitos regionais atuais
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>7. Conflitos regionais atuais e suas raízes geopolíticas</h3>
+                    <p>Os conflitos contemporâneos são majoritariamente <strong>intraestatais</strong>, embora com forte intervenção externa. A <strong>Guerra da Síria</strong> iniciou-se como protesto civil em 2011 e tornou-se uma guerra por procuração (proxy) entre EUA, Rússia, Irã e Turquia. A <strong>Guerra na Ucrânia</strong> (2022) recolocou o expansionismo territorial no centro da geopolítica europeia. O <strong>conflito no Iêmen</strong> envolve Arábia Saudita e Irã. No <strong>mar do Sul da China</strong>, Pequim reivindica soberania sobre ilhas disputadas por Vietnã, Filipinas, Malásia e Brunei. Em todos esses casos, <strong>recursos estratégicos</strong> (petróleo, gás, água, rotas marítimas) estão no centro das disputas.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/conflict-concept-illustration_114360-29368.jpg" alt="Conflitos mundiais" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 8. Geopolítica dos recursos
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/energy-concept-illustration_114360-3307.jpg" alt="Recursos estratégicos" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>8. Geopolítica dos recursos: energia, água e minerais estratégicos</h3>
+                    <p>Petróleo e gás natural continuam centrais na geopolítica mundial, com o <strong>Oriente Médio</strong> ainda detentor de grande parte das reservas comprovadas. A OPEP+ influencia os preços globais. A transição energética, por outro lado, cria novas dependências: a produção de baterias elétricas demanda <strong>lítio, cobalto e terras raras</strong>, cuja extração está concentrada em poucos países (China, República Democrática do Congo, Bolívia, Chile). A <strong>água</strong> doce já é motivo de tensão em regiões como a bacia do Nilo (disputa entre Egito, Sudão e Etiópia) e no Oriente Médio. No Brasil, o <strong>Aquífero Guarani</strong> e o <strong>pré-sal</strong> são ativos estratégicos.</p>
+                </div>
+            </div>`,
+
+            // 9. Ciberguerra e desinformação
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>9. Ciberguerra, desinformação e a nova geopolítica digital</h3>
+                    <p>As <strong>guerras híbridas</strong> combinam ações militares convencionais com ciberataques, desinformação e pressão econômica (Vesentini, 2013). Ataques a infraestruturas críticas (redes elétricas, bancos, sistemas de defesa) podem paralisar um país sem um tiro. A <strong>desinformação</strong> em massa, via redes sociais, é instrumento de manipulação eleitoral e desestabilização política. As grandes corporações de tecnologia (Big Techs) acumulam poder que rivaliza com o dos Estados. O controle de dados pessoais — o chamado <strong>capitalismo de vigilância</strong> — é uma nova forma de poder geopolítico. O bloqueio ao 5G da Huawei exemplifica a disputa tecnológica entre EUA e China.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/cyber-security-concept-illustration_114360-1636.jpg" alt="Ciberguerra e desinformação" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 10. Migrações forçadas
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/refugee-concept-illustration_114360-30792.jpg" alt="Migrações e refugiados" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>10. Migrações forçadas, refugiados e direitos humanos</h3>
+                    <p>Os <strong>deslocamentos forçados</strong> são uma marca do século XXI. Guerras (Síria, Ucrânia, Sudão), perseguições étnicas e religiosas, colapso econômico (Venezuela) e desastres ambientais empurram milhões de pessoas para fora de seus países. A crise dos <strong>refugiados sírios</strong> (2015) abalou a União Europeia, fortalecendo movimentos xenófobos. Na América Latina, a <strong>diáspora venezuelana</strong> afeta Colômbia, Peru e Brasil. A BNCC orienta que esses temas sejam tratados sob a ótica dos <strong>direitos humanos</strong>, da <strong>justiça social</strong> e da <strong>soberania</strong>. A geografia ajuda a compreender que migrar não é uma escolha individual, mas, frequentemente, uma imposição estrutural.</p>
+                </div>
+            </div>`,
+
+            // 11. Questões comentadas
+            `<div class="text-container" style="max-width:100%;">
+                <h3>11. Questões comentadas</h3>
+                <p><strong>Questão 1:</strong> (Adaptada) A expressão "meio técnico-científico-informacional" pertence ao pensamento de: <strong>a)</strong> Ruy Moreira. <strong>b)</strong> José William Vesentini. <strong>c)</strong> Milton Santos. <strong>d)</strong> Jurandyr Ross. <strong>Gabarito: C.</strong> Milton Santos cunhou o conceito para descrever o atual período histórico (Santos, 2006).</p>
+                <p><strong>Questão 2:</strong> A guerra comercial entre EUA e China a partir de 2018 teve como principal manifestação: <strong>a)</strong> Criação de uma moeda única. <strong>b)</strong> Imposição mútua de tarifas sobre bilhões de dólares em mercadorias. <strong>c)</strong> Boicote cultural. <strong>d)</strong> Fechamento de todas as embaixadas. <strong>Gabarito: B.</strong> Ambos os países impuseram sobretaxas afetando as cadeias globais de suprimentos.</p>
+                <p><strong>Questão 3:</strong> Os BRICS constituem: <strong>a)</strong> Um bloco econômico com moeda única. <strong>b)</strong> Um agrupamento de cooperação política e econômica entre Brasil, Rússia, Índia, China e África do Sul. <strong>c)</strong> Uma aliança militar. <strong>d)</strong> Um acordo de livre comércio das Américas. <strong>Gabarito: B.</strong> BRICS é um grupo de cooperação, não um bloco de integração profunda.</p>
+                <p><strong>Questão 4:</strong> A Nova Rota da Seda (Belt and Road Initiative) é um megaprojeto de infraestrutura liderado por: <strong>a)</strong> Estados Unidos. <strong>b)</strong> União Europeia. <strong>c)</strong> China. <strong>d)</strong> Rússia. <strong>Gabarito: C.</strong> A China financia portos, ferrovias e dutos na Ásia, África e Europa para expandir sua influência econômica e geopolítica.</p>
+            </div>`,
+
+            // PÁGINA FINAL
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo dos temas contemporâneos de economia, geopolítica e conflitos sob a perspectiva geográfica.</p>
+                <p>Compreender a relação entre espaço, poder, recursos e desigualdades é essencial para a prova de Geografia e para formar uma visão crítica do mundo atual.</p>
+                <p>Continue lendo Santos (2000, 2006) e Vesentini (2013) e acompanhando os acontecimentos mundiais.</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContentDiv = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContentDiv.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContentDiv.scrollTop) pageContentDiv.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContentDiv.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>
