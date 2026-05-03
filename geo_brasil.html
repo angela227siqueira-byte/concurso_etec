@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Geopolítica e globalização · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">🌐 Geopolítica e globalização</div>
+        <div class="sub">Vesentini, Milton Santos e a BNCC · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Geopolítica e globalização) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: "A globalização é um fenômeno exclusivamente econômico, sem implicações culturais ou políticas.",
+            correct: false,
+            justification: "A globalização abrange dimensões econômica, cultural, política e tecnológica, transformando hábitos e relações de poder (Vesentini, 2013)."
+        },
+        {
+            type: 'mc',
+            text: "Segundo Milton Santos (2000), a globalização atual pode ser compreendida como:",
+            correct: 2,
+            options: [
+                "Fim das fronteiras nacionais",
+                "Expansão do socialismo pelo mundo",
+                "Fábula, perversidade e possibilidade",
+                "Retorno ao mercantilismo"
+            ],
+            justification: "Santos propõe três faces da globalização: a fábula (como é contada), a perversidade (como é vivida) e a possibilidade (outra globalização)."
+        },
+        {
+            type: 'tf',
+            text: "A ordem bipolar da Guerra Fria estruturava o mundo em dois blocos antagônicos: o capitalista, liderado pelos EUA, e o socialista, liderado pela URSS.",
+            correct: true,
+            justification: "Entre 1947 e 1991, o sistema internacional dividiu-se em duas esferas de influência, com alianças militares e ideológicas opostas."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'Nova Ordem Mundial' refere-se, majoritariamente, ao seguinte contexto:",
+            correct: 1,
+            options: [
+                "O aumento do poder da ONU",
+                "A multipolaridade após o fim da Guerra Fria, com novos polos de poder",
+                "A volta do colonialismo europeu",
+                "Um governo mundial único"
+            ],
+            justification: "Após a dissolução da URSS, a ordem bipolar cedeu espaço a uma configuração mais complexa, com EUA, China, União Europeia e potências regionais."
+        },
+        {
+            type: 'tf',
+            text: "Vesentini (2013) afirma que o fim da Guerra Fria eliminou todos os conflitos regionais do planeta.",
+            correct: false,
+            justification: "Apesar do fim do conflito Leste-Oeste, tensões étnicas, nacionalistas, religiosas e disputas por recursos persistiram e se intensificaram."
+        },
+        {
+            type: 'mc',
+            text: "A chamada 'doutrina Bush', implantada pelos EUA após os ataques de 11 de setembro de 2001, caracterizou-se por:",
+            correct: 3,
+            options: [
+                "Redução de gastos militares",
+                "Política exclusivamente diplomática",
+                "Respeito irrestrito à soberania de todas as nações",
+                "Ação militar preventiva e unilateralismo"
+            ],
+            justification: "A doutrina Bush autorizava ataques preventivos contra supostas ameaças, sem necessidade de aval multilateral (Vesentini, 2013)."
+        },
+        {
+            type: 'tf',
+            text: "A Organização das Nações Unidas (ONU) foi fundada em 1945 com o objetivo de manter a paz e a segurança internacional.",
+            correct: true,
+            justification: "Criada após a Segunda Guerra Mundial, a ONU sucedeu a Liga das Nações e busca evitar conflitos e promover cooperação."
+        },
+        {
+            type: 'mc',
+            text: "O Conselho de Segurança da ONU é composto por 15 membros, dos quais 5 são permanentes. São eles:",
+            correct: 0,
+            options: [
+                "EUA, Rússia, China, França e Reino Unido",
+                "Brasil, Índia, Japão, Alemanha e África do Sul",
+                "Canadá, Austrália, México, Egito e Coreia do Sul",
+                "Itália, Espanha, Portugal, Grécia e Turquia"
+            ],
+            justification: "Os cinco membros permanentes são as potências vencedoras da Segunda Guerra Mundial, com poder de veto (Vesentini, 2013)."
+        },
+        {
+            type: 'tf',
+            text: "O Brasil defende a reforma do Conselho de Segurança da ONU, pleiteando um assento permanente.",
+            correct: true,
+            justification: "O país argumenta que o Conselho deve refletir a nova geopolítica mundial, com maior representatividade de nações em desenvolvimento."
+        },
+        {
+            type: 'mc',
+            text: "A União Europeia é um bloco econômico que alcançou a integração mais profunda, caracterizada por:",
+            correct: 1,
+            options: [
+                "Apenas zona de livre comércio",
+                "União monetária (Euro), livre circulação de pessoas e políticas comuns",
+                "União aduaneira sem coordenação política",
+                "Mercado comum apenas de serviços"
+            ],
+            justification: "A UE combina mercado único, moeda única em parte dos membros e instituições supranacionais, sendo o bloco mais integrado do planeta."
+        },
+        {
+            type: 'tf',
+            text: "O MERCOSUL foi criado pelo Tratado de Assunção (1991) e tem como membros fundadores Brasil, Argentina, Paraguai e Uruguai.",
+            correct: true,
+            justification: "Esses quatro países assinaram o Tratado de Assunção visando constituir um mercado comum, evoluindo posteriormente."
+        },
+        {
+            type: 'mc',
+            text: "Globalização neoliberal, conforme Milton Santos, tende a:",
+            correct: 2,
+            options: [
+                "Fortalecer economias locais",
+                "Homogeneizar o espaço mundial, eliminando desigualdades",
+                "Aprofundar desigualdades e concentrar riqueza",
+                "Incentivar a agricultura de subsistência"
+            ],
+            justification: "Santos (2000) denuncia o caráter concentrador e excludente da globalização neoliberal, que beneficia poucos atores."
+        },
+        {
+            type: 'tf',
+            text: "A sigla BRICS designa um bloco econômico formal com moeda única e livre circulação de pessoas.",
+            correct: false,
+            justification: "BRICS (Brasil, Rússia, Índia, China e África do Sul) é um agrupamento de cooperação política e econômica, não um bloco de integração profunda."
+        },
+        {
+            type: 'mc',
+            text: "A 'partilha da África', entre os séculos XIX e XX, foi oficializada em qual conferência?",
+            correct: 0,
+            options: [
+                "Conferência de Berlim (1884-1885)",
+                "Conferência de Yalta (1945)",
+                "Conferência de Bandung (1955)",
+                "Conferência de Paris (1919)"
+            ],
+            justification: "Na Conferência de Berlim, as potências europeias delimitaram suas áreas de influência na África, desrespeitando fronteiras étnicas."
+        },
+        {
+            type: 'tf',
+            text: "Os conflitos na Síria e no Iêmen, no século XXI, são exemplos de confrontos estritamente religiosos, sem dimensão geopolítica.",
+            correct: false,
+            justification: "Além de aspectos religiosos, esses conflitos envolvem disputas por poder regional, recursos, influência estrangeira e rivalidades geopolíticas."
+        },
+        {
+            type: 'mc',
+            text: "A 'guerra híbrida' caracteriza-se por:",
+            correct: 0,
+            options: [
+                "Combinação de ações militares convencionais com ciberataques, desinformação e pressão econômica",
+                "Uso exclusivo de armas nucleares",
+                "Batalhas travadas apenas em ambiente marítimo",
+                "Acordos de paz entre potências"
+            ],
+            justification: "Guerras híbridas mesclam meios militares e não militares para desestabilizar adversários (Vesentini, 2013)."
+        },
+        {
+            type: 'tf',
+            text: "A China, nas últimas décadas, ampliou sua influência global por meio de investimentos em infraestrutura, como a Nova Rota da Seda.",
+            correct: true,
+            justification: "A Belt and Road Initiative consiste em projetos de infraestrutura que conectam Ásia, Europa e África, consolidando a presença chinesa."
+        },
+        {
+            type: 'mc',
+            text: "O que caracteriza um 'Estado falido' na geopolítica contemporânea?",
+            correct: 1,
+            options: [
+                "País com altos índices de produtividade agrícola",
+                "Perda do monopólio legítimo da força e incapacidade de prover serviços básicos",
+                "Estado que aboliu suas forças armadas",
+                "Nação sem constituição escrita"
+            ],
+            justification: "Estado falido não consegue controlar seu território, garantir segurança ou prestar serviços essenciais à população."
+        },
+        {
+            type: 'tf',
+            text: "A OTAN (Organização do Tratado do Atlântico Norte) foi criada para ser uma aliança militar dos países socialistas durante a Guerra Fria.",
+            correct: false,
+            justification: "A OTAN é uma aliança militar ocidental criada em 1949; o bloco socialista formou o Pacto de Varsóvia."
+        },
+        {
+            type: 'mc',
+            text: "O terrorismo internacional, a partir dos anos 2000, ganhou novas características. Assinale a alternativa correta:",
+            correct: 2,
+            options: [
+                "Restringe-se a um único país",
+                "É sempre patrocinado por Estados",
+                "Atua em redes transnacionais, com células descentralizadas",
+                "Utiliza exclusivamente armas biológicas"
+            ],
+            justification: "Grupos terroristas contemporâneos operam em redes difusas, com ramificações em vários países e uso intenso da internet."
+        },
+        {
+            type: 'tf',
+            text: "A CPLP (Comunidade dos Países de Língua Portuguesa) é um exemplo de bloco econômico com moeda única.",
+            correct: false,
+            justification: "A CPLP é uma organização de cooperação cultural e política entre países lusófonos, sem integração econômica profunda."
+        },
+        {
+            type: 'mc',
+            text: "A globalização financeira caracterizou-se pela integração das bolsas de valores e pelo fluxo instantâneo de capitais. Esse fenômeno produziu, entre outros efeitos:",
+            correct: 3,
+            options: [
+                "Maior estabilidade cambial no mundo",
+                "Redução das crises financeiras",
+                "Eliminação da especulação",
+                "Crises financeiras de contágio rápido, como a de 2008"
+            ],
+            justification: "A mobilidade do capital financeiro amplifica crises, que se disseminam velozmente entre os mercados."
+        },
+        {
+            type: 'tf',
+            text: "A 'guerra comercial' entre EUA e China, intensificada a partir de 2018, envolveu a imposição mútua de tarifas sobre bilhões de dólares em mercadorias.",
+            correct: true,
+            justification: "Ambos os países adotaram sobretaxas em setores estratégicos, afetando as cadeias globais de suprimentos."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'região' na geopolítica pode ser exemplificado pelo Oriente Médio, que compartilha:",
+            correct: 0,
+            options: [
+                "Proximidade geográfica, questões estratégicas ligadas ao petróleo e tensões históricas",
+                "Língua única e religião única",
+                "Integração plena de seus países",
+                "Ausência de disputas territoriais"
+            ],
+            justification: "O Oriente Médio é uma região geopolítica e simbólica marcada pela concentração de hidrocarbonetos e conflitos duradouros."
+        },
+        {
+            type: 'tf',
+            text: "O Acordo de Paris (2015) é um tratado de comércio internacional que reduziu tarifas entre a Europa e os Estados Unidos.",
+            correct: false,
+            justification: "O Acordo de Paris trata do clima, estabelecendo metas de redução de emissão de gases de efeito estufa."
+        },
+        {
+            type: 'mc',
+            text: "O termo 'balcanização' designa:",
+            correct: 2,
+            options: [
+                "Crescimento econômico acelerado de uma nação",
+                "Processo de integração supranacional",
+                "Fragmentação territorial de um Estado, frequentemente com conflitos étnicos",
+                "Anexação pacífica de territórios"
+            ],
+            justification: "Balcanização refere-se à desintegração de Estados em unidades menores, como ocorreu nos Bálcãs após o fim da Iugoslávia."
+        },
+        {
+            type: 'tf',
+            text: "O PIB da China, em paridade de poder de compra, já superou o dos Estados Unidos, segundo dados do Banco Mundial.",
+            correct: true,
+            justification: "Em paridade de compra, a China ultrapassou os EUA por volta de 2014, consolidando-se como maior economia nesse critério (afirmação baseada em dados de tendência, mas sujeita a atualização anual)."
+        },
+        {
+            type: 'mc',
+            text: "O Brexit (saída do Reino Unido da União Europeia) foi decidido em 2016 e implementado em 2020. Esse evento reflete:",
+            correct: 0,
+            options: [
+                "Crescimento de discursos nacionalistas e de rejeição à integração supranacional",
+                "Fortalecimento do federalismo europeu",
+                "Expansão da UE para o Leste",
+                "Adoção imediata do Euro pelo Reino Unido"
+            ],
+            justification: "O Brexit foi influenciado por movimentos que defendiam a soberania nacional e criticavam a burocracia de Bruxelas."
+        },
+        {
+            type: 'tf',
+            text: "Segundo Vesentini (2013), a geopolítica moderna nasce com a obra de Friedrich Ratzel, que relaciona Estado e território como organismo vivo.",
+            correct: true,
+            justification: "Ratzel é considerado precursor da geopolítica, enfatizando o espaço vital e o poder territorial do Estado."
+        },
+        {
+            type: 'mc',
+            text: "Os 'paraísos fiscais' (tax havens) desempenham qual papel na globalização?",
+            correct: 3,
+            options: [
+                "Regulam o sistema financeiro internacional",
+                "Cobram altos impostos sobre multinacionais",
+                "Reduzem o fluxo de capitais",
+                "Permitem baixa tributação e sigilo, facilitando evasão fiscal e fluxos de capital não rastreáveis"
+            ],
+            justification: "Paraísos fiscais são jurisdições com impostos reduzidos e opacidade, utilizadas por empresas e indivíduos para minimizar tributações."
+        },
+        {
+            type: 'tf',
+            text: "A 'Primavera Árabe' (2010-2011) foi uma série de protestos com causas exclusivamente religiosas, centradas no fundamentalismo islâmico.",
+            correct: false,
+            justification: "As causas foram múltiplas: autoritarismo, desemprego, corrupção e falta de liberdades políticas, além de elementos religiosos em alguns contextos."
+        },
+        {
+            type: 'mc',
+            text: "O 'soft power', conceito de Joseph Nye, refere-se a:",
+            correct: 1,
+            options: [
+                "Uso da força militar",
+                "Capacidade de influenciar por atração cultural e ideológica, em vez de coerção",
+                "Ataques cibernéticos",
+                "Domínio do setor nuclear"
+            ],
+            justification: "Soft power é a habilidade de moldar preferências por meio de valores, cultura e políticas, não pela força."
+        },
+        {
+            type: 'tf',
+            text: "A disputa pelo mar do Sul da China envolve apenas China e Japão, tendo sido resolvida em 2020.",
+            correct: false,
+            justification: "Envolve China, Vietnã, Filipinas, Malásia, Brunei e Taiwan, e continua sendo foco de tensão com incidentes frequentes."
+        },
+        {
+            type: 'mc',
+            text: "A ALCA (Área de Livre Comércio das Américas) fracassou, entre outras razões, porque:",
+            correct: 1,
+            options: [
+                "Todos os países americanos a rejeitaram desde o início",
+                "Houve resistência de nações, inclusive do Brasil, preocupadas com a hegemonia dos EUA e a proteção de suas economias",
+                "Foi implementada com sucesso em 2005",
+                "Nunca foi proposta formalmente"
+            ],
+            justification: "O Brasil e outros países latino-americanos criticaram as condições assimétricas, levando ao abandono do projeto."
+        },
+        {
+            type: 'tf',
+            text: "Os BRICS fundaram um banco, o Novo Banco de Desenvolvimento (NDB), com sede em Xangai, para financiar projetos de infraestrutura e desenvolvimento sustentável.",
+            correct: true,
+            justification: "Criado em 2014, o NDB busca ser alternativa aos mecanismos tradicionais como o Banco Mundial e o FMI."
+        },
+        {
+            type: 'mc',
+            text: "O conceito de 'território-rede' na geopolítica é bem ilustrado por:",
+            correct: 0,
+            options: [
+                "Empresas transnacionais cujas operações se distribuem por vários países, conectando pontos do espaço",
+                "Estados isolados sem comércio exterior",
+                "Reservas indígenas intocadas",
+                "Cidades sem acesso à internet"
+            ],
+            justification: "Territórios-rede são descontínuos, formados por nós conectados por fluxos, transcendendo a contiguidade territorial clássica."
+        },
+        {
+            type: 'tf',
+            text: "A Organização Mundial do Comércio (OMC) regula o comércio internacional e resolve disputas entre seus membros.",
+            correct: true,
+            justification: "Substituiu o GATT e busca assegurar regras comerciais estáveis e previsíveis entre os países-membros."
+        },
+        {
+            type: 'mc',
+            text: "A União Africana, fundada em 2002, tem como uma de suas principais metas:",
+            correct: 0,
+            options: [
+                "Promover a integração, a paz e o desenvolvimento do continente",
+                "Estabelecer uma monarquia continental",
+                "Substituir a União Europeia",
+                "Desmilitarizar a África"
+            ],
+            justification: "A UA busca acelerar a integração política e socioeconômica entre os Estados africanos, sucedendo a OUA."
+        },
+        {
+            type: 'tf',
+            text: "O Ártico tornou-se zona de interesse geopolítico renovado devido ao derretimento do gelo e às expectativas de exploração de petróleo e novas rotas marítimas comerciais.",
+            correct: true,
+            justification: "Mudanças climáticas abrem rotas como a Passagem do Noroeste e facilitam a prospecção de recursos, intensificando disputas territoriais."
+        },
+        {
+            type: 'mc',
+            text: "A política de 'uma China' é defendida por Pequim e significa que:",
+            correct: 1,
+            options: [
+                "China e Índia unificaram suas fronteiras",
+                "Taiwan é considerada parte inalienável do território chinês",
+                "A China adota um sistema pluripartidário",
+                "Hong Kong possui independência política plena"
+            ],
+            justification: "A República Popular da China alega soberania sobre Taiwan, onde funciona a República da China, governo com reconhecimento limitado."
+        },
+        {
+            type: 'tf',
+            text: "O FMI e o Banco Mundial, criados em Bretton Woods (1944), possuem caráter igualitário, dando o mesmo poder de voto a todos os países membros.",
+            correct: false,
+            justification: "O poder de voto nessas instituições é proporcional às cotas de contribuição financeira, favorecendo países ricos."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você tem domínio da geopolítica contemporânea.';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Aprofunde a leitura de Vesentini (2013) sobre os conflitos regionais.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas revise os conceitos de globalização e os organismos internacionais.';
+        else mensagem = '📚 Volte ao capítulo sobre Guerra Fria e Nova Ordem Mundial em Vesentini (2013).';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
