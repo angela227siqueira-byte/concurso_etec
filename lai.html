@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Lei de Acesso à Informação · LAI Federal e Decreto SP 68.155/2023</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 auto;
+            max-width: 35vw;
+            text-align: center;
+        }
+        .img-container img {
+            height: 50vh;
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 1;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 40px; color: #1a5e44; }
+        .capa p { font-size: 22px; color: #2a5e4a; }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 { color: #1a5e44; margin-bottom: 10px; font-size: 2rem; }
+        .congrats-page p { margin: 20px 0; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { max-width: 100%; text-align: center; }
+            .img-container img { height: auto; max-height: 300px; width: auto; max-width: 90%; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Lei de Acesso à Informação</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 12</span>
+                <span id="progressPercent">8%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // PÁGINA 0 - CAPA
+            `<div class="capa">
+                <h1>Lei de Acesso à Informação</h1>
+                <h2>Lei Federal nº 12.527/2011<br>Decreto Estadual SP nº 68.155/2023</h2>
+                <p>Material de estudos para concursos</p>
+            </div>`,
+
+            // PÁGINA 1 - SUMÁRIO
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 Sumário</h3>
+                <ol>
+                    <li>1. Fundamentos constitucionais e princípios (arts. 1º a 3º)</li>
+                    <li>2. Abrangência e definições (art. 4º)</li>
+                    <li>3. Direitos do requerente e dever do Estado (arts. 5º a 7º)</li>
+                    <li>4. Transparência ativa (art. 8º)</li>
+                    <li>5. Transparência passiva – pedido de acesso (arts. 9º a 14)</li>
+                    <li>6. Prazos e recursos (arts. 11, 14, 15)</li>
+                    <li>7. Classificação de sigilo (arts. 23 a 24)</li>
+                    <li>8. Competências e prazos de sigilo (arts. 27 a 31)</li>
+                    <li>9. Condutas ilícitas (art. 32)</li>
+                    <li>10. Vigência e disposições finais (arts. 45 a 46)</li>
+                    <li>11. Decreto nº 68.155/2023 – regulamentação em São Paulo</li>
+                    <li>12. Questões comentadas</li>
+                </ol>
+            </div>`,
+
+            // ----- 1: Fundamentos e princípios -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>1. Fundamentos constitucionais e princípios (arts. 1º a 3º)</h3>
+                    <p>A LAI regulamenta o direito constitucional de acesso à informação, previsto no <strong>art. 5º, XXXIII, art. 37, §3º, II, e art. 216, §2º, da Constituição Federal</strong>. O art. 1º estabelece que a lei se aplica a todos os órgãos e entidades dos três Poderes e a entidades privadas sem fins lucrativos que recebem recursos públicos. O art. 3º traz os princípios fundamentais: <strong>publicidade como preceito geral e sigilo como exceção</strong> (inciso I); divulgação de informações independentemente de requerimento (inciso II); utilização de meios de comunicação (inciso III); fomento à cultura de transparência (inciso IV) e desenvolvimento do controle social (inciso V). Essa base principiológica define a LAI como instrumento de fortalecimento da democracia.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/transparency-concept-illustration_114360-30499.jpg" alt="Transparência pública" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 2: Abrangência e definições -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/dictionary-concept-illustration_114360-16222.jpg" alt="Conceitos e definições" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>2. Abrangência e definições (art. 4º)</h3>
+                    <p>O art. 4º define os conceitos centrais: <strong>informação</strong> são dados processados ou não, em qualquer meio; <strong>documento</strong> é a unidade de registro; <strong>informação sigilosa</strong> é aquela temporariamente restrita em razão de sua imprescindibilidade para a segurança da sociedade e do Estado; <strong>informação pessoal</strong> diz respeito à pessoa natural identificada ou identificável; <strong>tratamento da informação</strong> inclui coleta, produção, armazenamento, etc.; <strong>disponibilidade</strong> é a qualidade da informação acessível e utilizável; <strong>autenticidade</strong> é a garantia de que a informação provém da fonte declarada; <strong>integridade</strong> é a preservação da informação sem modificações; <strong>primariedade</strong> é a qualidade da informação coletada na fonte, com o máximo de detalhamento.</p>
+                </div>
+            </div>`,
+
+            // ----- 3: Direitos e deveres -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>3. Direitos do requerente e dever do Estado (arts. 5º a 7º)</h3>
+                    <p>O art. 5º determina que o acesso à informação deve ser garantido mediante procedimentos objetivos e ágeis, de forma transparente e em linguagem de fácil compreensão. O art. 7º elenca os direitos do requerente, entre eles: obter informação primária, íntegra e autêntica (inciso IV); informação atualizada (inciso V); orientação sobre procedimentos (inciso I); acesso aos documentos que fundamentam decisões (art. 7º, §3º). Se a informação for parcialmente sigilosa, assegura-se o acesso à parte não sigilosa por certidão ou cópia com ocultação (art. 7º, §2º). O pedido não precisa ser motivado (art. 10, §3º).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/citizen-request-concept-illustration_114360-30958.jpg" alt="Cidadão solicitando informação" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 4: Transparência ativa -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/website-setup-concept-illustration_114360-1803.jpg" alt="Site de transparência" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>4. Transparência ativa (art. 8º)</h3>
+                    <p>A transparência ativa é o dever de divulgar informações independentemente de solicitação. O art. 8º, §1º, elenca o mínimo que deve constar nos sítios oficiais: registros de competências, estrutura organizacional, endereços e telefones; repasses e transferências de recursos; despesas; licitações e contratos; dados gerais de programas e ações; respostas a perguntas frequentes. O §3º exige que os sítios tenham ferramenta de pesquisa de conteúdo, possibilitem gravação de relatórios em formatos eletrônicos abertos e acesso automatizado por sistemas externos. A transparência ativa economiza recursos e reduz o volume de pedidos individuais.</p>
+                </div>
+            </div>`,
+
+            // ----- 5: Pedido de acesso -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>5. Transparência passiva – pedido de acesso (arts. 9º a 14)</h3>
+                    <p>A transparência passiva é acionada mediante requerimento. O art. 10 exige apenas a <strong>identificação do requerente e a especificação da informação</strong>, sendo vedada qualquer exigência de motivo (§3º). O Serviço de Informações ao Cidadão (SIC) é a unidade física responsável pelo atendimento (art. 9º). Não sendo possível a concessão, o órgão emitirá certidão negativa (art. 9º, parágrafo único). O art. 14 obriga que a negativa seja comunicada por escrito, com a fundamentação legal, o prazo e o órgão para recurso, e a possibilidade de reavaliação pela autoridade máxima.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/filing-system-concept-illustration_114360-16279.jpg" alt="Protocolo de pedido" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 6: Prazos e recursos -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/deadline-concept-illustration_114360-2644.jpg" alt="Prazos e recursos" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>6. Prazos e recursos (arts. 11, 14, 15)</h3>
+                    <p>O órgão deve conceder acesso imediato à informação disponível. Não sendo possível, o prazo é de <strong>20 (vinte) dias</strong>, prorrogáveis por mais <strong>10 (dez) dias</strong> mediante justificativa (art. 11, §1º). Da negativa, cabe <strong>recurso em 10 (dez) dias</strong>, dirigido à autoridade hierarquicamente superior (art. 15). Em caso de indeferimento pela autoridade máxima ou omissão, o interessado pode recorrer à <strong>Controladoria Geral do Estado</strong> (no caso de São Paulo, nos termos do Decreto 68.155/2023) e, depois, à <strong>Comissão Estadual de Acesso à Informação (CEAI)</strong>. A via judicial está sempre aberta.</p>
+                </div>
+            </div>`,
+
+            // ----- 7: Classificação de sigilo -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>7. Classificação de sigilo (arts. 23 a 24)</h3>
+                    <p>O art. 23 estabelece os critérios que autorizam a classificação de uma informação como sigilosa, vinculados a riscos para a defesa, soberania, integridade do território nacional, relações internacionais, estabilidade econômica, planos militares, atividades de inteligência e investigações. O art. 24 define três graus de sigilo: <strong>ultrassecreta</strong> (prazo máximo de 25 anos), <strong>secreta</strong> (15 anos) e <strong>reservada</strong> (5 anos). Transcorrido o prazo, a informação torna-se <strong>automaticamente pública</strong> (§4º). Informações sobre violação de direitos humanos não podem ser sigilosas (art. 21, parágrafo único).</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/classified-document-concept-illustration_114360-31055.jpg" alt="Documento sigiloso" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 8: Competências e prazos -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/flowchart-concept-illustration_114360-6532.jpg" alt="Hierarquia de competências" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>8. Competências e prazos de sigilo (arts. 27 a 31)</h3>
+                    <p>O art. 27 distribui a competência para classificação: <strong>ultrassecreta</strong> é exclusiva do Presidente e Vice-Presidente, Ministros de Estado, Comandantes das Forças Armadas e Chefes de Missões Diplomáticas; <strong>secreta</strong> pode ser delegada pelas mesmas autoridades, vedada subdelegação; <strong>reservada</strong> é mais abrangente, alcançando outras autoridades. O <strong>art. 28</strong> exige que o ato de classificação identifique o assunto, o fundamento, o prazo e a autoridade. O <strong>art. 31</strong> protege as informações pessoais por até <strong>100 anos</strong>, admitindo acesso por agentes públicos legalmente autorizados.</p>
+                </div>
+            </div>`,
+
+            // ----- 9: Condutas ilícitas -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>9. Condutas ilícitas e responsabilidades (art. 32)</h3>
+                    <p>O art. 32 elenca condutas consideradas ilícitas, passíveis de responsabilidade administrativa, civil e penal. Entre elas: <strong>recusar-se a fornecer a informação</strong>; <strong>retardar deliberadamente</strong> o fornecimento; fornecer informação <strong>incorreta, incompleta ou imprecisa</strong>; ocultar ou destruir documentos; utilizar indevidamente informação sigilosa; impor sigilo para ocultar irregularidades. A conduta é atribuída ao agente público ou militar que agir com dolo ou má-fé. O rol é exaustivo apenas para fins disciplinares, sem prejuízo de outras previsões legais, como a Lei de Improbidade Administrativa.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/justice-concept-illustration_114360-1630.jpg" alt="Responsabilização legal" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 10: Vigência -----
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/calendar-concept-illustration_114360-1619.jpg" alt="Calendário e prazos" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>10. Vigência e disposições finais (arts. 45 a 46)</h3>
+                    <p>O art. 47 determina que a LAI entrou em vigor <strong>180 (cento e oitenta) dias</strong> após sua publicação (ocorrida em 18/11/2011). O art. 45 convoca Estados, Distrito Federal e Municípios a editarem <strong>legislação própria</strong> para regulamentar o acesso em seus âmbitos. O art. 46 revogou apenas os artigos 22 a 24 da Lei nº 8.159/1991 (Lei de Arquivos), preservando o restante. Este prazo de 180 dias é um detalhe importante: a lei foi publicada em novembro de 2011 e passou a valer em maio de 2012, permitindo que os órgãos se adequassem.</p>
+                </div>
+            </div>`,
+
+            // ----- 11: Decreto SP -----
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>11. Decreto nº 68.155/2023 – regulamentação em São Paulo</h3>
+                    <p>O Decreto paulista, de 18/12/2023, regulamenta a LAI no Poder Executivo estadual e revoga o antigo Decreto 58.052/2012. Ele cria ou reafirma a estrutura: <strong>Serviço de Informações ao Cidadão (SIC)</strong> em cada órgão, com atendimento presencial e eletrônico; a <strong>Controladoria Geral do Estado (CGE)</strong> como órgão de monitoramento, consolidação estatística e orientação; e a <strong>Comissão Estadual de Acesso à Informação (CEAI)</strong>, colegiado misto (servidores e sociedade civil) para julgar recursos em última instância administrativa. O Decreto também enfatiza a <strong>transparência ativa</strong>, a necessidade de dados abertos legíveis por máquina e a interface com a Lei Geral de Proteção de Dados (LGPD) para informações pessoais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/sao-paulo-state-map-concept-illustration_114360-30580.jpg" alt="Estado de São Paulo" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // ----- 12: Questões comentadas -----
+            `<div class="text-container" style="max-width:100%;">
+                <h3>12. Questões comentadas</h3>
+                <p><strong>Questão 1:</strong> (Adaptada) O princípio fundamental da LAI, expresso no art. 3º, I, é: <strong>a)</strong> Sigilo como regra. <strong>b)</strong> Publicidade como preceito geral e sigilo como exceção. <strong>c)</strong> Publicidade limitada a documentos oficiais. <strong>d)</strong> Sigilo apenas para informações militares. <strong>Gabarito: B.</strong> É o que estabelece o inciso I do art. 3º.</p>
+                <p><strong>Questão 2:</strong> O prazo máximo para classificação de uma informação como reservada é de: <strong>a)</strong> 25 anos. <strong>b)</strong> 15 anos. <strong>c)</strong> 5 anos. <strong>d)</strong> 100 anos. <strong>Gabarito: C.</strong> Art. 24, §1º, III.</p>
+                <p><strong>Questão 3:</strong> No Estado de São Paulo, o órgão responsável por monitorar a LAI e julgar recursos em primeira instância após o órgão de origem é: <strong>a)</strong> Procuradoria Geral do Estado. <strong>b)</strong> Comissão Estadual de Acesso à Informação. <strong>c)</strong> Controladoria Geral do Estado (CGE). <strong>d)</strong> Tribunal de Contas do Estado. <strong>Gabarito: C.</strong> A CGE é o órgão de monitoramento e segunda instância administrativa; a CEAI é a última instância.</p>
+                <p><strong>Questão 4:</strong> Constitui conduta ilícita de agente público: <strong>a)</strong> Fornecer a informação no prazo legal. <strong>b)</strong> Fornecer informação intencionalmente incorreta. <strong>c)</strong> Divulgar a transparência ativa. <strong>d)</strong> Orientar o cidadão sobre como recorrer. <strong>Gabarito: B.</strong> Art. 32, I, considera ilícito fornecer informação incorreta de forma intencional.</p>
+            </div>`,
+
+            // PÁGINA FINAL
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo da Lei de Acesso à Informação e do Decreto Estadual nº 68.155/2023.</p>
+                <p>Dominar os prazos, os princípios e os mecanismos de recurso é essencial para garantir seus direitos como cidadão e para obter êxito em provas de concursos.</p>
+                <p>Mantenha-se informado e exerça o controle social!</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContentDiv = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContentDiv.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContentDiv.scrollTop) pageContentDiv.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContentDiv.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>
