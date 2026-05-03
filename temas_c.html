@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>📘 Temas Contemporâneos · BNCC</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            margin: 0;
+        }
+
+        .reader-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .fixed-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #dde5e0;
+            padding-bottom: 8px;
+        }
+        .fixed-header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .progress-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a5e44;
+            margin-bottom: 6px;
+        }
+        .progress-bar-bg {
+            background: #dee6e1;
+            height: 7px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #1a7a58;
+            height: 7px;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.2s;
+        }
+
+        .text-content {
+            text-align: justify;
+            padding: 8px 0 16px;
+            max-height: 58vh;
+            overflow-y: auto;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 0 2px;
+            scroll-behavior: smooth;
+        }
+        .text-content p {
+            margin-bottom: 1em;
+        }
+        .text-content h2, .text-content h3, .text-content h4 {
+            margin: 1.2em 0 0.3em;
+            color: #154e3a;
+            font-weight: 600;
+        }
+
+        .img-text-row {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .img-container {
+            flex: 0 0 auto;
+            max-width: 35vw;
+            text-align: center;
+        }
+        .img-container img {
+            height: 50vh;
+            max-height: 400px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .text-container {
+            flex: 1;
+            min-width: 200px;
+        }
+        .right-image .text-container { order: 1; }
+        .right-image .img-container { order: 2; }
+        .left-image .text-container { order: 2; }
+        .left-image .img-container { order: 1; }
+
+        .toolbar-single {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin: 18px 0 14px;
+            padding: 4px 0 8px;
+            border-top: 1px solid #dde5e0;
+            border-bottom: 1px solid #dde5e0;
+        }
+        .tool-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            color: #134531;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 10px 14px;
+            border-radius: 48px;
+            min-width: 60px;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tool-btn:active { background: #d0e0d7; transform: scale(0.96); }
+        .tool-btn:disabled { opacity: 0.4; background: #e0e8e3; border-color: #b6ccc1; pointer-events: none; }
+        select.tool-btn { background: #ecf3ef; width: auto; }
+
+        .capa {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .capa h1 { font-size: 36px; margin-bottom: 20px; color: #0f3d2e; }
+        .capa h2 { font-size: 28px; margin-bottom: 40px; color: #1a5e44; }
+        .capa p { font-size: 22px; color: #2a5e4a; }
+
+        .congrats-page {
+            text-align: center;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .congrats-page h2 { color: #1a5e44; margin-bottom: 10px; font-size: 2rem; }
+        .congrats-page p { margin: 20px 0; }
+
+        @media (max-width: 700px) {
+            .reader-wrapper { max-width: 98%; padding: 15px; }
+            .tool-btn { padding: 8px 10px; min-width: 50px; font-size: 0.9rem; }
+            .img-text-row { flex-direction: column; }
+            .img-container { max-width: 100%; text-align: center; }
+            .img-container img { height: auto; max-height: 300px; width: auto; max-width: 90%; }
+            .right-image .text-container, .right-image .img-container,
+            .left-image .text-container, .left-image .img-container { order: unset; }
+            .capa h1 { font-size: 28px; }
+            .capa h2 { font-size: 24px; }
+            .capa p { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="reader-wrapper">
+    <div id="readerScreen" class="screen active">
+        <div class="fixed-header">
+            <h1>Temas Contemporâneos conforme a BNCC</h1>
+            <div class="progress-row">
+                <span id="pageXofY">Página 1 de 11</span>
+                <span id="progressPercent">9%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="text-content" id="pageContent"></div>
+        <div class="toolbar-single">
+            <button class="tool-btn" id="fontMinusBtn" title="Diminuir fonte">A−</button>
+            <button class="tool-btn" id="fontPlusBtn" title="Aumentar fonte">A+</button>
+            <button class="tool-btn" id="fullscreenBtn" title="Tela cheia">⛶</button>
+            <button class="tool-btn" id="prevBtnInline" title="Página anterior">◀</button>
+            <button class="tool-btn" id="nextBtnInline" title="Próxima página">▶</button>
+            <button class="tool-btn" id="speakBtn" title="Ouvir/Parar">🔊</button>
+            <select id="rateSelect" class="tool-btn" style="width: auto;">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const pageContents = [
+            // CAPA
+            `<div class="capa">
+                <h1>Temas Contemporâneos</h1>
+                <h2>Conforme a Base Nacional Comum Curricular (BNCC)</h2>
+                <p>Direitos humanos, diversidade, tecnologia, meio ambiente, saúde e cidadania</p>
+            </div>`,
+
+            // SUMÁRIO
+            `<div class="text-container" style="max-width:100%;">
+                <h3>📌 Sumário</h3>
+                <ol>
+                    <li>1. A BNCC e os temas contemporâneos transversais</li>
+                    <li>2. Direitos humanos e cidadania</li>
+                    <li>3. Diversidade cultural, étnico-racial e de gênero</li>
+                    <li>4. Educação ambiental e sustentabilidade</li>
+                    <li>5. Ciência, tecnologia e inovação</li>
+                    <li>6. Trabalho, consumo e educação financeira</li>
+                    <li>7. Saúde e educação alimentar e nutricional</li>
+                    <li>8. Mobilidade, urbanização e direito à cidade</li>
+                    <li>9. Questões comentadas</li>
+                </ol>
+            </div>`,
+
+            // 1. BNCC e temas transversais
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>1. A BNCC e os temas contemporâneos transversais</h3>
+                    <p>A <strong>Base Nacional Comum Curricular</strong> (2018) estabelece que temas como direitos humanos, diversidade cultural, educação ambiental, tecnologia, trabalho e saúde devem permear todas as áreas do conhecimento. Esses temas não são disciplinas isoladas, mas <strong>transversais</strong>: atravessam a Geografia, a História, a Sociologia e demais componentes. Na Geografia, eles se materializam na análise das desigualdades espaciais, dos fluxos migratórios, dos conflitos ambientais e das transformações do mundo do trabalho. A BNCC também incentiva o desenvolvimento de <strong>projetos de vida</strong> e a reflexão sobre o papel do estudante como agente de transformação social.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/education-concept-illustration_114360-1715.jpg" alt="Educação e BNCC" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 2. Direitos humanos
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/human-rights-concept-illustration_114360-30876.jpg" alt="Direitos humanos" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>2. Direitos humanos e cidadania</h3>
+                    <p>A educação em direitos humanos é um dos pilares da BNCC. No campo geográfico, isso se traduz na análise das <strong>desigualdades socioespaciais</strong>, do <strong>racismo ambiental</strong> e da <strong>justiça climática</strong>. O direito à moradia, ao saneamento básico, à cidade e à terra são temas centrais. A Declaração Universal dos Direitos Humanos (1948) e a Constituição de 1988 são marcos legais. Milton Santos já alertava que a globalização perversa viola direitos cotidianamente, mas também apontava a <strong>possibilidade</strong> de outra globalização, fundada na solidariedade e na dignidade humana (Santos, 2000).</p>
+                </div>
+            </div>`,
+
+            // 3. Diversidade
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>3. Diversidade cultural, étnico-racial e de gênero</h3>
+                    <p>A BNCC promove o respeito à diversidade e o combate ao preconceito. Na Geografia, estudam-se as <strong>comunidades tradicionais</strong> (quilombolas, indígenas, caiçaras), suas territorialidades e conflitos. A interseccionalidade (gênero, raça e classe), trabalhada por Heleieth Saffioti e Lélia Gonzalez, ajuda a entender que a opressão se manifesta de forma combinada. A <strong>demarcação de terras indígenas</strong> e o <strong>reconhecimento de territórios quilombolas</strong> são questões atuais que envolvem a luta contra o etnocentrismo e o racismo estrutural. A diversidade também se expressa nas paisagens culturais e nos modos de vida regionais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/multicultural-community-concept-illustration_114360-30555.jpg" alt="Diversidade cultural" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 4. Educação ambiental
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/eco-conscious-concept-illustration_114360-30563.jpg" alt="Educação ambiental" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>4. Educação ambiental e sustentabilidade</h3>
+                    <p>A educação ambiental na BNCC visa formar cidadãos conscientes dos limites do planeta. Os <strong>17 Objetivos de Desenvolvimento Sustentável</strong> (ODS) da Agenda 2030 orientam discussões sobre consumo sustentável, mudanças climáticas e preservação da biodiversidade. Na Geografia, isso implica estudar os <strong>biomas brasileiros</strong>, os impactos do agronegócio, a gestão de resíduos sólidos (PNRS) e a vulnerabilidade socioambiental. O conceito de <strong>justiça ambiental</strong> denuncia que os riscos ambientais recaem desproporcionalmente sobre os mais pobres. Santos (2006) já afirmava que a natureza está cada vez mais artificializada, exigindo uma nova ética ambiental.</p>
+                </div>
+            </div>`,
+
+            // 5. Ciência e tecnologia
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>5. Ciência, tecnologia e inovação</h3>
+                    <p>O avanço tecnológico transforma o espaço geográfico rapidamente. O <strong>meio técnico-científico-informacional</strong> (Santos, 2006) integra ciência, técnica e informação, criando novas centralidades e periferias. Temas como <strong>inteligência artificial</strong>, <strong>internet das coisas</strong> e <strong>automação</strong> impactam o mundo do trabalho. A <strong>uberização</strong> precariza relações trabalhistas. A <strong>cidadania digital</strong> envolve acesso à internet, proteção de dados (LGPD) e combate às <strong>fake news</strong>. A BNCC propõe que o aluno não seja apenas usuário, mas também produtor crítico de tecnologia, compreendendo seus impactos sociais, éticos e ambientais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/artificial-intelligence-concept-illustration_114360-30567.jpg" alt="Tecnologia e inovação" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 6. Trabalho e consumo
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/financial-literacy-concept-illustration_114360-30569.jpg" alt="Educação financeira" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>6. Trabalho, consumo e educação financeira</h3>
+                    <p>A BNCC insere a educação para o consumo e a educação financeira como temas transversais. No campo da Geografia, analisam-se as <strong>cadeias globais de produção</strong>, o <strong>consumo consciente</strong> e a <strong>obsolescência programada</strong>. O <strong>trabalho análogo ao escravo</strong> ainda persiste em oficinas de costura e fazendas, revelando as contradições da globalização. A <strong>economia solidária</strong> e o <strong>comércio justo</strong> são alternativas. Ruy Moreira (2009) lembra que o território é palco das relações de produção e das lutas de classe. Compreender o endividamento, o planejamento financeiro e os direitos do consumidor são competências para a vida.</p>
+                </div>
+            </div>`,
+
+            // 7. Saúde
+            `<div class="img-text-row right-image">
+                <div class="text-container">
+                    <h3>7. Saúde e educação alimentar e nutricional</h3>
+                    <p>A saúde na BNCC abrange desde a prevenção de doenças até a promoção de hábitos saudáveis. A <strong>pandemia de Covid-19</strong> evidenciou as desigualdades no acesso à saúde e a importância do SUS. Na Geografia, estudam-se a <strong>distribuição espacial de equipamentos de saúde</strong>, os <strong>determinantes sociais da doença</strong> e a <strong>soberania alimentar</strong>. O <strong>uso de agrotóxicos</strong> e a <strong>contaminação da água</strong> afetam diretamente a saúde das populações rurais e urbanas. A <strong>fome</strong>, que voltou a crescer no Brasil, é um problema geopolítico e social que demanda políticas públicas estruturais.</p>
+                </div>
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/health-concept-illustration_114360-844.jpg" alt="Saúde e bem-estar" aria-hidden="true">
+                </div>
+            </div>`,
+
+            // 8. Mobilidade e direito à cidade
+            `<div class="img-text-row left-image">
+                <div class="img-container">
+                    <img src="https://img.freepik.com/free-vector/smart-city-concept-illustration_114360-30573.jpg" alt="Direito à cidade" aria-hidden="true">
+                </div>
+                <div class="text-container">
+                    <h3>8. Mobilidade, urbanização e direito à cidade</h3>
+                    <p>O <strong>direito à cidade</strong>, conceito de Henri Lefebvre, é incorporado pela BNCC ao tratar da mobilidade urbana, da segregação socioespacial e da <strong>gentrificação</strong>. No Brasil, o <strong>Estatuto da Cidade</strong> (2001) e o <strong>Plano Diretor</strong> são instrumentos de política urbana. A <strong>mobilidade ativa</strong> (bicicletas, pedestres) e o <strong>transporte público</strong> são centrais para cidades sustentáveis. A <strong>favelização</strong> e a <strong>periferização</strong> revelam a ausência de moradia digna para a população de baixa renda. Milton Santos dedicou parte de sua obra a compreender a urbanização dos países pobres, criticando a especulação imobiliária e a segregação.</p>
+                </div>
+            </div>`,
+
+            // 9. Questões comentadas
+            `<div class="text-container" style="max-width:100%;">
+                <h3>9. Questões comentadas</h3>
+                <p><strong>Questão 1:</strong> (Adaptada) A BNCC prevê que os temas contemporâneos transversais devem: <strong>a)</strong> Ser tratados exclusivamente na disciplina de Sociologia. <strong>b)</strong> Permear todas as áreas do conhecimento. <strong>c)</strong> Ser optativos para cada escola. <strong>d)</strong> Limitar-se ao Ensino Fundamental. <strong>Gabarito: B.</strong> A transversalidade é um princípio central da BNCC.</p>
+                <p><strong>Questão 2:</strong> A "uberização" é um fenômeno contemporâneo associado a: <strong>a)</strong> Ampliação de direitos trabalhistas. <strong>b)</strong> Precarização do trabalho e ausência de vínculo empregatício. <strong>c)</strong> Fortalecimento dos sindicatos. <strong>d)</strong> Redução da jornada de trabalho. <strong>Gabarito: B.</strong> A uberização elimina garantias trabalhistas ao tratar o trabalhador como "empreendedor".</p>
+                <p><strong>Questão 3:</strong> O conceito de "racismo ambiental" refere-se a: <strong>a)</strong> Igualdade na distribuição de riscos ambientais. <strong>b)</strong> Exposição desproporcional de minorias étnicas a poluição e degradação. <strong>c)</strong> Proteção exclusiva de áreas verdes em bairros ricos. <strong>d)</strong> Ausência de saneamento básico em áreas rurais. <strong>Gabarito: B.</strong> Racismo ambiental é uma das formas de injustiça socioambiental.</p>
+            </div>`,
+
+            // PÁGINA FINAL
+            `<div class="congrats-page">
+                <h2>🎉 Parabéns!</h2>
+                <p>Você concluiu o estudo dos temas contemporâneos conforme a BNCC.</p>
+                <p>Compreender essas questões é essencial para formar cidadãos críticos, preparados para os desafios do século XXI e para as provas de concurso.</p>
+                <p>Continue aprofundando seus conhecimentos e relacionando a teoria com a realidade à sua volta.</p>
+            </div>`
+        ];
+
+        const totalPages = pageContents.length;
+        let currentPage = 0;
+        let fontSizeIndex = 4;
+        const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 38, 42];
+
+        const pageContentDiv = document.getElementById('pageContent');
+        const pageXofY = document.getElementById('pageXofY');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const fontMinus = document.getElementById('fontMinusBtn');
+        const fontPlus = document.getElementById('fontPlusBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const prevBtn = document.getElementById('prevBtnInline');
+        const nextBtn = document.getElementById('nextBtnInline');
+        const speakBtn = document.getElementById('speakBtn');
+        const rateSelect = document.getElementById('rateSelect');
+
+        let synth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        function getFemaleVoice() {
+            const voices = synth.getVoices();
+            const ptVoices = voices.filter(v => v.lang === 'pt-BR');
+            const female = ptVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || v.name.includes('Samantha') || v.name.includes('Maria'));
+            return female || ptVoices[0] || voices[0];
+        }
+
+        function updateUI() {
+            pageContentDiv.innerHTML = pageContents[currentPage];
+            const num = currentPage + 1;
+            pageXofY.textContent = `Página ${num} de ${totalPages}`;
+            const pct = (num / totalPages) * 100;
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = Math.round(pct) + '%';
+            prevBtn.disabled = (currentPage === 0);
+            nextBtn.disabled = (currentPage === totalPages - 1);
+            stopReading();
+            if (pageContentDiv.scrollTop) pageContentDiv.scrollTop = 0;
+        }
+
+        function applyFontSize() {
+            const size = fontSizes[fontSizeIndex] + 'px';
+            pageContentDiv.style.fontSize = size;
+            fontMinus.disabled = (fontSizeIndex === 0);
+            fontPlus.disabled = (fontSizeIndex === fontSizes.length-1);
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 0 && newPage < totalPages) {
+                currentPage = newPage;
+                updateUI();
+            }
+        }
+
+        function startReading() {
+            if (!synth) { alert('Seu navegador não suporta síntese de voz.'); return; }
+            if (isSpeaking) { stopReading(); return; }
+            const text = pageContentDiv.innerText;
+            if (!text.trim()) return;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            const voice = getFemaleVoice();
+            if (voice) currentUtterance.voice = voice;
+            currentUtterance.rate = parseFloat(rateSelect.value);
+            currentUtterance.onend = function() {
+                isSpeaking = false;
+                currentUtterance = null;
+                speakBtn.textContent = '🔊';
+            };
+            synth.speak(currentUtterance);
+            isSpeaking = true;
+            speakBtn.textContent = '⏹️';
+        }
+
+        function stopReading() {
+            if (synth && synth.speaking) synth.cancel();
+            if (currentUtterance) {
+                currentUtterance.onend = null;
+                currentUtterance = null;
+            }
+            isSpeaking = false;
+            speakBtn.textContent = '🔊';
+        }
+
+        fontMinus.addEventListener('click', () => { if (fontSizeIndex > 0) fontSizeIndex--; applyFontSize(); });
+        fontPlus.addEventListener('click', () => { if (fontSizeIndex < fontSizes.length-1) fontSizeIndex++; applyFontSize(); });
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else document.documentElement.requestFullscreen();
+        });
+        prevBtn.addEventListener('click', () => changePage(-1));
+        nextBtn.addEventListener('click', () => changePage(1));
+        speakBtn.addEventListener('click', startReading);
+        rateSelect.addEventListener('change', () => {
+            if (isSpeaking && currentUtterance) currentUtterance.rate = parseFloat(rateSelect.value);
+        });
+
+        applyFontSize();
+        updateUI();
+        if (synth) synth.getVoices();
+    })();
+</script>
+</body>
+</html>
