@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quiz · Lei de Acesso à Informação (Lei Federal nº 12.527/2011) · 40 questões</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Verdana', 'Arial', sans-serif;
+            background: #f5f7f6;
+            color: #1a2e2a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 85%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.04);
+            padding: 20px 30px;
+            border: 1px solid #dde5e0;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0f3d2e;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #2a5e4a;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .opt-btn {
+            background: #ecf3ef;
+            border: 1px solid #b3cdbf;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .opt-btn.selected { background: #1a5e44; color: white; border-color: #1a5e44; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .feedback.correct { background: #d4edda; border-left: 6px solid #28a745; }
+        .feedback.wrong { background: #f8d7da; border-left: 6px solid #dc3545; }
+        .toolbar { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 10px; }
+        .tool-btn {
+            background: #ecf3ef; border: 1px solid #b3cdbf; padding: 12px; font-size: 1rem;
+            border-radius: 48px; flex: 1; text-align: center; cursor: pointer;
+        }
+        .progress { font-size: 0.85rem; margin-bottom: 8px; color: #1a5e44; text-align: right; }
+        .font-controls { display: flex; gap: 8px; margin-bottom: 15px; justify-content: flex-end; }
+        .font-btn {
+            background: #e6f0ea; border: none; padding: 6px 12px; border-radius: 40px; cursor: pointer; font-weight: bold;
+        }
+        .result-screen { text-align: center; }
+        .result-box { background: #f0f7f3; padding: 20px; border-radius: 28px; margin: 20px 0; }
+        .restart-btn {
+            background: #1a5e44; color: white; border: none; padding: 14px; border-radius: 60px; width: 100%; cursor: pointer; margin-top: 10px;
+        }
+        .stats { font-size: 1.1rem; line-height: 1.8; }
+        @media (max-width: 640px) { .quiz-wrapper { max-width: 100%; padding: 15px; } .opt-btn { padding: 8px 16px; } }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div id="quizScreen" class="screen active">
+        <div class="font-controls">
+            <button class="font-btn" id="fontMinus">A−</button>
+            <button class="font-btn" id="fontPlus">A+</button>
+            <button class="font-btn" id="fullscreenBtn">⛶ Tela cheia</button>
+        </div>
+        <div class="title">📖 Lei de Acesso à Informação</div>
+        <div class="sub">Lei Federal nº 12.527, de 18 de novembro de 2011 · 40 questões</div>
+        <div class="progress" id="progressText">Questão 1 de 40</div>
+        <div id="questionArea">
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsArea"></div>
+            <div class="feedback" id="feedbackArea" style="display: none;"></div>
+        </div>
+        <div class="toolbar">
+            <button class="tool-btn" id="prevBtn" disabled>◀ Anterior</button>
+            <button class="tool-btn" id="nextBtn" disabled>Próxima ▶</button>
+        </div>
+    </div>
+
+    <div id="resultScreen" class="screen result-screen">
+        <h2>📊 Estatística da sua pontuação</h2>
+        <div class="result-box" id="resultContent"></div>
+        <button class="restart-btn" id="restartQuizBtn">🔄 Refazer quiz</button>
+    </div>
+</div>
+
+<script>
+    // =================== 40 QUESTÕES (Lei nº 12.527/2011) ===================
+    const questions = [
+        {
+            type: 'tf',
+            text: "A Lei nº 12.527/2011 regulamenta o direito de acesso à informação previsto exclusivamente no inciso XXXIII do art. 5º da Constituição Federal, sem relação com os arts. 37 e 216 da CF.",
+            correct: false,
+            justification: "Nos termos do art. 1º, a LAI regulamenta o acesso a informações previsto no inciso XXXIII do art. 5º, no inciso II do §3º do art. 37 e no §2º do art. 216 da CF."
+        },
+        {
+            type: 'mc',
+            text: "O princípio fundamental que rege a Lei de Acesso à Informação, expresso em seu art. 3º, inciso I, é o de que:",
+            correct: 0,
+            options: [
+                "A publicidade é a regra e o sigilo é a exceção",
+                "O sigilo é a regra e a publicidade é a exceção",
+                "Toda informação pública é imediatamente sigilosa até classificação em contrário",
+                "A publicidade e o sigilo são equivalentes"
+            ],
+            justification: "O art. 3º, I, estabelece a \"observância da publicidade como preceito geral e do sigilo como exceção\", consagrando o princípio da máxima divulgação."
+        },
+        {
+            type: 'tf',
+            text: "As disposições da Lei de Acesso à Informação se aplicam às entidades privadas sem fins lucrativos que recebam recursos públicos, mas a publicidade se restringe à parcela e destinação desses recursos.",
+            correct: true,
+            justification: "Nos termos do art. 2º e seu parágrafo único, as entidades do terceiro setor que recebem verbas públicas se submetem à LAI apenas quanto aos recursos recebidos e sua finalidade."
+        },
+        {
+            type: 'mc',
+            text: "Nos termos do art. 1º da LAI, subordinam-se ao seu regime, EXCETO:",
+            correct: 3,
+            options: [
+                "Os órgãos da administração direta dos Poderes Executivo, Legislativo e Judiciário",
+                "As autarquias e fundações públicas",
+                "As Cortes de Contas e o Ministério Público",
+                "As organizações não governamentais que não recebam recursos públicos"
+            ],
+            justification: "As ONGs que não recebem recursos públicos não estão submetidas à LAI, pois o art. 1º alcança os entes da administração direta e indireta e, excepcionalmente, as entidades privadas que recebem verbas públicas."
+        },
+        {
+            type: 'tf',
+            text: "A LAI estabelece como uma de suas diretrizes o fomento ao desenvolvimento da cultura de transparência e o desenvolvimento do controle social da administração pública.",
+            correct: true,
+            justification: "De acordo com o art. 3º, IV e V, a LAI visa fomentar a cultura de transparência e o desenvolvimento do controle social da administração pública."
+        },
+        {
+            type: 'mc',
+            text: "Para os efeitos da Lei 12.527/2011, o conceito de \"informação pessoal\" corresponde a:",
+            correct: 2,
+            options: [
+                "Dados de pessoas jurídicas de direito privado",
+                "Qualquer informação de interesse público",
+                "Aquela relacionada à pessoa natural identificada ou identificável",
+                "Informações sobre agentes públicos no exercício de suas funções"
+            ],
+            justification: "O art. 4º, IV, define informação pessoal como \"aquela relacionada à pessoa natural identificada ou identificável\"."
+        },
+        {
+            type: 'tf',
+            text: "A definição de \"primariedade\", prevista no art. 4º, IX, da LAI, corresponde à qualidade da informação coletada na fonte, com o máximo de detalhamento possível, sem modificações.",
+            correct: true,
+            justification: "O art. 4º, IX, define primariedade exatamente como a qualidade da informação original, coletada na fonte e sem modificações, com o máximo de detalhamento."
+        },
+        {
+            type: 'mc',
+            text: "O art. 5º da LAI dispõe que o acesso à informação deve ser garantido mediante procedimentos:",
+            correct: 0,
+            options: [
+                "Objetivos e ágeis, de forma transparente, clara e em linguagem de fácil compreensão",
+                "Demorados, complexos e restritivos",
+                "Sigilosos e condicionados à identificação do requerente",
+                "Que exijam justificativa detalhada do motivo da solicitação"
+            ],
+            justification: "O art. 5º estabelece que o acesso à informação deve ser franqueado \"mediante procedimentos objetivos e ágeis, de forma transparente, clara e em linguagem de fácil compreensão\"."
+        },
+        {
+            type: 'tf',
+            text: "Cabe aos órgãos e entidades públicas promover, independentemente de requerimentos, a divulgação de informações de interesse coletivo ou geral, salvo aquelas cujo sigilo seja imprescindível à segurança da sociedade e do Estado.",
+            correct: true,
+            justification: "O art. 8º, caput, estabelece o dever de promover a transparência ativa, divulgando informações de interesse coletivo independentemente de pedidos, ressalvadas as hipóteses legais de sigilo."
+        },
+        {
+            type: 'mc',
+            text: "De acordo com o art. 7º da LAI, o direito de acesso à informação compreende, entre outros, o direito de obter:",
+            correct: 1,
+            options: [
+                "Informação exclusivamente sobre contratos administrativos",
+                "Informação primária, íntegra, autêntica e atualizada, dentre outras",
+                "Apenas informações relativas à licitações",
+                "Somente informações de cunho financeiro"
+            ],
+            justification: "O art. 7º, IV, assegura ao requerente o direito de obter \"informação primária, íntegra, autêntica e atualizada\", além das demais hipóteses previstas nos incisos do artigo."
+        },
+        {
+            type: 'tf',
+            text: "O pedido de acesso à informação não precisa ser justificado, bastando a identificação do requerente e a especificação da informação solicitada.",
+            correct: true,
+            justification: "O art. 10, §3º, determina que \"são vedadas quaisquer exigências relativas aos motivos determinantes da solicitação de informações de interesse público\", e o art. 10, caput, exige apenas a identificação do requerente e a especificação da informação."
+        },
+        {
+            type: 'mc',
+            text: "A informação em poder dos órgãos e entidades públicas, segundo o art. 24 da LAI, poderá ser classificada nos seguintes graus de sigilo:",
+            correct: 3,
+            options: [
+                "Confidencial, secreta e restrita",
+                "Ultrassecreta, secreta, confidencial e reservada",
+                "Sigilosa, privada e secreta",
+                "Ultrassecreta, secreta e reservada"
+            ],
+            justification: "O art. 24, caput, estabelece três graus de sigilo: ultrassecreta, secreta e reservada, cada qual com prazo máximo de restrição distinto."
+        },
+        {
+            type: 'tf',
+            text: "O prazo máximo de restrição de acesso para informação classificada como secreta é de 15 (quinze) anos, contados a partir da data de sua produção.",
+            correct: true,
+            justification: "O art. 24, §1º, II, fixa em 15 (quinze) anos o prazo máximo para a informação classificada como secreta, a partir da data de produção."
+        },
+        {
+            type: 'mc',
+            text: "Nos termos do art. 24, §2º, as informações que possam colocar em risco a segurança do Presidente e do Vice-Presidente da República e seus respectivos cônjuges e filhos serão classificadas como:",
+            correct: 0,
+            options: [
+                "Reservadas, com sigilo até o término do mandato",
+                "Ultrassecretas, com sigilo por 25 anos",
+                "Secretas, com sigilo por 15 anos",
+                "Pessoais, com sigilo por 100 anos"
+            ],
+            justification: "O art. 24, §2º, estabelece que essas informações serão classificadas como reservadas e ficarão sob sigilo até o término do mandato em exercício ou do último mandato, em caso de reeleição."
+        },
+        {
+            type: 'tf',
+            text: "Transcorrido o prazo máximo de classificação sem que o órgão ou entidade tenha tornado a informação pública, esta permanece automaticamente sigilosa até nova avaliação.",
+            correct: false,
+            justification: "O art. 24, §4º, estabelece que \"transcorrido o prazo de classificação ou consumado o evento que defina o seu termo final, a informação tornar-se-á, automaticamente, de acesso público\"."
+        },
+        {
+            type: 'mc',
+            text: "A classificação de informação no grau de sigilo ultrassecreto, no âmbito da administração pública federal, compete a quais autoridades, nos termos do art. 27?",
+            correct: 2,
+            options: [
+                "Qualquer agente público sem restrição",
+                "Apenas ao Presidente da República",
+                "Ao Presidente e Vice-Presidente da República, Ministros de Estado e equivalentes, Comandantes das Forças Armadas e Chefes de Missões Diplomáticas",
+                "Exclusivamente ao Supremo Tribunal Federal"
+            ],
+            justification: "O art. 27, I, elenca como competentes para classificar como ultrassecreto: Presidente, Vice-Presidente, Ministros de Estado e equivalentes, Comandantes das Forças e Chefes de Missões Diplomáticas."
+        },
+        {
+            type: 'tf',
+            text: "A classificação de informação em qualquer grau de sigilo deverá ser formalizada em decisão que conterá, no mínimo, o assunto, o fundamento, o prazo de sigilo ou evento que defina seu termo final e a identificação da autoridade que a classificou.",
+            correct: true,
+            justification: "O art. 28, caput, enumera os requisitos obrigatórios do ato de classificação: assunto, fundamento, indicação do prazo de sigilo e identificação da autoridade classificadora."
+        },
+        {
+            type: 'mc',
+            text: "O prazo máximo de restrição de acesso para informação classificada como reservada é de:",
+            correct: 0,
+            options: [
+                "5 (cinco) anos",
+                "25 (vinte e cinco) anos",
+                "15 (quinze) anos",
+                "100 (cem) anos"
+            ],
+            justification: "O art. 24, §1º, III, estabelece o prazo máximo de 5 (cinco) anos para informação classificada como reservada."
+        },
+        {
+            type: 'tf',
+            text: "As informações pessoais relativas à intimidade, vida privada, honra e imagem terão seu acesso restrito pelo prazo máximo de 50 (cinquenta) anos, a contar da data de sua produção.",
+            correct: false,
+            justification: "O art. 31, §1º, I, estabelece o prazo máximo de 100 (cem) anos, e não 50, para o acesso restrito das informações pessoais relativas à intimidade, vida privada, honra e imagem."
+        },
+        {
+            type: 'mc',
+            text: "Constitui conduta ilícita que enseja responsabilidade do agente público ou militar, nos termos do art. 32 da LAI:",
+            correct: 3,
+            options: [
+                "Fornecer a informação requerida nos termos da Lei",
+                "Divulgar informações de interesse público",
+                "Observar a transparência ativa",
+                "Retardar deliberadamente o fornecimento da informação requerida"
+            ],
+            justification: "O art. 32, I, considera conduta ilícita \"recusar-se a fornecer informação requerida nos termos desta Lei, retardar deliberadamente o seu fornecimento ou fornecê-la intencionalmente de forma incorreta, incompleta ou imprecisa\"."
+        },
+        {
+            type: 'tf',
+            text: "O acesso à informação classificada como sigilosa cria a obrigação para aquele que a obtém de resguardar o sigilo.",
+            correct: true,
+            justification: "O art. 25, §2º, dispõe que \"o acesso à informação classificada como sigilosa cria a obrigação para aquele que a obteve de resguardar o sigilo\"."
+        },
+        {
+            type: 'mc',
+            text: "Nos termos do art. 11, o órgão ou entidade pública deve autorizar ou conceder o acesso imediato à informação disponível. Não sendo possível, deverá, em prazo não superior a quantos dias, indicar as razões da recusa?",
+            correct: 1,
+            options: [
+                "10 (dez) dias",
+                "20 (vinte) dias",
+                "30 (dias)",
+                "5 (cinco) dias"
+            ],
+            justification: "O art. 11, §1º, estabelece o prazo de 20 (vinte) dias, prorrogáveis por mais 10 (dez) dias mediante justificativa expressa, para atender ou justificar a recusa do pedido."
+        },
+        {
+            type: 'tf',
+            text: "Quando a informação solicitada estiver parcialmente sob sigilo, o acesso é negado integralmente para preservar a segurança da parte sigilosa.",
+            correct: false,
+            justification: "O art. 7º, §2º, garante que \"não sendo autorizado acesso integral à informação por ser ela parcialmente sigilosa, é assegurado o acesso à parte não sigilosa por meio de certidão, extrato ou cópia com ocultação da parte sob sigilo\"."
+        },
+        {
+            type: 'mc',
+            text: "A Lei nº 12.527/2011 entrou em vigor decorridos quantos dias da data de sua publicação?",
+            correct: 0,
+            options: [
+                "180 (cento e oitenta) dias",
+                "90 (noventa) dias",
+                "60 (sessenta) dias",
+                "Imediatamente, na data da publicação"
+            ],
+            justification: "O art. 47 estabelece que a lei entra em vigor 180 (cento e oitenta) dias após a data de sua publicação."
+        },
+        {
+            type: 'tf',
+            text: "As sociedades de economia mista e as empresas públicas subordinam-se ao regime da LAI, por força do art. 1º, parágrafo único, II.",
+            correct: true,
+            justification: "O art. 1º, parágrafo único, II, inclui expressamente as empresas públicas e sociedades de economia mista no rol de entidades subordinadas à LAI."
+        },
+        {
+            type: 'mc',
+            text: "Nos termos do art. 30, a autoridade máxima de cada órgão ou entidade deverá publicar anualmente rol de documentos desclassificados e classificados, incluindo relatório estatístico de pedidos. Essa publicação refere-se a qual período?",
+            correct: 2,
+            options: [
+                "Somente os documentos classificados nos últimos 6 meses",
+                "Apenas informações do ano corrente",
+                "Documentos desclassificados nos últimos 12 meses e rol de documentos classificados em cada grau de sigilo",
+                "Exclusivamente informações financeiras"
+            ],
+            justification: "O art. 30, I e II, determina a publicação do rol das informações desclassificadas nos últimos 12 (doze) meses e do rol de documentos classificados em cada grau de sigilo."
+        },
+        {
+            type: 'tf',
+            text: "O direito de acesso às informações utilizadas como fundamento da tomada de decisão e do ato administrativo será assegurado com a edição do ato decisório respectivo.",
+            correct: true,
+            justification: "O art. 7º, §3º, garante o direito de acesso aos documentos que fundamentaram a decisão administrativa, assegurado com a edição do ato decisório respectivo."
+        },
+        {
+            type: 'mc',
+            text: "Segundo o art. 4º, III, a informação sigilosa é definida como:",
+            correct: 1,
+            options: [
+                "Qualquer dado que o agente público considere confidencial",
+                "Aquela submetida temporariamente à restrição de acesso público em razão de sua imprescindibilidade para a segurança da sociedade e do Estado",
+                "Informação que nunca pode ser acessada",
+                "Aquela que contém opiniões pessoais do agente público"
+            ],
+            justification: "O art. 4º, III, define informação sigilosa como \"aquela submetida temporariamente à restrição de acesso público em razão de sua imprescindibilidade para a segurança da sociedade e do Estado\"."
+        },
+        {
+            type: 'tf',
+            text: "O art. 15 da LAI permite recurso contra negativa de acesso à informação apenas após esgotada a via administrativa no próprio órgão. O prazo para interposição desse recurso de primeira instância é de 10 (dez) dias.",
+            correct: true,
+            justification: "O art. 15, caput, faculta ao interessado interpor recurso contra a decisão de negativa de acesso no prazo de 10 (dez) dias contados de sua ciência, dirigido à autoridade hierarquicamente superior."
+        },
+        {
+            type: 'mc',
+            text: "O art. 8º, §3º, exige que os sítios oficiais na internet atendam a requisitos específicos. Qual das alternativas abaixo NÃO corresponde a um desses requisitos?",
+            correct: 3,
+            options: [
+                "Conter ferramenta de pesquisa de conteúdo",
+                "Possibilitar a gravação de relatórios em diversos formatos eletrônicos",
+                "Possibilitar o acesso automatizado por sistemas externos",
+                "Exigir cadastro com senha pessoal e complexa para visualizar qualquer informação"
+            ],
+            justification: "O art. 8º, §3º, determina que os sítios oficiais devem facilitar o acesso à informação, não restringi-lo mediante exigência de senha para informações de interesse público. Os requisitos incluem ferramenta de pesquisa, gravação de relatórios em formatos abertos e acesso automatizado."
+        },
+        {
+            type: 'tf',
+            text: "A competência para classificar informação como ultrassecreta pode ser delegada a agente público, inclusive em missão no exterior, mas é vedada a subdelegação.",
+            correct: true,
+            justification: "O art. 27, §1º, permite a delegação da competência para classificação como ultrassecreta e secreta pela autoridade responsável, mas veda expressamente a subdelegação."
+        },
+        {
+            type: 'mc',
+            text: "O art. 23 estabelece que são passíveis de classificação informações cuja divulgação possa pôr em risco a defesa e a soberania nacionais. Qual dos seguintes NÃO é um critério de classificação previsto nesse artigo?",
+            correct: 2,
+            options: [
+                "Oferecer elevado risco à estabilidade financeira, econômica ou monetária do País",
+                "Prejudicar planos ou operações estratégicos das Forças Armadas",
+                "Divulgar o salário de servidores públicos federais",
+                "Comprometer atividades de inteligência em andamento"
+            ],
+            justification: "A divulgação de salários de servidores é considerada, pelo Supremo Tribunal Federal e pela CGU, como informação pública de interesse coletivo, não se enquadrando nas hipóteses de sigilo do art. 23. Os demais itens correspondem aos incisos IV, V e VIII do artigo."
+        },
+        {
+            type: 'tf',
+            text: "O art. 14 estabelece que, nas hipóteses de indeferimento de acesso, o órgão ou entidade deverá informar ao requerente, por escrito, o prazo para recurso, a fundamentação legal da decisão e a possibilidade de reavaliação pela autoridade máxima.",
+            correct: true,
+            justification: "O art. 14 enumera que o órgão deve informar, por escrito: a autoridade hierarquicamente superior, os prazos recursais e o órgão competente para reavaliação."
+        },
+        {
+            type: 'mc',
+            text: "Segundo o art. 9º, quando uma informação não estiver disponível, o órgão ou entidade deverá justificar e, na impossibilidade de concedê-la, deverá adotar uma das seguintes providências:",
+            correct: 1,
+            options: [
+                "Arquivar o pedido sem resposta",
+                "Expedir certidão negativa de existência de informações oficiais",
+                "Ignorar a solicitação",
+                "Transferir a informação para outra entidade sem comunicar o requerente"
+            ],
+            justification: "O art. 9º determina que, não sendo possível conceder a informação, o órgão deverá expedir certidão negativa de existência de informações oficiais."
+        },
+        {
+            type: 'tf',
+            text: "O acesso à informação sobre condutas que impliquem violação dos direitos humanos praticadas por agentes públicos não poderá ser objeto de restrição de acesso.",
+            correct: true,
+            justification: "O art. 21, parágrafo único, veda a restrição de acesso a informações que versem sobre condutas de violação dos direitos humanos praticadas por agentes públicos ou a mando de autoridades públicas."
+        },
+        {
+            type: 'mc',
+            text: "De acordo com o art. 10, o pedido de acesso à informação deverá conter, essencialmente:",
+            correct: 2,
+            options: [
+                "A motivação política do requerente",
+                "O histórico profissional completo do solicitante",
+                "A identificação do requerente e a especificação da informação requerida",
+                "A anuência de autoridade superior do órgão"
+            ],
+            justification: "O art. 10, caput, exige apenas a identificação do requerente e a especificação da informação requerida. O §3º veda expressamente exigências relativas aos motivos determinantes da solicitação."
+        },
+        {
+            type: 'tf',
+            text: "A LAI revogou integralmente a Lei nº 8.159/1991 (Lei de Arquivos), extinguindo toda a disciplina sobre gestão documental no Brasil.",
+            correct: false,
+            justification: "O art. 46 revogou apenas dispositivos específicos da Lei nº 8.159/1991 (artigos 22 a 24), mantendo-a em vigor no restante. A gestão documental permanece regulada por aquela lei."
+        },
+        {
+            type: 'mc',
+            text: "O art. 45 da LAI prevê que os Estados, o Distrito Federal e os Municípios devem editar legislação própria para regulamentar o acesso à informação em seus âmbitos. Essa disposição é considerada:",
+            correct: 0,
+            options: [
+                "Norma de reprodução obrigatória, pois o direito constitucional de acesso à informação tem aplicação imediata",
+                "Facultativa, pois apenas a lei federal se aplica",
+                "Exclusiva para Estados com mais de 10 milhões de habitantes",
+                "Revogada tacitamente pelo Decreto nº 7.724/2012"
+            ],
+            justification: "O art. 45 estabelece que os entes devem editar suas próprias normas para regulamentar o acesso à informação em âmbito estadual, distrital e municipal, refletindo o pacto federativo. Trata-se de norma de reprodução obrigatória."
+        }
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let userAnswers = new Array(total).fill(null);
+    let userJustification = new Array(total).fill(null);
+
+    const quizScreen = document.getElementById('quizScreen');
+    const resultScreen = document.getElementById('resultScreen');
+    const questionText = document.getElementById('questionText');
+    const optionsArea = document.getElementById('optionsArea');
+    const feedbackArea = document.getElementById('feedbackArea');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const restartQuizBtn = document.getElementById('restartQuizBtn');
+    const resultContent = document.getElementById('resultContent');
+    const fontMinus = document.getElementById('fontMinus');
+    const fontPlus = document.getElementById('fontPlus');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+    let currentFontSize = 16;
+    function setFontSize(size) {
+        document.querySelector('.quiz-wrapper').style.fontSize = size + 'px';
+        const els = document.querySelectorAll('.question-text, .feedback, .opt-btn, .tool-btn, .restart-btn');
+        els.forEach(el => el.style.fontSize = size + 'px');
+        currentFontSize = size;
+    }
+    fontMinus.addEventListener('click', () => setFontSize(Math.max(12, currentFontSize-2)));
+    fontPlus.addEventListener('click', () => setFontSize(Math.min(36, currentFontSize+2)));
+    fullscreenBtn.addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        questionText.innerHTML = `${currentIndex+1}. ${q.text}`;
+        feedbackArea.style.display = 'none';
+        feedbackArea.className = 'feedback';
+        optionsArea.innerHTML = '';
+
+        if (q.type === 'tf') {
+            const btnTrue = document.createElement('button');
+            btnTrue.className = 'opt-btn';
+            btnTrue.dataset.value = 'true';
+            btnTrue.textContent = '✅ Verdadeiro';
+            const btnFalse = document.createElement('button');
+            btnFalse.className = 'opt-btn';
+            btnFalse.dataset.value = 'false';
+            btnFalse.textContent = '❌ Falso';
+            optionsArea.appendChild(btnTrue);
+            optionsArea.appendChild(btnFalse);
+        } else if (q.type === 'mc') {
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.dataset.value = idx.toString();
+                btn.textContent = opt;
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        const answer = userAnswers[currentIndex];
+        if (answer !== null) {
+            const allBtns = optionsArea.querySelectorAll('.opt-btn');
+            allBtns.forEach(btn => {
+                const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+                if (btnVal === answer) btn.classList.add('selected');
+            });
+            if (userJustification[currentIndex]) {
+                const isCorrect = (q.type === 'tf') ? (answer === q.correct) : (answer === q.correct);
+                feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+                feedbackArea.style.display = 'block';
+                feedbackArea.innerHTML = userJustification[currentIndex];
+            }
+        }
+
+        progressText.innerText = `Questão ${currentIndex+1} de ${total}`;
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = false;
+    }
+
+    function selectAnswer(valueStr) {
+        const q = questions[currentIndex];
+        let answerValue;
+        if (q.type === 'tf') {
+            answerValue = (valueStr === 'true');
+        } else {
+            answerValue = parseInt(valueStr);
+        }
+        userAnswers[currentIndex] = answerValue;
+
+        const isCorrect = (q.type === 'tf') ? (answerValue === q.correct) : (answerValue === q.correct);
+        const correctText = q.type === 'tf' ? (q.correct ? 'Verdadeiro' : 'Falso') : q.options[q.correct];
+        const explanation = `<strong>${isCorrect ? '✓ Correto!' : '✗ Incorreto'}</strong><br>Justificativa: ${q.justification}<br><span style="font-size:0.9rem;">Resposta correta: ${correctText}.</span>`;
+        userJustification[currentIndex] = explanation;
+        feedbackArea.classList.remove('correct', 'wrong');
+        feedbackArea.classList.add(isCorrect ? 'correct' : 'wrong');
+        feedbackArea.style.display = 'block';
+        feedbackArea.innerHTML = explanation;
+
+        const allBtns = optionsArea.querySelectorAll('.opt-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('selected');
+            const btnVal = q.type === 'tf' ? (btn.dataset.value === 'true') : parseInt(btn.dataset.value);
+            if (btnVal === answerValue) btn.classList.add('selected');
+        });
+    }
+
+    optionsArea.addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-btn');
+        if (btn) selectAnswer(btn.dataset.value);
+    });
+
+    prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderQuestion(); } });
+    nextBtn.addEventListener('click', () => {
+        if (userAnswers[currentIndex] === null) {
+            alert('Por favor, responda a questão antes de avançar.');
+            return;
+        }
+        if (currentIndex < total-1) { currentIndex++; renderQuestion(); }
+        else mostrarResultado();
+    });
+
+    function mostrarResultado() {
+        let acertos = 0;
+        let erros = 0;
+        for (let i = 0; i < total; i++) {
+            const ans = userAnswers[i];
+            const q = questions[i];
+            if (ans !== null) {
+                if ((q.type === 'tf' && ans === q.correct) || (q.type === 'mc' && ans === q.correct)) acertos++;
+                else erros++;
+            }
+        }
+        const percentual = (acertos / total) * 100;
+        const nota = (acertos / total) * 10;
+        let mensagem = '';
+        if (percentual >= 85) mensagem = '⭐ Excelente! Você domina os principais dispositivos da LAI (Lei 12.527/2011).';
+        else if (percentual >= 70) mensagem = '👍 Muito bom! Reforce os prazos de sigilo e as competências para classificação.';
+        else if (percentual >= 50) mensagem = '📘 Bom, mas releia os capítulos sobre classificação de sigilo e recursos.';
+        else mensagem = '📚 Recomendo reler a íntegra da Lei 12.527/2011, especialmente os arts. 3º, 7º, 24, 27 e 32.';
+
+        resultContent.innerHTML = `
+            <div class="stats">
+                <p><strong>✅ Acertos:</strong> ${acertos} (${percentual.toFixed(1)}%)</p>
+                <p><strong>❌ Erros:</strong> ${erros}</p>
+                <p><strong>🎓 Nota (0 a 10):</strong> ${nota.toFixed(1)}</p>
+                <p><strong>📊 Percentual de acerto:</strong> ${percentual.toFixed(1)}%</p>
+                <hr style="margin: 15px 0;">
+                <p>${mensagem}</p>
+            </div>
+        `;
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+    }
+
+    restartQuizBtn.addEventListener('click', () => {
+        userAnswers = new Array(total).fill(null);
+        userJustification = new Array(total).fill(null);
+        currentIndex = 0;
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+        renderQuestion();
+    });
+
+    renderQuestion();
+    setFontSize(16);
+</script>
+</body>
+</html>
